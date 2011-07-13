@@ -1,0 +1,44 @@
+<%inherit file="/base.html"/>
+<%def name="title()">HAR Storage</%def>
+<table align="center"><tr><td>
+        <div style="float:left">
+            ${h.form(h.url_for(controller='results',action='upload'),multipart=True)}
+                    <fieldset>
+                    	<legend>Upload new file</legend>
+                    	<p>${h.file('file',size="30")} ${h.submit('submit','Upload')}</p>
+                    </fieldset>
+            ${h.end_form()}
+        </div>
+        <div style="float:left;margin-left:3em;">
+            ${h.form(h.url_for(controller='results',action='search'),multipart=True)}
+                    <fieldset>
+                    <legend>Search for existing</legend>
+                    <p> ${h.text('search_text',size="40")} ${h.submit('submit','Search')}</p>
+                    </fieldset>
+            ${h.end_form()}
+        </div>
+</td></tr></table>
+<table align="center"><tr><td>
+    <p style="color:#498a2d;font-weight:bold">Test Results</p>
+    <table width="960px" align="center" class="stats_table">
+        <tr>
+            <th class="stats_td" width="29%" style="text-align:left;">Label</th>
+            <th class="stats_td" width="39%" style="text-align:left;">URL</th>
+            <th class="stats_td" width="8%" style="">PageSpeed Score</th>
+            <th class="stats_td" width="8%" style="">Total Size</th>
+            <th class="stats_td" width="8%" style="">Total Requests</th>
+            <th class="stats_td" width="8%" style="">Full Time</th>
+        </tr>
+		% for index in range(c.rowcount):
+		<tr>
+			<td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}"> ${c.metrics_table[0][index]}</a></td>
+			<td class="stats_td">${c.metrics_table[1][index]}</td>
+			<td class="stats_td" style="text-align:center;">${c.metrics_table[2][index]}</td>
+			<td class="stats_td" style="text-align:center;">${c.metrics_table[3][index]}</td>
+			<td class="stats_td" style="text-align:center;">${c.metrics_table[4][index]}</td>
+			<td class="stats_td" style="text-align:center;">${c.metrics_table[5][index]}</td>
+		</tr>
+		% endfor
+    </table>
+</td></tr>
+</table>

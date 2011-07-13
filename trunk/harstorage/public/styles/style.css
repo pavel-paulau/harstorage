@@ -1,0 +1,133 @@
+a
+{
+text-decoration:none;
+color:#498a2d;
+}
+a:visited
+{
+color:#498a2d;
+}
+a:active,a:hover
+{
+color:#000000;
+}
+span.error-message
+{
+color: #f00;
+font-size: 14px;
+}
+fieldset
+{
+border: 1px solid #1a3d0a;
+-moz-border-radius:10px;
+width: 26em
+}
+.credentials
+{
+border: 1px solid #1a3d0a;
+border-radius: 10px;
+-moz-border-radius: 10px;
+width: 18em
+}
+legend
+{
+color: #fff;
+font-size: 14px;
+background: #498a2d;
+border: 1px solid #1a3d0a;
+padding: 2px 6px
+}
+input
+{
+color: #000;
+font-size: 12px;
+background: #d7e7cf;
+border: 1px solid #1a3d0a;
+}
+.submit input
+{
+color: #fff;
+background: #498a2d;
+border: 2px outset #1a3d0a;
+margin-left: 11.5em;
+width: 10em;
+}
+.login input
+{
+color: #fff;
+background: #498a2d;
+border: 2px outset #1a3d0a;
+margin-left: 1.5em;
+width: 10em;
+}
+label
+{
+font-size: 12px;
+width: 11em;
+float: left;
+text-align: right;
+margin-right: 0.5em;
+}
+.account
+{
+font-size: 14px;
+width: 5em;
+float: left;
+text-align: right;
+margin-right: 0.5em;
+}
+.stats_table
+{
+border-color: #1a3d0a;
+border-width: 0 0 1px 1px;
+border-style: solid;
+}
+.stats_td
+{
+border-color: #1a3d0a;
+border-width: 1px 1px 0 0;
+border-style: solid;
+margin: 0;
+padding: 4px;
+background-color: #d7e7cf;
+font-size:small;
+color:#498a2d;
+}
+.stats_th
+{
+border-color: #1a3d0a;
+border-width: 1px 1px 0 0;
+border-style: solid;
+margin: 0;
+padding: 4px;
+background-color: #d7e7cf;
+font-size:small;
+font-weight:bold;
+color:#498a2d;
+}
+.header_r
+{
+text-align:right;
+font-size:12px;
+margin-top:0.5em;
+}
+.header_l
+{
+float:left;
+text-align:left;
+color: #498a2d;
+font-weight: bold;
+font-size: 28px;
+}
+.footer_l
+{
+float:left;
+font-size: 11px;
+vertical-align:middle;
+height:25px;
+}
+.footer_r
+{
+float:right;
+font-size: 11px;
+}

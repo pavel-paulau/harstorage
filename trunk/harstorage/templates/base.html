@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>${self.title()}</title>
+        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/style.css')}" />
+    </head>
+    <body>
+        <div class="header_l"><a href="/">HAR Storage</a></div>
+        <div class="header_r"><a href="http://code.google.com/p/harstorage/w/list">Documentation</a></div>
+        <div class="header_r"><a href="https://groups.google.com/group/har-storage/?hl=en">Discussion Group</a></div>
+        <hr>
+		${next.body()}
+		<hr>
+        <!--<div class="footer_l"><img src='/images/pylons.png' width="25" height="25" alt="Powered by Pylons"></div>-->
+        <div class="footer_r"><a href='mailto:pavel.paulau@gmail.com'>© 2011, Pavel Paulau</a></div>
+	</body>
+</html>

@@ -1,0 +1,3 @@
+include harstorage/config/deployment.ini_tmpl
+recursive-include harstorage/public *
+recursive-include harstorage/templates *

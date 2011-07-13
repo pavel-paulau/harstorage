@@ -1,0 +1,2 @@
+Pylons>=0.10
+SQLAlchemy>=0.5
