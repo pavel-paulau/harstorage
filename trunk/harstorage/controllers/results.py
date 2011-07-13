@@ -47,3 +47,10 @@ class ResultsController(BaseController):
     def details(self):
         c.label = request.GET['label']
         return render('./details.html')
+
+    def search(self):
+        c.search_text = request.POST['search_text']
+        return render('./search.html')
+
+    def upload(self):
+        return render('./upload.html')
