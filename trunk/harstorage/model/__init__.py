@@ -14,36 +14,30 @@ def init_model(engine):
     meta.Session = orm.scoped_session(sm)
     meta.Session.configure(bind=engine)
 
-
-urls_table = schema.Table('urls',meta.metadata,
+urls_table = schema.Table('URLS',meta.metadata,
     schema.Column('id',MEDIUMINT,primary_key=True),
     schema.Column('url',VARCHAR(255)),
+)
+
+labels_table = schema.Table('LABELS',meta.metadata,
+    schema.Column('id',MEDIUMINT,primary_key=True),
     schema.Column('label',VARCHAR(255)),
     schema.Column('last_metric',INTEGER),
 )
-    
-hars_table = schema.Table('hars',meta.metadata,
-    schema.Column('id',INTEGER,primary_key=True),
-    schema.Column('mongo_key',VARCHAR(24)),
-    schema.Column('requests',MEDIUMINT),
-    schema.Column('total_size',MEDIUMINT),
-    schema.Column('html_size',MEDIUMINT),   
-    schema.Column('js_size',MEDIUMINT),
-    schema.Column('css_size',MEDIUMINT),
-    schema.Column('image_size',MEDIUMINT),
-    schema.Column('other_size',MEDIUMINT),
-    schema.Column('full_time',MEDIUMINT),
-)
 
-metrics_table = schema.Table('metrics',meta.metadata,
+testresults_table = schema.Table('TESTRESULTS',meta.metadata,
     schema.Column('id',INTEGER,primary_key=True),
-    schema.Column('url_id',INTEGER),
-    schema.Column('har_id',INTEGER),
-    schema.Column('pagespeed_id',INTEGER),
     schema.Column('timestamp',TIMESTAMP),
-)
+    schema.Column('url_id',INTEGER),
+    schema.Column('label_id',INTEGER),
+    schema.Column('pagespeed_id',INTEGER),
+    schema.Column('requests',MEDIUMINT),
+    schema.Column('size',MEDIUMINT),
+    schema.Column('time',MEDIUMINT),
+    schema.Column('har_key',CHAR(24)),
+    )
 
-pagespeed_table = schema.Table('pagespeed',meta.metadata,
+pagespeed_table = schema.Table('PAGESPEED',meta.metadata,
     schema.Column('id',INTEGER,primary_key=True),
     schema.Column('score',TINYINT),
 )
@@ -51,10 +45,10 @@ pagespeed_table = schema.Table('pagespeed',meta.metadata,
 class Urls(object):
     pass
 
-class Hars(object):
+class Labels(object):
     pass
 
-class Metrics(object):
+class TestResults(object):
     pass
 
 class PageSpeed(object):
@@ -62,6 +56,6 @@ class PageSpeed(object):
 
 
 orm.mapper(Urls,urls_table)
-orm.mapper(Hars,hars_table)
-orm.mapper(Metrics,metrics_table)
+orm.mapper(Labels,labels_table)
+orm.mapper(TestResults,testresults_table)
 orm.mapper(PageSpeed,pagespeed_table)
