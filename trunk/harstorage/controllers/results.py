@@ -13,7 +13,6 @@ from harstorage import model
 log = logging.getLogger(__name__)
 
 class ResultsController(BaseController):
-
     def index(self):
         my_session  = model.meta.Session
    
@@ -44,3 +43,7 @@ class ResultsController(BaseController):
             c.metrics_table[6].append( result.timestamp )
             
         return render('./home.html')
+
+    def details(self):
+        c.label = request.GET['label']
+        return render('./details.html')
