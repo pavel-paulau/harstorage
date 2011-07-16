@@ -31,7 +31,7 @@ class HAR():
             if start_time < min: min = start_time
             if end_time > max: max = end_time
 
-        return int ((max - min)*1000)/1000.0
+        return (max - min)*1000
         
     def weight_ratio(self):
         resources = dict()        
