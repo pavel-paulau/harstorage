@@ -42,7 +42,7 @@ function drawTimeLine(hash,label) {
         return size;
     };
 
-    // dataset for timeline,
+    // dataset for timeline
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Timestamp');
     data.addColumn('number', label);
@@ -63,7 +63,7 @@ function drawTimeLine(hash,label) {
         colors          :["#e0931a"],
         chartArea       :{left:100,top:30,width:650},
         hAxis           :{title:"Timestamp",slantedText:false,slantedTextAngle:60,maxAlternation:2},
-        vAxis           :{title:label},
+        vAxis           :{title:label,baseline:0},
         legend          :'none',
         pointSize       :4
     }

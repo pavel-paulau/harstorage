@@ -102,7 +102,8 @@ border-style:solid;
 border-color:#498a2d;
 border-radius:10px;
 overflow:auto;
-width:100%;
+width:960px;
+margin-bottom:5px;
 }
 hr
 {
@@ -111,14 +112,15 @@ height:1px;
 }
 h4
 {
-margin-top:0.5em;
+margin-top:0.0em;
 margin-bottom:1em;
-margin-left:0.5em;
 color:#498a2d;
+text-align:left;
 }
 .gauge
 {
-margin:20px;
+margin-left:20px;
+margin-right:20px;
 float:left;
 text-align:left;
 width:200px;
@@ -129,7 +131,7 @@ height:200px;
 text-align:left;
 font-size:small;
 color:#498a2d;
-margin-top:2.0em;
+margin-top:1.0em;
 margin-bottom:2.0em;
 width:150px;
 float:left;
@@ -139,7 +141,7 @@ float:left;
 text-align:left;
 font-size:small;
 color:#498a2d;
-margin-top:2.0em;
+margin-top:1.0em;
 margin-bottom:2.0em;
 width:50px;
 float:left;

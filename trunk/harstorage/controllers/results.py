@@ -67,6 +67,9 @@ class ResultsController(BaseController):
 
             c.timestamp.append(result.timestamp)
 
+    def harviewer(self):
+        return render('./harviewer.html')
+
     def details(self):
         c.label = request.GET['label']
         self.timeline(c.label)
