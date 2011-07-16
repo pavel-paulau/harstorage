@@ -1,8 +1,8 @@
-syntax: glob
-*.pyc
+syntax: regexp
+\.pyc
 # Temporary files used by the vim editor.
 .*.swp
 # MySQL WorkBench backup files
-docs/*.bak
+\.bak
 # Pylons temporary files
 trunk/data
