@@ -1,0 +1,1 @@
+define({root:{aboutTabLabel:"About",schemaTabLabel:"Schema",domTabLabel:"HAR"}})
