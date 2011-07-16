@@ -1,3 +1,85 @@
 <%inherit file="/base.html"/>
 <%def name="title()">Details | ${c.label}</%def>
-<p>${c.label}</p>
+
+<table id="trends" width="960px" align="center">
+    <tr><td>
+        <h4>Trends</h4>
+        <div class="details">
+            <div id="timeline_div" style="float:left"></div>
+            <div id="trend_selectors" style="float:left">
+                <form style="font-size:small;margin-top:1em;color:#498a2d;" name="timeLineForm">  
+                    <input style="margin-bottom:3em" type="radio" name="timeline" value="Full Time" checked="checked" onClick="setTimeLine('Full Time');"/> Full Time<br />
+                    <input style="margin-bottom:3em" type="radio" name="timeline" value="Total Size" onClick="setTimeLine('Total Size');"/> Total Time<br />
+                    <input style="margin-bottom:3em" type="radio" name="timeline" value="Total Requests" onClick="setTimeLine('Total Requests');"/> Total Requests<br />
+                    <input style="margin-bottom:0em" type="radio" name="timeline" value="Page Speed Score" onClick="setTimeLine('Page Speed Score');"/> Page Speed Score
+                </form>
+            </div>  
+        </div>
+    </td></tr>
+
+    <tr><td>
+        <div style="float:left">
+            <h4>Run Info</h4>
+        </div>
+        <div style="text-align:right;margin-top:0.5em;">
+            <form>
+                <select id="run_timestamp" onchange="displayRunInfo();">
+                    % for timestamp in c.timestamp:
+                    <option value="${timestamp}"> ${timestamp}</option>
+                    % endfor
+                </select>
+            </form>
+        </div>
+    </td></tr>
+
+    <tr><td>
+        <div class="details">
+            <div>
+                <div id="gauge" class="gauge"></div>
+                <div id="weight" style="width:510px;height:240px;float:left"></div>
+                <div style="width:200px;height:240px;float:left">
+                    <div class="run_stats">Full Time:</div><div id="run_time" class="run_stats2"></div>
+                    <div class="run_stats">Total Size:</div><div id="run_size" class="run_stats2"></div>
+                    <div class="run_stats">Total Requests:</div><div id="run_requests" class="run_stats2"></div>
+                </div>
+            </div>
+            <div>
+            <div style="width:100%;"><h4>Page Speed Details</h4></div>
+            <div id='page-speed' style="width:100%"></div>
+            <!--<h4>HAR Viewer</h4>
+            <div id='har-viewer' style="">HAR Viewer</div>-->
+            </div>
+    </div>
+    </td></tr>
+</table>
+
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type='text/javascript' src="${h.url_for('/scripts/plots.js')}"></script>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>
+<script type 'text/javascript'>
+	function setTimeLine(metric){
+        var hash = new Array();
+        if (metric == "Full Time"){
+            % for key,value in c.time_hash.items():
+                hash["${key}"] = ${value};
+            % endfor
+        } else if (metric == "Total Size") {
+            % for key,value in c.size_hash.items():
+                hash["${key}"] = ${value};
+            % endfor
+        } else if (metric == "Total Requests") {
+            % for key,value in c.requests_hash.items():
+                hash["${key}"] = ${value};
+            % endfor
+        } else if (metric == "Page Speed Score") {
+            % for key,value in c.score_hash.items():
+                hash["${key}"] = ${value};
+            % endfor
+        }
+        
+        drawTimeLine(hash,metric);
+    }
+   
+    setTimeLine(getCheckedValue(document.forms['timeLineForm'].elements['timeline']))
+    displayRunInfo();
+</script>
