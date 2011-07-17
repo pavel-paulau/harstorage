@@ -6,7 +6,7 @@
     <h4>Trends</h4>
     <div class="details">
         <div id="timeline_div" style="float:left"></div>
-        <div id="trend_selectors" style="float:left;text-align:left">
+        <div id="trend_selector" style="float:left;text-align:left;visibility:hidden;">
             <form style="font-size:small;margin-top:1em;color:#498a2d;" name="timeLineForm">  
                 <input style="margin-bottom:3em" type="radio" name="timeline" value="Full Time" checked="checked" onClick="setTimeLine('Full Time');"/> Full Time<br />
                 <input style="margin-bottom:3em" type="radio" name="timeline" value="Total Size" onClick="setTimeLine('Total Size');"/> Total Size<br />
@@ -30,23 +30,24 @@
         </form>
     </div>
 </div>
-<div class="details">
+<div class="details" id="summary" style="visibility:hidden;">
     <h4 style="text-align:center;margin-top:1em">Summary</h4>
     <div>
         <div id="gauge" class="gauge"></div>
-        <div id="weight" style="width:510px;height:240px;float:left"></div>
-        <div style="width:200px;height:240px;float:left">
+        <div id="by_size" style="width:240px;margin-right:30px;height:240px;float:left"></div>
+        <div id="by_req"  style="width:240px;height:240px;float:left"></div>
+        <div style="width:190px;height:240px;float:left">
             <div class="run_stats">Full Time:</div><div id="run_time" class="run_stats2"></div>
             <div class="run_stats">Total Size:</div><div id="run_size" class="run_stats2"></div>
             <div class="run_stats">Total Requests:</div><div id="run_requests" class="run_stats2"></div>
         </div>
     </div>
 </div>
-<div class="details">
+<div class="details" id="pagespeed" style="visibility:hidden;">
     <h4 style="text-align:center;margin-top:1em">Page Speed Details</h4>
     <div id='page-speed' style="width:100%"></div>
 </div>
-<div class="details">
+<div class="details" id="harviewer" style="visibility:hidden;">
     <h4 style="text-align:center;margin-top:1em">HAR Viewer</h4>
     <div id="harviewer"><iframe src="/results/harviewer" width="940" height="400px" frameborder="0"></iframe></div>
     </div>
@@ -80,6 +81,7 @@
         drawTimeLine(hash,metric);
     }
    
-    setTimeLine(getCheckedValue(document.forms['timeLineForm'].elements['timeline']))
+    setTimeLine(getCheckedValue(document.forms['timeLineForm'].elements['timeline']));
+    document.getElementById('trend_selector').style.visibility="visible";
     displayRunInfo();
 </script>

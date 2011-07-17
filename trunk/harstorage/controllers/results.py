@@ -1,6 +1,9 @@
 import logging
 import json
 
+from harstorage.lib.HAR import HAR
+from harstorage.lib.MongoHandler import MongoHandler
+
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
 
@@ -73,6 +76,7 @@ class ResultsController(BaseController):
     def details(self):
         c.label = request.GET['label']
         self.timeline(c.label)
+            
         return render('./details.html')
 
     def runinfo(self):
@@ -82,13 +86,28 @@ class ResultsController(BaseController):
         testresults = my_session.query(TestResults)
         pagespeed   = my_session.query(PageSpeed)
 
-        pagespeed_id =  testresults.filter_by(timestamp = timestamp).first().pagespeed_id
+        pagespeed_id    = testresults.filter_by(timestamp = timestamp).first().pagespeed_id
+        har_key         = testresults.filter_by(timestamp = timestamp).first().har_key
         
-        return json.dumps({'score':pagespeed.filter_by(id = pagespeed_id).first().score,
-                            'time':testresults.filter_by(timestamp = timestamp).first().time,
-                            'size':testresults.filter_by(timestamp = timestamp).first().size,
-                            'requests':testresults.filter_by(timestamp = timestamp).first().requests,
-                            'Avoid CSS @import':pagespeed.filter_by(id = pagespeed_id).first().avoid_import,
+        har = HAR(MongoHandler().read_from_mongo(har_key))
+        
+        summary = {'score':pagespeed.filter_by(id = pagespeed_id).first().score,
+                    'time':testresults.filter_by(timestamp = timestamp).first().time,
+                    'size':testresults.filter_by(timestamp = timestamp).first().size,
+                    'requests':testresults.filter_by(timestamp = timestamp).first().requests,
+                    }
+        
+        weights = dict()
+        for type,size in har.weight_ratio().items():
+            weights[type] = size
+
+        requests = dict()
+        for type,num in har.req_ratio().items():
+            requests[type] = num
+
+
+
+        scores =  {'Avoid CSS @import':pagespeed.filter_by(id = pagespeed_id).first().avoid_import,
                             'Avoid bad requests':pagespeed.filter_by(id = pagespeed_id).first().avoid_bad_req,
                             'Combine images into CSS sprites':pagespeed.filter_by(id = pagespeed_id).first().combine_images,
                             'Defer loading of JavaScript':pagespeed.filter_by(id = pagespeed_id).first().defer_load_js,
@@ -115,7 +134,15 @@ class ResultsController(BaseController):
                             'Specify a Vary:Accept-Encoding':pagespeed.filter_by(id = pagespeed_id).first().specify_vary,
                             'Specify a cache validator':pagespeed.filter_by(id = pagespeed_id).first().specify_cache_validator,
                             'Specify a character set':pagespeed.filter_by(id = pagespeed_id).first().specify_char_set,
-                            'Use efficient CSS selectors':pagespeed.filter_by(id = pagespeed_id).first().use_efficient_selectors
+                            'Use efficient CSS selectors':pagespeed.filter_by(id = pagespeed_id).first().use_efficient_selectors,
+                            }
+        
+
+
+        return json.dumps({'summary'    :summary,
+                           'pagespeed'  :scores,
+                           'weights'    :weights,
+                           'requests'   :requests
                             })
         
     def search(self):

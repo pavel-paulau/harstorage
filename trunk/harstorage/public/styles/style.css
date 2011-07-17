@@ -128,12 +128,14 @@ height:200px;
 }
 .run_stats
 {
-text-align:left;
+text-align:right;
 font-size:small;
+font-weight:bold;
 color:#498a2d;
+margin-left:10px;
 margin-top:1.0em;
 margin-bottom:2.0em;
-width:150px;
+width:120px;
 float:left;
 }
 .run_stats2
@@ -141,6 +143,7 @@ float:left;
 text-align:left;
 font-size:small;
 color:#498a2d;
+margin-left:10px;
 margin-top:1.0em;
 margin-bottom:2.0em;
 width:50px;
