@@ -135,7 +135,7 @@ function drawColumns(hash) {
     }
 
     // chart object
-    var chart = new google.visualization.ColumnChart(document.getElementById('page-speed'));
+    var chart = new google.visualization.ColumnChart(document.getElementById('pagespeed'));
     chart.draw(data,options);
 }
 
@@ -168,17 +168,14 @@ function displayRunInfo() {
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-            document.getElementById("summary").style.visibility="hidden";
-            document.getElementById("pagespeed").style.visibility="hidden";
-            document.getElementById("harviewer").style.visibility="hidden";
+            var json = eval("("+xmlhttp.responseText+")");
 
-            var json = eval("("+xmlhttp.responseText+")")
             drawScore(json.summary.score);
 
             document.getElementById("run_time").innerHTML = json.summary.time;
             document.getElementById("run_size").innerHTML = json.summary.size;
             document.getElementById("run_requests").innerHTML = json.summary.requests;
-            
+
             var pagespeed = new Array();    
             jQuery.each(json.pagespeed, function(key,value) {
                 pagespeed[key]=value;
@@ -188,15 +185,16 @@ function displayRunInfo() {
             drawSizes("by_size","Resources by Size",json.weights);
             drawSizes("by_req","Resources by Requests",json.requests);
 
-            document.getElementById("summary").style.visibility="visible";
-            document.getElementById("pagespeed").style.visibility="visible";
-            document.getElementById("harviewer").style.visibility="visible";
+            //console.debug(json.har);
+            document.getElementById("harframe").src = "/results/harviewer?har="+json.har;
         }
     }
     xmlhttp.open("POST","runinfo",true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
     var ts_selector = document.getElementById("run_timestamp");
     timestamp = ts_selector.options[ts_selector.selectedIndex].text;
-    var parameters = "timestamp="+timestamp
+    var parameters = "timestamp="+timestamp;
+
     xmlhttp.send(parameters);
 }

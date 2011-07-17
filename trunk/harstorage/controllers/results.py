@@ -1,11 +1,14 @@
 import logging
 import json
 
+import os
+
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoHandler
 
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
+from pylons import config
 
 from harstorage.lib.base import BaseController, render
 
@@ -13,6 +16,8 @@ import harstorage.lib.helpers as h
 
 from harstorage.model import Urls, Labels, TestResults, PageSpeed
 from harstorage import model
+
+from pymongo import objectid, Connection
 
 log = logging.getLogger(__name__)
 
@@ -71,6 +76,7 @@ class ResultsController(BaseController):
             c.timestamp.append(result.timestamp)
 
     def harviewer(self):
+        c.url = h.url_for(str('/data/'+request.GET['har']))
         return render('./harviewer.html')
 
     def details(self):
@@ -88,9 +94,14 @@ class ResultsController(BaseController):
 
         pagespeed_id    = testresults.filter_by(timestamp = timestamp).first().pagespeed_id
         har_key         = testresults.filter_by(timestamp = timestamp).first().har_key
-        
+
         har = HAR(MongoHandler().read_from_mongo(har_key))
-        
+
+        filename = os.path.join( config['app_conf']['temp_store'], har_key )
+        file = open(filename, 'w')
+        file.write( MongoHandler().read_from_mongo(har_key).encode('utf-8') )
+        file.close()
+
         summary = {'score':pagespeed.filter_by(id = pagespeed_id).first().score,
                     'time':testresults.filter_by(timestamp = timestamp).first().time,
                     'size':testresults.filter_by(timestamp = timestamp).first().size,
@@ -104,8 +115,6 @@ class ResultsController(BaseController):
         requests = dict()
         for type,num in har.req_ratio().items():
             requests[type] = num
-
-
 
         scores =  {'Avoid CSS @import':pagespeed.filter_by(id = pagespeed_id).first().avoid_import,
                             'Avoid bad requests':pagespeed.filter_by(id = pagespeed_id).first().avoid_bad_req,
@@ -136,13 +145,12 @@ class ResultsController(BaseController):
                             'Specify a character set':pagespeed.filter_by(id = pagespeed_id).first().specify_char_set,
                             'Use efficient CSS selectors':pagespeed.filter_by(id = pagespeed_id).first().use_efficient_selectors,
                             }
-        
-
 
         return json.dumps({'summary'    :summary,
                            'pagespeed'  :scores,
                            'weights'    :weights,
-                           'requests'   :requests
+                           'requests'   :requests,
+                           'har'        :har_key,
                             })
         
     def search(self):

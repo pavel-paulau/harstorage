@@ -8,7 +8,8 @@
     <script>
         $("#content").bind("onPreviewInit", function(event){ 
             var viewer = event.target.repObject;
-            viewer.loadHar("${h.url_for('/data/google.har')}");
+            var url = "${h.url_for(c.url)}";
+            viewer.loadHar(url);
         });
     </script>
 </body>
