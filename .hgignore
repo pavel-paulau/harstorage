@@ -6,3 +6,5 @@ syntax: regexp
 \.bak
 # Pylons temporary files
 trunk/data
+# Temp har files
+trunk/harstorage/public/data
