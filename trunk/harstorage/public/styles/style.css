@@ -31,7 +31,11 @@ input
 color: #000;
 font-size: 12px;
 background: #d7e7cf;
-border: 1px solid #498a2d;
+border: 1px
+border-style:solid
+border-color:#498a2d;
+border-radius:2px;
+-mox-border-radius:2px;
 }
 label
 {
@@ -63,7 +67,7 @@ border-color: #498a2d;
 border-width: 1px 1px 0 0;
 border-style: solid;
 padding: 6px;
-background-color: #d0fdbb;
+background-color: #f2fbed;
 font-size:small;
 font-weight:bold;
 color:#498a2d;
@@ -101,6 +105,7 @@ border:1px;
 border-style:solid;
 border-color:#498a2d;
 border-radius:10px;
+-moz-border-radius:10px;
 overflow:auto;
 width:960px;
 margin-bottom:5px;
