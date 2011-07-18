@@ -49,13 +49,16 @@ function drawTimeLine(hash,label) {
     data.addColumn('number', label);
     data.addRows(Object.size(hash));
 
-    var index = 0;
-    for (key in hash) {
-        data.setValue(index, 0, key);
-        data.setValue(index, 1, hash[key]);
-        index = index + 1;
+    // sorted hash
+    var temp = [];
+    for (key in hash) temp.push(key);
+    temp.sort();
+    
+    for (var i = 0; i < temp.length; i++){
+        data.setValue(i, 0, temp[i+1]);
+        data.setValue(i, 1, hash[temp[i+1]]);
     }
-
+    
     // chart option: sizes, curve and axis style
     var options ={
         width           :770,
