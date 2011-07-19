@@ -6,10 +6,17 @@ class HAR():
     def __init__(self,har):
         try:
             self.har = json.loads(har)
+            self.origin = har
             self.status = 'Ok'
         except:
             self.status = "Failed to read HAR"
     
+    def label(self):
+        return self.har['log']['pages'][0]['id']
+
+    def url(self):
+        return self.har['log']['entries'][0]['request']['url']
+
     def total_size(self):
         size = 0.0
         for entry in self.har['log']['entries']:
@@ -31,7 +38,7 @@ class HAR():
             if start_time < min: min = start_time
             if end_time > max: max = end_time
 
-        return (max - min)*1000
+        return int ((max - min)*1000)
         
     def weight_ratio(self):
         resources = dict()        
