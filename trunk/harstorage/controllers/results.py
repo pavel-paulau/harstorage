@@ -3,6 +3,8 @@ import json
 
 import os
 
+from time import strftime, localtime
+
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoHandler
 
@@ -118,7 +120,7 @@ class ResultsController(BaseController):
 
         filename = os.path.join( config['app_conf']['temp_store'], har_key )
         file = open(filename, 'w')
-        file.write( MongoHandler().read_from_mongo(har_key).encode('utf-8') )
+        file.write( MongoHandler().read_from_mongo(har_key) )
         file.close()
 
         summary = {'score':pagespeed.filter_by(id = pagespeed_id).first().score,
@@ -177,4 +179,46 @@ class ResultsController(BaseController):
         return render('./search.html')
 
     def upload(self):
-        return render('./upload.html')
+        my_session  = model.meta.Session
+   
+        testresults = my_session.query(TestResults)
+        labels      = my_session.query(Labels)
+        urls        = my_session.query(Urls)
+
+        har = HAR( request.POST['file'].value )
+        
+        if har.status == 'Ok':
+            label   = har.label()
+            url     = har.url()
+
+            if labels.filter_by(label = label).count() == 0:
+                new_label = Labels()
+                new_label.label = label
+                new_label.last_metric = 1
+                my_session.add(new_label)
+                my_session.flush();
+
+            if urls.filter_by(url = url).count() == 0:
+                new_url = Urls()
+                new_url.url = url
+                my_session.add(new_url)
+                my_session.flush();
+            
+            new_testresult = TestResults()
+
+            new_testresult.label_id     =   labels.filter_by(label = label).first().id
+            new_testresult.url_id       =   urls.filter_by(url = url).first().id
+            new_testresult.pagespeed_id =   1
+            new_testresult.timestamp    =    strftime("%Y-%m-%d %H:%M:%S", localtime())
+            new_testresult.time         =    har.full_time()
+            new_testresult.size         =   har.total_size()
+            new_testresult.requests     =   har.req_num()
+            new_testresult.har_key      =   MongoHandler().store_to_mongo(har.origin)
+
+            my_session.add(new_testresult)
+            my_session.flush()
+            my_session.commit()
+
+            redirect('/')
+        else:
+            return render('./upload.html')
