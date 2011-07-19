@@ -54,9 +54,10 @@ function drawTimeLine(hash,label) {
     for (key in hash) temp.push(key);
     temp.sort();
     
+    
     for (var i = 0; i < temp.length; i++){
-        data.setValue(i, 0, temp[i+1]);
-        data.setValue(i, 1, hash[temp[i+1]]);
+        data.setValue(i, 0, temp[i]);
+        data.setValue(i, 1, hash[temp[i]]);
     }
     
     // chart option: sizes, curve and axis style
