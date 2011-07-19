@@ -31,8 +31,8 @@
         </tr>
 		% for index in range(c.rowcount):
 		<tr>
-			<td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}"> ${c.metrics_table[0][index]}</a></td>
-			<td class="stats_td">${c.metrics_table[1][index]}</td>
+			<td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
+			<td class="stats_td"><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[1][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
 			<td class="stats_td" style="text-align:center;">${c.metrics_table[2][index]}</td>
 			<td class="stats_td" style="text-align:center;">${c.metrics_table[3][index]}</td>
 			<td class="stats_td" style="text-align:center;">${c.metrics_table[4][index]}</td>

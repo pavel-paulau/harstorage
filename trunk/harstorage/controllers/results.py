@@ -53,36 +53,55 @@ class ResultsController(BaseController):
             
         return render('./home.html')
 
-    def timeline(self,label):
+    def timeline(self,label,url):
         my_session  = model.meta.Session
    
         testresults = my_session.query(TestResults)
         labels      = my_session.query(Labels)
+        urls        = my_session.query(Urls)
         pagespeed   = my_session.query(PageSpeed)
 
-        label_id = labels.filter_by(label = label).first().id
-    
         c.time_hash     = dict()
         c.size_hash     = dict()
         c.requests_hash = dict()
         c.score_hash    = dict()
         c.timestamp     = list()
-        for result in testresults.filter_by(label_id = label_id).order_by(model.testresults_table.c.timestamp.desc()).all():
-            c.time_hash[result.timestamp]       = result.time
-            c.size_hash[result.timestamp]       = result.size
-            c.requests_hash[result.timestamp]   = result.requests
-            c.score_hash[result.timestamp]      = pagespeed.filter_by(id = result.pagespeed_id).first().score
 
-            c.timestamp.append(result.timestamp)
+        if label is not None:
+            label_id = labels.filter_by(label = label).first().id
+        
+            for result in testresults.filter_by(label_id = label_id).order_by(model.testresults_table.c.timestamp.desc()).all():
+                c.time_hash[result.timestamp]       = result.time
+                c.size_hash[result.timestamp]       = result.size
+                c.requests_hash[result.timestamp]   = result.requests
+                c.score_hash[result.timestamp]      = pagespeed.filter_by(id = result.pagespeed_id).first().score
+
+                c.timestamp.append(result.timestamp)
+        else:
+            url_id = urls.filter_by(url = url).first().id
+        
+            for result in testresults.filter_by(url_id = url_id).order_by(model.testresults_table.c.timestamp.desc()).all():
+                c.time_hash[result.timestamp]       = result.time
+                c.size_hash[result.timestamp]       = result.size
+                c.requests_hash[result.timestamp]   = result.requests
+                c.score_hash[result.timestamp]      = pagespeed.filter_by(id = result.pagespeed_id).first().score
+
+                c.timestamp.append(result.timestamp)
+
+            c.label = c.url
 
     def harviewer(self):
         c.url = h.url_for(str('/data/'+request.GET['har']))
         return render('./harviewer.html')
 
     def details(self):
-        c.label = request.GET['label']
-        self.timeline(c.label)
-            
+        try:
+            c.url = request.GET['url']
+            self.timeline(None,c.url)
+        except:
+            c.label = request.GET['label']
+            self.timeline(c.label,None)
+ 
         return render('./details.html')
 
     def runinfo(self):
