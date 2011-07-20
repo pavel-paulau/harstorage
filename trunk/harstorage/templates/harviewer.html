@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<body style="margin:0">
-    <div id="content" version="2.0.12"></div>
-    <script src="${h.url_for('/scripts/harviewer/jquery.js')}"></script>
-    <script data-main="${h.url_for('/scripts/harviewer/harPreview')}" src="${h.url_for('/scripts/harviewer/require.js')}"></script>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>HAR Viewer</title>
     <link rel="stylesheet" href="${h.url_for('/styles/harviewer/harPreview.css')}" type="text/css"/>
-    <script>
+</head>
+<body style="margin:0">
+    <div id="content"></div>
+    <script type='text/javascript' src="${h.url_for('/scripts/harviewer/jquery.js')}"></script>
+    <script type='text/javascript' data-main="${h.url_for('/scripts/harviewer/harPreview')}" src="${h.url_for('/scripts/harviewer/require.js')}"></script>
+    <script type='text/javascript'>
         $("#content").bind("onPreviewInit", function(event){ 
             var viewer = event.target.repObject;
             var url = "${h.url_for(c.url)}";
