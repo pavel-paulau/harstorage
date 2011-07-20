@@ -35,8 +35,8 @@ background: #d7e7cf;
 border: 1px;
 border-style:solid;
 border-color:#498a2d;
-border-radius:2px;
--mox-border-radius:2px;
+border-radius:3px;
+-moz-border-radius:3px;
 }
 label
 {
