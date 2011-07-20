@@ -9,6 +9,12 @@ class HAR():
             self.origin = har
             self.status = 'Ok'
         except:
+            pass
+        try:
+            self.har = json.loads(har.decode('latin-1').encode('utf-8'))
+            self.origin = har.decode('latin-1').encode('utf-8')
+            self.status = 'Ok'
+        except:
             self.status = "Failed to read HAR"
     
     def label(self):
