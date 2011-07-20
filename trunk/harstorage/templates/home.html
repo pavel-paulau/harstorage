@@ -5,7 +5,7 @@
             ${h.form(h.url_for(controller='results',action='upload'),multipart=True)}
                     <fieldset>
                     	<legend>Upload new file</legend>
-                    	<p>${h.file('file',size="30")} ${h.submit('submit','Upload')}</p>
+                    	<p>${h.file('file',size="30")} ${h.submit('upload','Upload')}</p>
                     </fieldset>
             ${h.end_form()}
         </div>
@@ -13,7 +13,7 @@
             ${h.form(h.url_for(controller='results',action='search'),multipart=True)}
                     <fieldset>
                     <legend>Search for existing</legend>
-                    <p> ${h.text('search_text',size="40")} ${h.submit('submit','Search')}</p>
+                    <p> ${h.text('search_text',size="40")} ${h.submit('search','Search')}</p>
                     </fieldset>
             ${h.end_form()}
         </div>
