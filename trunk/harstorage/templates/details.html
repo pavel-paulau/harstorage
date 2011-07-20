@@ -21,13 +21,11 @@
         <h4>Run Info</h4>
     </div>
     <div style="text-align:right;margin-top:1em;margin-bottom:1.5em">
-        <form id="test_run_list" action="test_run_list">
             <select id="run_timestamp" onchange="displayRunInfo();">
                 % for timestamp in c.timestamp:
                 <option value="${timestamp}"> ${timestamp}</option>
                 % endfor
             </select>
-        </form>
     </div>
 </div>
 <div class="details">
