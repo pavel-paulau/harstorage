@@ -14,6 +14,11 @@ class HAR():
             self.har = json.loads(har.decode('latin-1').encode('utf-8'))
             self.origin = har.decode('latin-1').encode('utf-8')
             self.status = 'Ok'
+        try:
+            temp = sub("'","\"", sub("u'","\"", har) )
+            self.har = json.loads( temp )
+            self.origin = temp 
+            self.status = 'Ok'
         except:
             self.status = "Failed to read HAR"
     

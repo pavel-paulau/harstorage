@@ -185,7 +185,10 @@ class ResultsController(BaseController):
         labels      = my_session.query(Labels)
         urls        = my_session.query(Urls)
 
-        har = HAR( request.POST['file'].value )
+        try:
+            har = HAR( request.POST['file'].decode('utf-8').value )
+        except:
+            har = HAR( request.POST['file'] )
         
         if har.status == 'Ok':
             label   = har.label()
