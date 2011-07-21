@@ -8,3 +8,5 @@ syntax: regexp
 trunk/data
 # Temp har files
 trunk/harstorage/public/data
+# Reverted files
+\.orig
