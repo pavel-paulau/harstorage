@@ -1,6 +1,7 @@
 import json
 from time import strftime, strptime, mktime
 from math import ceil
+from re impost sub
 
 class HAR():
     def __init__(self,har):
