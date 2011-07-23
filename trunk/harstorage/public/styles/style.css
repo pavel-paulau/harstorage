@@ -14,8 +14,9 @@ color:#000000;
 fieldset
 {
 border: 1px solid #498a2d;
-border-radius:10px;
 -moz-border-radius:10px;
+-webkit-border-radius:10px;
+border-radius:10px;
 width: 26em;
 }
 legend
@@ -35,8 +36,9 @@ background: #d7e7cf;
 border: 1px;
 border-style:solid;
 border-color:#498a2d;
-border-radius:3px;
 -moz-border-radius:3px;
+-webkit-border-radius:10px;
+border-radius:3px;
 }
 label
 {
@@ -105,8 +107,9 @@ margin-bottom:1em;
 border:1px;
 border-style:solid;
 border-color:#498a2d;
-border-radius:10px;
 -moz-border-radius:10px;
+-webkit-border-radius:10px;
+border-radius:10px;
 overflow:auto;
 width:960px;
 margin-bottom:5px;
@@ -118,7 +121,6 @@ height:1px;
 }
 h4
 {
-margin-top:0.0em;
 margin-bottom:1em;
 color:#498a2d;
 text-align:left;
