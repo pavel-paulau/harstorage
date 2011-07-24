@@ -186,7 +186,7 @@ class ResultsController(BaseController):
         urls        = my_session.query(Urls)
 
         try:
-            har = HAR( request.POST['file'].decode('utf-8').value )
+            har = HAR( request.POST['file'].value )
         except:
             har = HAR( request.POST['file'] )
         
