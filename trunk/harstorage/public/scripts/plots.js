@@ -189,8 +189,12 @@ function displayRunInfo() {
             drawSizes("by_size","Resources by Size",json.weights);
             drawSizes("by_req","Resources by Requests",json.requests);
 
-            //console.debug(json.har);
-            document.getElementById("harframe").src = "/results/harviewer?har="+json.har;
+            var iframe = document.createElement('iframe');
+            iframe.src = "/results/harviewer?har="+json.har;
+            iframe.width = "940";
+            iframe.height = "400";
+            iframe.frameBorder = "0";
+            $("#harviewer").html(iframe);
         }
     }
     xmlhttp.open("POST","runinfo",true);
