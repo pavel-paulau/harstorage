@@ -6,6 +6,10 @@
 		<title>${self.title()}</title>
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/style.css')}" />
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
+		<script type='text/javascript' src="${h.url_for('/scripts/tabber.js')}"></script>
+		<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+		<script type='text/javascript' src="${h.url_for('/scripts/plots.js')}"></script>
+		<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>
     </head>
     <body>
         <div class="header_l"><a href="/">HAR Storage</a></div>
