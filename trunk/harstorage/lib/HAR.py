@@ -1,7 +1,7 @@
 import json
 from time import strftime, strptime, mktime
 from math import ceil
-from re impost sub
+from re import sub
 
 class HAR():
     def __init__(self,har):
@@ -15,6 +15,8 @@ class HAR():
             self.har = json.loads(har.decode('latin-1').encode('utf-8'))
             self.origin = har.decode('latin-1').encode('utf-8')
             self.status = 'Ok'
+        except:
+            pass
         try:
             temp = sub("'","\"", sub("u'","\"", har) )
             self.har = json.loads( temp )
