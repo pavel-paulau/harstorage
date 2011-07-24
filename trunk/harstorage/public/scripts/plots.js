@@ -66,7 +66,8 @@ function zoomableChart(timeHash,sizeHash,reqHash,scoreHash) {
         },
         title: { text: 'Performance Trends' },
         xAxis: [{
-            categories: keySorted
+            categories      : keySorted,
+            tickInterval    : Math.ceil(keySorted.length / 20)
         }],
         yAxis: [{ // yAxis #1
             title: {
@@ -95,7 +96,7 @@ function zoomableChart(timeHash,sizeHash,reqHash,scoreHash) {
         }],
         tooltip: {
             formatter: function() {
-                return this.x +': '+ this.y;
+                return this.y + ' (' + this.x + ')';
             }
         },
         series: [{
