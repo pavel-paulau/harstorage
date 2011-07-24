@@ -40,6 +40,88 @@ function drawScore(score) {
     chart.draw(data, options);
 }
 
+function zoomableChart(timeHash,sizeHash,reqHash,scoreHash) {
+    // Prepair data for charts
+    var keySorted   = [];
+    var timeSorted  = [];
+    var sizeSorted  = [];
+    var reqSorted   = [];
+    var scoreSorted = [];
+
+    for (key in timeHash) keySorted.push(key);
+    keySorted.sort();
+
+    for (var i = 0; i < keySorted.length; i++){
+        timeSorted.push( timeHash[ keySorted[i] ] );
+        sizeSorted.push( sizeHash[ keySorted[i] ] );
+        reqSorted.push( reqHash[ keySorted[i] ] );
+        scoreSorted.push( scoreHash[ keySorted[i] ] );
+    }
+
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'timeline_div',
+            zoomType: 'x',
+            alignTicks: false
+        },
+        title: { text: 'Performance Trends' },
+        xAxis: [{
+            categories: keySorted
+        }],
+        yAxis: [{ // yAxis #1
+            title: {
+                text: 'Full Time (ms)',
+                style: { color: '#DDDF0D' }
+            },
+        }, { // yAxis #2
+            title: {
+                text: 'Total Requests',
+                style: { color: '#55BF3B' }
+            },
+            opposite: true
+        }, { // yAxis #3
+            title: {
+                text: 'Total Size',
+                style: { color: '#DF5353' }
+            },
+            opposite: true
+        }, { // yAxis #4
+            title: {
+                text: 'Page Speed Score',
+                style: { color: '#7798BF' }
+            },
+            min: 0.0,
+            max: 100,
+        }],
+        tooltip: {
+            formatter: function() {
+                return this.x +': '+ this.y;
+            }
+        },
+        series: [{
+            name: 'Full Time',
+            type: 'spline',
+            yAxis: 0,
+            data: timeSorted
+        }, {
+            name: 'Total Requests',
+            type: 'spline',
+            yAxis: 1,
+            data: reqSorted
+        }, {
+            name: 'Total Size',
+            type: 'spline',
+            yAxis: 2,
+            data: sizeSorted
+        }, {
+            name: 'Page Speed Score',
+            type: 'spline',
+            yAxis: 3,
+            data: scoreSorted
+        } ]
+    });
+}
+
 // draw Line Chart,
 // arguments are vAxis label and XY values
 function drawTimeLine(hash,label) {
@@ -206,3 +288,5 @@ function displayRunInfo() {
 
     xmlhttp.send(parameters);
 }
+
+

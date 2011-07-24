@@ -2,20 +2,20 @@
 <%def name="title()">Details | ${c.label}</%def>
 
 <center>
+<div id="timeline_div" style="width:960px"></div>
+<!--
 <div id="trends" style="width:960px">
-    <h4>Trends</h4>
+    
     <div class="details">
-        <div id="timeline_div" style="float:left"></div>
-        <div id="trend_selector" style="float:left;text-align:left;visibility:hidden;margin-top:1.5em;">
+                <div id="trend_selector" style="float:left;text-align:left;visibility:hidden;margin-top:1.5em;">
             <form style="font-size:13px;margin-top:1em;color:#498a2d;" action="timeLineForm" name="timeLineForm">  
                 <input style="margin-top:-0.2em;margin-bottom:3em;vertical-align:top;" type="radio" name="timeline" value="Full Time" checked="checked" onclick="setTimeLine('Full Time');"/> Full Time<br />
                 <input style="margin-top:-0.2em;margin-bottom:3em;vertical-align:top;" type="radio" name="timeline" value="Total Size" onclick="setTimeLine('Total Size');"/> Total Size<br />
                 <input style="margin-top:-0.2em;margin-bottom:3em;vertical-align:top;" type="radio" name="timeline" value="Total Requests" onclick="setTimeLine('Total Requests');"/> Total Requests<br />
                 <input style="margin-top:-0.2em;margin-bottom:0em;vertical-align:top;" type="radio" name="timeline" value="Page Speed Score" onclick="setTimeLine('Page Speed Score');"/> Page Speed Score
             </form>
-        </div>  
-    </div>
-</div>
+        </div>  -->
+
 <div style="width:960px" align="center">
     <div style="float:left;text-align:left;">
         <h4>Run Info</h4>
@@ -53,29 +53,27 @@
 </center>
 
 <script type='text/javascript'>
-	function setTimeLine(metric){
-        var hash = new Array();
-        if (metric == "Full Time"){
-            % for key,value in c.time_hash.items():
-                hash["${key}"] = ${value};
-            % endfor
-        } else if (metric == "Total Size") {
-            % for key,value in c.size_hash.items():
-                hash["${key}"] = ${value};
-            % endfor
-        } else if (metric == "Total Requests") {
-            % for key,value in c.requests_hash.items():
-                hash["${key}"] = ${value};
-            % endfor
-        } else if (metric == "Page Speed Score") {
-            % for key,value in c.score_hash.items():
-                hash["${key}"] = ${value};
-            % endfor
-        }
-        drawTimeLine(hash,metric);
+	function setTimeLine(){
+        var timeHash = new Array();
+        var sizeHash = new Array();
+        var reqHash = new Array();
+        var scoreHash = new Array();
+        % for key,value in c.time_hash.items():
+            timeHash["${key}"] = ${value};
+        % endfor
+        % for key,value in c.size_hash.items():
+            sizeHash["${key}"] = ${value};
+        % endfor
+        % for key,value in c.requests_hash.items():
+            reqHash["${key}"] = ${value};
+        % endfor
+        % for key,value in c.score_hash.items():
+            scoreHash["${key}"] = ${value};
+        % endfor
+
+        zoomableChart(timeHash,sizeHash,reqHash,scoreHash);
     }
    
-    setTimeLine(getCheckedValue(document.forms['timeLineForm'].elements['timeline']));
-    document.getElementById('trend_selector').style.visibility="visible";
+    setTimeLine();
     displayRunInfo();
 </script>
