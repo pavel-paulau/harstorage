@@ -136,7 +136,7 @@ text-align:left;
 width:200px;
 height:200px;
 }
-.run_stats
+.stat-title
 {
 text-align:right;
 font-size:13px;
@@ -148,7 +148,7 @@ margin-bottom:2.0em;
 width:120px;
 float:left;
 }
-.run_stats2
+.stat-value
 {
 text-align:left;
 font-size:13px;

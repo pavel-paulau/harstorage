@@ -1,19 +1,6 @@
 google.load('visualization', '1', {packages:['gauge']});
-google.load("visualization", "1", {packages:["corechart"]});
 
-// object size property,
-// used for hash arrays
-Object.size = function(obj) {
-    var size = 0, key;
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-    return size;
-};
-
-
-// draw Gauge Chart,
-// argument is Page Speed score
+// draw Gauge Chart
 function drawScore(score) {
     // value for chart
     var data = new google.visualization.DataTable();
@@ -40,7 +27,7 @@ function drawScore(score) {
     chart.draw(data, options);
 }
 
-function zoomableChart(timeHash,sizeHash,reqHash,scoreHash) {
+function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
     // Prepair data for charts
     var keySorted   = [];
     var timeSorted  = [];
@@ -63,6 +50,11 @@ function zoomableChart(timeHash,sizeHash,reqHash,scoreHash) {
             renderTo: 'timeline_div',
             zoomType: 'x',
             alignTicks: false
+        },
+        exporting: {
+            buttons : {
+                printButton: { enabled: false}
+            }
         },
         title: { text: 'Performance Trends' },
         xAxis: [{
@@ -123,129 +115,121 @@ function zoomableChart(timeHash,sizeHash,reqHash,scoreHash) {
     });
 }
 
-// draw Line Chart,
-// arguments are vAxis label and XY values
-function drawTimeLine(hash,label) {
-    // dataset for timeline
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Timestamp');
-    data.addColumn('number', label);
-    data.addRows(Object.size(hash));
+function drawPageSpeed (json) {
+    rules   = [];
+    scores  = [];
 
-    // sorted hash
-    var temp = [];
-    for (key in hash) temp.push(key);
-    temp.sort();
-    
-    
-    for (var i = 0; i < temp.length; i++){
-        data.setValue(i, 0, temp[i]);
-        data.setValue(i, 1, hash[temp[i]]);
-    }
-    
-    // chart option: sizes, curve and axis style
-    var options ={
-        width           :770,
-        height          :270,
-        curveType       :"function",
-        colors          :["#e0931a"],
-        chartArea       :{left:100,top:30,width:650},
-        hAxis           :{title:"Timestamp",slantedText:false,slantedTextAngle:60,maxAlternation:2},
-        vAxis           :{title:label,baseline:0},
-        legend          :'none',
-        pointSize       :4
-    }
+    jQuery.each(json.pagespeed, function(key,value) {
+        rules.push(key);
+        scores.push(value);
+    });
 
-    // chart object
-    var chart = new google.visualization.LineChart(document.getElementById('timeline_div'));
-    chart.draw(data, options);
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'pagespeed',
+            defaultSeriesType: 'bar',
+            height  : 550,
+            width   : 930, 
+        },
+        exporting: {
+            buttons : {
+                printButton: { enabled: false}
+            }
+        },
+        title: {
+            text: "Page Speed Scores"
+        },
+        xAxis: {
+            categories: rules,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 105,
+            endOnTick: false,
+            title: {
+                text: null,
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return this.x +': '+ this.y;
+            }
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            },
+            series: {
+                showInLegend: false,
+                animation: false,
+            }
+        },
+        series: [{
+            data: scores
+        }]
+    });
 }
 
+function drawPie(div,title,hash) {
+    data  = [];
 
-// draw pie chart
-function drawSizes(div_id,title,hash) {
-    // dataset for chart
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Type');
-    data.addColumn('number', 'Vaoue');
+    jQuery.each(hash, function(key,value) {
+        data.push( [key,value]);
+    });
 
-    data.addRows(Object.size(hash));
-    var index = 0;
-    for (key in hash) {
-        data.setValue(index, 0, key);
-        data.setValue(index, 1, hash[key]);
-        index = index + 1;
-    }
-    
-    // chart options
-    var options = {
-        width       :240,
-        height      :210,
-        chartArea   :{left:0,top:20,width:"100%"},
-        is3D        :false,
-        title       :title,
-        legend      :"bottom",
-    }
-    
-    // chart object
-    var div = document.getElementById(div_id);
-    var chart = new google.visualization.PieChart(div);
-    chart.draw(data, options);
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: div,
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            width: 450,
+            height: 300,
+        },
+        exporting: {
+            buttons : {
+                printButton: { enabled: false}
+            }
+        },
+        title: {
+            text: title,
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.point.name +'</b>: '+ this.y + ' kB';
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                size: '65%',
+                dataLabels: {
+                    enabled: true,
+                    color: '#FFF',
+                    distance: 25,
+                    connectorColor: '#FFF',
+                    formatter: function() {
+                        return this.point.name;
+                    }
+                }
+            },
+            series: {
+                showInLegend: true
+            }
+        },
+        series: [{
+            type: 'pie',
+            data: data    
+        }]
+    });
 }
 
-// draw column chart
-// argument is XY hash
-function drawColumns(hash) {
-    // dataset for chart
-
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Rule');
-    data.addColumn('number', 'Score');
-
-    data.addRows(Object.size(hash));
-    var index = 0;
-    for (key in hash) {
-        data.setValue(index, 0, key);
-        data.setValue(index, 1, hash[key]);
-        index = index + 1;
-    }
-      
-    // chart options - size, colors and axis
-    var options = {
-        width       :900,
-        height      :420,
-        chartArea   :{left:100,top:10,width:750,height:150},
-        colors      :['#498a2d'],
-        legend      :'none',
-        hAxis       :{slantedText:true,slantedTextAngle:90,maxAlternation:1},
-        vAxis       :{baseline:0},
-    }
-
-    // chart object
-    var chart = new google.visualization.ColumnChart(document.getElementById('pagespeed'));
-    chart.draw(data,options);
-}
-
-
-// return the value of the radio button that is checked
-// return an empty string if none are checked, or
-// there are no radio buttons
-function getCheckedValue(radioObj) {
-    if(!radioObj)
-        return "";
-    var radioLength = radioObj.length;
-    if(radioLength == undefined)
-        if(radioObj.checked)
-            return radioObj.value;
-        else
-            return "";
-    for(var i = 0; i < radioLength; i++) {
-        if(radioObj[i].checked) {
-            return radioObj[i].value;
-        }
-    }
-    return "";
-}
 
 // Ajax stuff
 // Dislpay details for selected test run
@@ -258,19 +242,15 @@ function displayRunInfo() {
             var json = eval("("+xmlhttp.responseText+")");
 
             drawScore(json.summary.score);
+            
+            $("#run-time").html(json.summary.time)
+            $("#run-size").html(json.summary.size)
+            $("#run-requests").html(json.summary.requests)
 
-            document.getElementById("run_time").innerHTML = json.summary.time;
-            document.getElementById("run_size").innerHTML = json.summary.size;
-            document.getElementById("run_requests").innerHTML = json.summary.requests;
+            drawPageSpeed(json);
 
-            var pagespeed = new Array();    
-            jQuery.each(json.pagespeed, function(key,value) {
-                pagespeed[key]=value;
-            });
-            drawColumns(pagespeed);
-
-            drawSizes("by_size","Resources by Size",json.weights);
-            drawSizes("by_req","Resources by Requests",json.requests);
+            drawPie("by-size","Resources by Size",json.weights);
+            drawPie("by-req","Resources by Requests",json.requests);
 
             var iframe = document.createElement('iframe');
             iframe.src = "/results/harviewer?har="+json.har;
@@ -289,5 +269,3 @@ function displayRunInfo() {
 
     xmlhttp.send(parameters);
 }
-
-
