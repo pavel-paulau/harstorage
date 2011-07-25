@@ -58,9 +58,9 @@ class HAR():
             type = entry['response']['content']['mimeType'].partition(';')[0]
             size = entry['response']['content']['size']
             try:
-                resources[type] += size
+                resources[type] += size / 1024
             except:
-                resources[type] = size
+                resources[type] = size / 1024
         return resources
         
     def req_ratio(self):
