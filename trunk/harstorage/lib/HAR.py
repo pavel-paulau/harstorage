@@ -52,18 +52,6 @@ class HAR():
 
         return int ((max - min)*1000)
 
-    def type_syn(self,string):
-        if string.count('javascript'):
-            return 'javascript'
-        elif string.count('flash'):
-            return 'flash'
-        elif string.count('text/plain') or string.count('text/xml'):
-            return 'text/html'
-        elif string.count('ico'):
-            return 'image/icon'
-        else:
-            return string
-
      def type_syn(self,string):
         if string.count('javascript'):
             return 'javascript'
