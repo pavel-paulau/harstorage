@@ -19,12 +19,25 @@
 
 <div class="tabber">
     <div class="tabbertab" title="Summary">
-            <div id="gauge" class="gauge" style="margin-top:10px;"></div>
-            <div style="width:500px;float:left;margin-top:10px;">-</div>
-            <div style="width:200px;height:240px;float:left;margin-top:10px;">
-                <div class="stat-title">Full Time:</div><div id="run-time" class="stat-value"></div>
-                <div class="stat-title">Total Size:</div><div id="run-size" class="stat-value"></div>
-                <div class="stat-title">Total Requests:</div><div id="run-requests" class="stat-value"></div>
+            <div class="gauge" id="gauge" ></div>
+            <div class="stat-container">
+                <div class="stat-title">Full Load Time:</div>       <div class="stat-value" id="run-time"></div>
+                <div class="stat-title">Total DNS Time:</div>       <div class="stat-value" id="dns-time"></div>
+                <div class="stat-title">Total Transfer Time:</div>  <div class="stat-value" id="transfer-time"></div>
+                <div class="stat-title">AVG Connecting Time:</div>  <div class="stat-value" id="connect-time"></div>
+                <div class="stat-title">AVG Blocking Time:</div>    <div class="stat-value" id="block-time"></div>
+            </div>
+            <div class="stat-container">
+                <div class="stat-title">Total Size:</div>           <div class="stat-value" id="run-size"></div>
+                <div class="stat-title">Text Files:</div>           <div class="stat-value" id="html-size"></div>
+                <div class="stat-title">Media Files:</div>          <div class="stat-value" id="text-size"></div>
+                <div class="stat-title">Cached Size:</div>          <div class="stat-value" id="media-size"></div>
+            </div>
+            <div class="stat-container">
+                <div class="stat-title">Requests:</div>             <div class="stat-value" id="run-requests"></div>
+                <div class="stat-title">Redirects:</div>            <div class="stat-value" id="run-requests"></div>
+                <div class="stat-title">Bad Requests:</div>         <div class="stat-value" id="run-bad"></div>
+                <div class="stat-title">Hosts:</div>                <div class="stat-value" id="run-domains"></div>
             </div>
     </div>
 

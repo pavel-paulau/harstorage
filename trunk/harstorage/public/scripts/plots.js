@@ -7,7 +7,7 @@ function drawScore(score) {
     data.addColumn('string', 'Score');
     data.addColumn('number', 'Value');
     data.addRows(1);
-    data.setValue(0, 0, 'Page Speed');
+    data.setValue(0, 0, 'PS Score');
     data.setValue(0, 1, score);
 
     // chart options
