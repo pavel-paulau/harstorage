@@ -201,7 +201,7 @@ function drawPie(div,title,hash,units) {
         },
         tooltip: {
             formatter: function() {
-                return '<b>'+ this.point.name +'</b>: '+ this.y + dim;
+                return '<b>'+ this.point.name +'</b>: '+ this.y + units;
             }
         },
         plotOptions: {
