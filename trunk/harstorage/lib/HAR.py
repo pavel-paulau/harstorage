@@ -63,7 +63,25 @@ class HAR():
             return 'image/icon'
         else:
             return string
-        
+
+     def type_syn(self,string):
+        if string.count('javascript'):
+            return 'javascript'
+        elif string.count('flash'):
+            return 'flash'
+        elif string.count('text/plain') or string.count('xml') or string.count('html'):
+            return 'text/html'
+        elif string.count('css'):
+             return 'text/css'
+        elif string.count('gif'):
+            return 'image/gif'
+        elif string.count('png'):
+            return 'image/png'
+        elif string.count('jpeg') or string.count('jpg'):
+            return 'image/jpeg'
+        else:
+            return 'other'
+       
     def weight_ratio(self):
         resources = dict()        
         for entry in self.har['log']['entries']:
