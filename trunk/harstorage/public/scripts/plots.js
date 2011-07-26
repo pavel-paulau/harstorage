@@ -175,7 +175,7 @@ function drawPageSpeed (json) {
     });
 }
 
-function drawPie(div,title,hash) {
+function drawPie(div,title,hash,units) {
     data  = [];
 
     jQuery.each(hash, function(key,value) {
@@ -201,7 +201,7 @@ function drawPie(div,title,hash) {
         },
         tooltip: {
             formatter: function() {
-                return '<b>'+ this.point.name +'</b>: '+ this.y + ' kB';
+                return '<b>'+ this.point.name +'</b>: '+ this.y + dim;
             }
         },
         plotOptions: {
@@ -249,8 +249,8 @@ function displayRunInfo() {
 
             drawPageSpeed(json);
 
-            drawPie("by-size","Resources by Size",json.weights);
-            drawPie("by-req","Resources by Requests",json.requests);
+            drawPie("by-size","Resources by Size",json.weights,' kB');
+            drawPie("by-req","Resources by Count",json.requests,'');
 
             var iframe = document.createElement('iframe');
             iframe.src = "/results/harviewer?har="+json.har;
