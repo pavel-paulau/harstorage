@@ -51,11 +51,23 @@ class HAR():
             if end_time > max: max = end_time
 
         return int ((max - min)*1000)
+
+    def type_syn(self,string):
+        if string.count('javascript'):
+            return 'javascript'
+        elif string.count('flash'):
+            return 'flash'
+        elif string.count('text/plain') or string.count('text/xml'):
+            return 'text/html'
+        elif string.count('ico'):
+            return 'image/icon'
+        else:
+            return string
         
     def weight_ratio(self):
         resources = dict()        
         for entry in self.har['log']['entries']:
-            type = entry['response']['content']['mimeType'].partition(';')[0]
+            type = self.type_syn( entry['response']['content']['mimeType'].partition(';')[0] )
             size = entry['response']['content']['size']
             try:
                 resources[type] += size / 1024
@@ -66,7 +78,7 @@ class HAR():
     def req_ratio(self):
         resources = dict()        
         for entry in self.har['log']['entries']:
-            type = entry['response']['content']['mimeType'].partition(';')[0]
+            type = self.type_syn( entry['response']['content']['mimeType'].partition(';')[0] )
             try:
                 resources[type] += 1
             except:
