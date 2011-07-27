@@ -66,29 +66,32 @@ function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
                 text: 'Full Time (ms)',
                 style: { color: '#DDDF0D' }
             },
+            min: 0,
         }, { // yAxis #2
             title: {
                 text: 'Total Requests',
                 style: { color: '#55BF3B' }
             },
+            min: 0,
             opposite: true
         }, { // yAxis #3
             title: {
-                text: 'Total Size',
+                text: 'Total Size (kB)',
                 style: { color: '#DF5353' }
             },
+            min: 0,
             opposite: true
         }, { // yAxis #4
             title: {
                 text: 'Page Speed Score',
                 style: { color: '#7798BF' }
             },
-            min: 0.0,
-            max: 100,
+            min: 0,
+            endOnTick: false
         }],
         tooltip: {
             formatter: function() {
-                return this.y + ' (' + this.x + ')';
+                return '<b>' + this.y + '</b>' + ' (' + this.x + ')';
             }
         },
         series: [{
