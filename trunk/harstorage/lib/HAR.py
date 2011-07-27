@@ -74,19 +74,21 @@ class HAR():
         resources = dict()        
         for entry in self.har['log']['entries']:
             type = self.type_syn( entry['response']['content']['mimeType'].partition(';')[0] )
-            size = entry['response']['content']['size']
-            try:
-                resources[type] += size / 1024
-            except:
-                resources[type] = size / 1024
+            if type != '':
+                size = entry['response']['content']['size']
+                try:
+                    resources[type] += size / 1024
+                except:
+                    resources[type] = size / 1024
         return resources
         
     def req_ratio(self):
         resources = dict()        
         for entry in self.har['log']['entries']:
             type = self.type_syn( entry['response']['content']['mimeType'].partition(';')[0] )
-            try:
-                resources[type] += 1
-            except:
-                resources[type] = 1
+            if type != '':
+                try:
+                    resources[type] += 1
+                except:
+                    resources[type] = 1
         return resources
