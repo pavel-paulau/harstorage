@@ -60,7 +60,7 @@ class HAR():
         elif string.count('text/plain') or string.count('xml') or string.count('html'):
             return 'text/html'
         elif string.count('css'):
-             return 'text/css'
+            return 'text/css'
         elif string.count('gif'):
             return 'image/gif'
         elif string.count('png'):
