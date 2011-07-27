@@ -63,7 +63,7 @@ function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
         }],
         yAxis: [{ // yAxis #1
             title: {
-                text: 'Full Time (ms)',
+                text: 'Full Load Time (ms)',
                 style: { color: '#DDDF0D' }
             },
             min: 0,
@@ -91,11 +91,18 @@ function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
         }],
         tooltip: {
             formatter: function() {
-                return '<b>' + this.y + '</b>' + ' (' + this.x + ')';
+                    var unit = {
+                        'Full Load Time': 'ms',
+                        'Total Requests': '',
+                        'Total Size': 'kB',
+                        'Page Speed Score': ''
+                    }[this.series.name];
+
+                return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
         },
         series: [{
-            name: 'Full Time',
+            name: 'Full Load Time',
             type: 'spline',
             yAxis: 0,
             data: timeSorted
