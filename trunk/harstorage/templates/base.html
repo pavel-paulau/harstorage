@@ -7,6 +7,12 @@
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/style.css')}" />
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
 
+        <script type="text/javascript">
+            if (navigator.userAgent.indexOf("WebKit") == -1 && navigator.userAgent.indexOf("Firefox") == -1 ){
+                alert("Unsupported browser! Use Chrome, Safari or Firefox instead.");
+            }
+        </script>
+
         <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>
         <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 
