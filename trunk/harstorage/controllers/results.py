@@ -21,6 +21,8 @@ from harstorage import model
 
 from pymongo import objectid, Connection
 
+from sqlalchemy import func
+
 log = logging.getLogger(__name__)
 
 class ResultsController(BaseController):
@@ -32,15 +34,17 @@ class ResultsController(BaseController):
         testresults = my_session.query(TestResults)
         pagespeed   = my_session.query(PageSpeed)
         
-        # Row count
-        c.rowcount = testresults.count()
+        # Initial row count
+        c.rowcount = 0
         
         c.metrics_table = list()
         for index in range(7):
             c.metrics_table.append(list())
             
         # Filling of metrics table
-        for result in testresults.order_by(model.testresults_table.c.timestamp.desc()).all():
+        stmt = my_session.query( func.max(TestResults.timestamp).label('maxts') ).group_by( TestResults.label_id ).subquery()
+
+        for result in my_session.query(TestResults).join((stmt, TestResults.timestamp==stmt.c.maxts)).order_by(TestResults.timestamp.desc()).all():
             label_id        = result.label_id
             pagespeed_id    = result.pagespeed_id
             url_id          = result.url_id
@@ -53,6 +57,8 @@ class ResultsController(BaseController):
             c.metrics_table[5].append( result.time )
             c.metrics_table[6].append( result.timestamp )
             
+            c.rowcount += 1
+
         return render('./home.html')
 
     def timeline(self,label,url):
