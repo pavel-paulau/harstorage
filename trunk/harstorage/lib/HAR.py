@@ -57,8 +57,10 @@ class HAR():
             return 'javascript'
         elif string.count('flash'):
             return 'flash'
-        elif string.count('text/plain') or string.count('xml') or string.count('html'):
+        elif string.count('text/plain') or string.count('html'):
             return 'text/html'
+        elif string.count('xml'):
+            return 'text/xml'
         elif string.count('css'):
             return 'text/css'
         elif string.count('gif'):
@@ -67,28 +69,32 @@ class HAR():
             return 'image/png'
         elif string.count('jpeg') or string.count('jpg'):
             return 'image/jpeg'
+        elif string.count('json'):
+            return 'json'
         else:
             return 'other'
        
     def weight_ratio(self):
         resources = dict()        
         for entry in self.har['log']['entries']:
-            type = self.type_syn( entry['response']['content']['mimeType'].partition(';')[0] )
-            if type != '':
+            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
+            if cmp(mime_type,''):
+                mime_type = self.type_syn(mime_type)
                 size = entry['response']['content']['size']
                 try:
-                    resources[type] += size / 1024
+                    resources[mime_type] += size / 1024
                 except:
-                    resources[type] = size / 1024
+                    resources[mime_type] = size / 1024
         return resources
         
     def req_ratio(self):
         resources = dict()        
         for entry in self.har['log']['entries']:
-            type = self.type_syn( entry['response']['content']['mimeType'].partition(';')[0] )
-            if type != '':
+            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
+            if cmp(mime_type,''):
+                mime_type = self.type_syn(mime_type)
                 try:
-                    resources[type] += 1
+                    resources[mime_type] += 1
                 except:
-                    resources[type] = 1
+                    resources[mime_type] = 1
         return resources
