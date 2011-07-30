@@ -129,19 +129,27 @@ class ResultsController(BaseController):
         file.write( MongoHandler().read_from_mongo(har_key) )
         file.close()
 
-        summary = {'score':pagespeed.filter_by(id = pagespeed_id).first().score,
-                    'time':testresults.filter_by(timestamp = timestamp).first().time,
-                    'size':testresults.filter_by(timestamp = timestamp).first().size,
-                    'requests':testresults.filter_by(timestamp = timestamp).first().requests,
+        har.analyze()
+
+        summary = {'score'          :pagespeed.filter_by(id = pagespeed_id).first().score,
+                    'full_time'     :testresults.filter_by(timestamp = timestamp).first().time,
+                    'total_size'    :testresults.filter_by(timestamp = timestamp).first().size,
+                    'requests'      :testresults.filter_by(timestamp = timestamp).first().requests,
+                    'dns'           :har.dns,
+                    'transfer'      :har.transfer,
+                    'connecting'    :har.connecting,
+                    'server'        :har.server,
+                    'blocked'       :har.blocked,
+                    'text_size'     :har.text_size,
+                    'media_size'    :har.media_size,
+                    'cache_size'    :har.cached,
+                    'redirects'     :har.redirects,
+                    'bad_req'       :har.bad_req,
+                    'hosts'         :har.hosts
                     }
         
-        weights = dict()
-        for type,size in har.weight_ratio().items():
-            weights[type] = size
-
-        requests = dict()
-        for type,num in har.req_ratio().items():
-            requests[type] = num
+        weights = har.weight_ratio()
+        requests = har.req_ratio()
 
         scores =  {'Avoid CSS @import':pagespeed.filter_by(id = pagespeed_id).first().avoid_import,
                             'Avoid bad requests':pagespeed.filter_by(id = pagespeed_id).first().avoid_bad_req,
@@ -175,8 +183,8 @@ class ResultsController(BaseController):
 
         return json.dumps({'summary'    :summary,
                            'pagespeed'  :scores,
-                           'weights'    :weights,
-                           'requests'   :requests,
+                           'weights'    :har.weight_ratio(),
+                           'requests'   :har.req_ratio(),
                            'har'        :har_key,
                             })
         
@@ -197,8 +205,9 @@ class ResultsController(BaseController):
             har = HAR( request.POST['file'] )
         
         if har.status == 'Ok':
-            label   = har.label()
-            url     = har.url()
+            har.analyze()
+            label   = har.label
+            url     = har.url
 
             if labels.filter_by(label = label).count() == 0:
                 new_label = Labels()
@@ -218,10 +227,10 @@ class ResultsController(BaseController):
             new_testresult.label_id     =   labels.filter_by(label = label).first().id
             new_testresult.url_id       =   urls.filter_by(url = url).first().id
             new_testresult.pagespeed_id =   1
-            new_testresult.timestamp    =    strftime("%Y-%m-%d %H:%M:%S", localtime())
-            new_testresult.time         =    har.full_time()
-            new_testresult.size         =   har.total_size()
-            new_testresult.requests     =   har.req_num()
+            new_testresult.timestamp    =   strftime("%Y-%m-%d %H:%M:%S", localtime())
+            new_testresult.time         =   har.full_load_time
+            new_testresult.size         =   har.total_size
+            new_testresult.requests     =   har.requests
             new_testresult.har_key      =   MongoHandler().store_to_mongo(har.origin)
 
             my_session.add(new_testresult)
