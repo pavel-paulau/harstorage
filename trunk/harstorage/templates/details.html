@@ -20,24 +20,25 @@
 <div class="tabber">
     <div class="tabbertab" title="Summary">
             <div class="gauge" id="gauge" ></div>
-            <div class="stat-container">
-                <div class="stat-title">Full Load Time:</div>       <div class="stat-value" id="run-time"></div>
-                <div class="stat-title">Total DNS Time:</div>       <div class="stat-value" id="dns-time"></div>
-                <div class="stat-title">Total Transfer Time:</div>  <div class="stat-value" id="transfer-time"></div>
-                <div class="stat-title">AVG Connecting Time:</div>  <div class="stat-value" id="connect-time"></div>
-                <div class="stat-title">AVG Blocking Time:</div>    <div class="stat-value" id="block-time"></div>
+            <div class="stat-container-max">
+                <div class="stat-title-max">Full Load Time:</div>       <div class="stat-value" id="full-load-time"></div>
+                <div class="stat-title-max">Total DNS Time:</div>       <div class="stat-value" id="dns"></div>
+                <div class="stat-title-max">Total Transfer Time:</div>  <div class="stat-value" id="transfer"></div>
+                <div class="stat-title-max">Total Server Time:</div>    <div class="stat-value" id="server"></div>
+                <div class="stat-title-max">AVG Connecting Time:</div>  <div class="stat-value" id="connecting"></div>
+                <div class="stat-title-max">AVG Blocking Time:</div>    <div class="stat-value" id="blocked"></div>
             </div>
-            <div class="stat-container">
-                <div class="stat-title">Total Size:</div>           <div class="stat-value" id="run-size"></div>
-                <div class="stat-title">Text Files:</div>           <div class="stat-value" id="html-size"></div>
-                <div class="stat-title">Media Files:</div>          <div class="stat-value" id="text-size"></div>
-                <div class="stat-title">Cached Size:</div>          <div class="stat-value" id="media-size"></div>
+            <div class="stat-container-min">
+                <div class="stat-title-min">Total Size:</div>           <div class="stat-value" id="total-size"></div>
+                <div class="stat-title-min">Text Files:</div>           <div class="stat-value" id="text-size"></div>
+                <div class="stat-title-min">Media Files:</div>          <div class="stat-value" id="media-size"></div>
+                <div class="stat-title-min">Cache Size:</div>           <div class="stat-value" id="cache-size"></div>
             </div>
-            <div class="stat-container">
-                <div class="stat-title">Requests:</div>             <div class="stat-value" id="run-requests"></div>
-                <div class="stat-title">Redirects:</div>            <div class="stat-value" id="run-redirects"></div>
-                <div class="stat-title">Bad Requests:</div>         <div class="stat-value" id="run-bad"></div>
-                <div class="stat-title">Hosts:</div>                <div class="stat-value" id="run-domains"></div>
+            <div class="stat-container-min">
+                <div class="stat-title-min">Requests:</div>             <div class="stat-value" id="requests"></div>
+                <div class="stat-title-min">Redirects:</div>            <div class="stat-value" id="redirects"></div>
+                <div class="stat-title-min">Bad Requests:</div>         <div class="stat-value" id="bad-req"></div>
+                <div class="stat-title-min">Hosts:</div>                <div class="stat-value" id="hosts"></div>
             </div>
     </div>
 

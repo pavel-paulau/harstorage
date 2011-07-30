@@ -250,18 +250,36 @@ function displayRunInfo() {
     {
         if (xmlhttp.readyState==4 && xmlhttp.status==200) {
             var json = eval("("+xmlhttp.responseText+")");
-
+            
+            // Page Speed Score - Gauge 
             drawScore(json.summary.score);
             
-            $("#run-time").html(json.summary.time)
-            $("#run-size").html(json.summary.size)
-            $("#run-requests").html(json.summary.requests)
+            // Summary
+            $("#full-load-time").html(json.summary.full_time+' ms');
+            $("#dns").html(json.summary.dns+' ms');
+            $("#transfer").html(json.summary.transfer+' ms');
+            $("#connecting").html(json.summary.connecting+' ms');
+            $("#server").html(json.summary.server+' ms');
+            $("#blocked").html(json.summary.blocked+' ms');
+            
+            $("#total-size").html(json.summary.total_size+' kB');
+            $("#text-size").html(json.summary.text_size+' kB');
+            $("#media-size").html(json.summary.media_size+' kB');
+            $("#cache-size").html(json.summary.cache_size+' kB');
 
+            $("#requests").html(json.summary.requests);
+            $("#redirects").html(json.summary.redirects);
+            $("#bad-req").html(json.summary.bad_req);
+            $("#hosts").html(json.summary.hosts);
+
+            // Page Speed Details
             drawPageSpeed(json);
 
+            // Resources
             drawPie("by-size","Resources by Size",json.weights,' kB');
             drawPie("by-req","Resources by Count",json.requests,'');
 
+            // HAR Viewer
             var iframe = document.createElement('iframe');
             iframe.src = "/results/harviewer?har="+json.har;
             iframe.width = "940";
