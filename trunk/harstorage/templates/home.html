@@ -1,33 +1,28 @@
 <%inherit file="/base.html"/>
 <%def name="title()">HAR Storage</%def>
-<table align="center"><tr><td>
-        <div style="float:left">
-            ${h.form(h.url_for(controller='results',action='upload'),multipart=True)}
-                    <fieldset>
-                    	<legend>Upload new file</legend>
-                    	<p>${h.file('file',size="30")} ${h.submit('upload','Upload')}</p>
-                    </fieldset>
-            ${h.end_form()}
-        </div>
-        <div style="float:left;margin-left:3em;">
-            ${h.form(h.url_for(controller='results',action='search'),multipart=True)}
-                    <fieldset>
-                    <legend>Search for existing</legend>
-                    <p> ${h.text('search_text',size="40")} ${h.submit('search','Search')}</p>
-                    </fieldset>
-            ${h.end_form()}
-        </div>
-</td></tr></table>
-<table align="center"><tr><td>
-    <h4>Latest Results</h4>
+
+<center>
+    <div>
+        <form action="/results/upload" enctype="multipart/form-data" method="post">
+            <fieldset class="upload-fs">
+                <legend class="upload-legend">Upload new file</legend>
+                    <input id="file" name="file" size="25" type="file" class="input-file">
+                    <input id="upload" name="upload" type="submit" value="Upload" class="input-button">
+            </fieldset>
+        </form>
+    </div>
+<div style="width:960px;">
+    <div>
+        <h4>Latest Results</h4>
+    </div>
     <table width="960px" align="center" class="stats_table">
         <tr>
-            <th class="stats_th" width="29%" style="text-align:left;">Label</th>
-            <th class="stats_th" width="39%" style="text-align:left;">URL</th>
-            <th class="stats_th" width="8%" style="">PageSpeed Score</th>
-            <th class="stats_th" width="8%" style="">Total Size</th>
-            <th class="stats_th" width="8%" style="">Total Requests</th>
-            <th class="stats_th" width="8%" style="">Full Time</th>
+            <th class="stats_th" width="22%" style="text-align:left;">Label</th>
+            <th class="stats_th" width="37%" style="text-align:left;">URL</th>
+            <th class="stats_th" width="12%" style="">Page Speed Score</th>
+            <th class="stats_th" width="9%" style="">Total Size</th>
+            <th class="stats_th" width="11%" style="">Total Requests</th>
+            <th class="stats_th" width="9%" style="">Full Time</th>
         </tr>
 		% for index in range(c.rowcount):
 		<tr>
@@ -40,5 +35,5 @@
 		</tr>
 		% endfor
     </table>
-</td></tr>
-</table>
+</div>
+</center>

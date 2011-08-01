@@ -11,15 +11,17 @@ a:active,a:hover
 {
 color:#000000;
 }
-fieldset
+.upload-fs
 {
+margin-top:20px;
+margin-bottom:20px;
 border: 1px solid #498a2d;
 -moz-border-radius:10px;
 -webkit-border-radius:10px;
 border-radius:10px;
-width: 26em;
+width: 480px;
 }
-legend
+.upload-legend
 {
 color: #fff;
 font-size: 14px;
@@ -27,9 +29,27 @@ background: #498a2d;
 border: 1px solid #498a2d;
 padding: 2px 6px;
 }
-input
+.input-file
 {
+width:300px;
 height:24px;
+color: #000;
+font-size: 12px;
+background: #d7e7cf;
+border: 1px;
+border-style:solid;
+border-color:#498a2d;
+-moz-border-radius:3px;
+-webkit-border-radius:10px;
+border-radius:3px;
+}
+.input-button
+{
+width:100px;
+height:24px;
+margin-left:20px;
+margin-top:20px;
+margin-bottom:20px;
 color: #000;
 font-size: 12px;
 background: #d7e7cf;
