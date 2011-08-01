@@ -60,6 +60,23 @@ border-color:#498a2d;
 -webkit-border-radius:10px;
 border-radius:3px;
 }
+.single-button
+{
+width:200px;
+height:24px;
+margin-left:20px;
+margin-top:20px;
+margin-bottom:20px;
+color: #000;
+font-size: 12px;
+background: #d7e7cf;
+border: 1px;
+border-style:solid;
+border-color:#498a2d;
+-moz-border-radius:3px;
+-webkit-border-radius:10px;
+border-radius:3px;
+}
 label
 {
 font-size: 12px;
