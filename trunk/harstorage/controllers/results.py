@@ -106,9 +106,11 @@ class ResultsController(BaseController):
         try:
             c.url = request.GET['url']
             self.timeline(None,c.url)
+            c.mode='url'
         except:
             c.label = request.GET['label']
             self.timeline(c.label,None)
+            c.mode='label'
  
         return render('./details.html')
 
@@ -188,6 +190,25 @@ class ResultsController(BaseController):
                            'har'        :har_key,
                             })
         
+    def deleterun(self):
+        label       = request.POST['label']
+        timestamp  = request.POST['timestamp']
+        mode        = request.POST['mode']
+        
+        my_session  = model.meta.Session
+   
+        if mode == 'label':
+            label_id    = my_session.query(Labels).filter_by(label = label).first().id
+            result      = my_session.query(TestResults).filter_by(label_id = label_id).filter_by(timestamp = timestamp).first()
+        else:
+            url_id      = my_session.query(Urls).filter_by(url = label).first().id
+            result      = my_session.query(TestResults).filter_by(url_id = url_id).filter_by(timestamp = timestamp).first()
+
+        my_session.delete(result)
+        my_session.commit()
+
+        return ("details?",mode,'=',label)
+
     def search(self):
         c.search_text = request.POST['search_text']
         return render('./search.html')

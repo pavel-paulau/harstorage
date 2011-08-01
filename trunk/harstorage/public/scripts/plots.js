@@ -288,6 +288,7 @@ function displayRunInfo() {
             $("#harviewer").html(iframe);
         }
     }
+
     xmlhttp.open("POST","runinfo",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
@@ -296,4 +297,28 @@ function displayRunInfo() {
     var parameters = "timestamp="+timestamp;
 
     xmlhttp.send(parameters);
+}
+
+function deleteRun(button,mode) {
+    var answer = confirm ("Are you sure?");
+    if (answer) {
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange=function()
+        {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                var response = xmlhttp.responseText;
+                window.location = response;
+            }
+        }
+
+        xmlhttp.open("POST","deleterun",true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        var ts_selector = document.getElementById("run_timestamp");
+        timestamp = ts_selector.options[ts_selector.selectedIndex].text;
+        var parameters = "timestamp="+timestamp+"&label="+button.id+"&mode="+mode;
+
+        xmlhttp.send(parameters);
+    }
 }
