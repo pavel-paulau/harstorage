@@ -70,8 +70,6 @@ class TestflowController(BaseController):
         avg_score   = 0
         count       = md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }).count()
         
-        print count
-        
         for document in md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }):
             avg_size    += document["total_size"]
             avg_time    += document["full_load_time"]
