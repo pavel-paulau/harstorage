@@ -98,6 +98,11 @@ function delStep(button){
     }
 }
 
+function sortNumber(a,b)
+{
+    return b - a;
+}  
+
 function setTimestamp(id){
     var xmlhttp = new XMLHttpRequest();
 
@@ -112,8 +117,7 @@ function setTimestamp(id){
             // Sorted timestamps
             var keySorted   = [];
             for (key in timestamps) keySorted.push(parseInt(key));
-            keySorted.sort();
-            keySorted.reverse();
+            keySorted.sort(sortNumber);
 
             // Start TS
             select = document.getElementById(id + '_start_ts');
