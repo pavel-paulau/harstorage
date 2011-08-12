@@ -111,7 +111,7 @@ function setTimestamp(id){
 
             // Sorted timestamps
             var keySorted   = [];
-            for (key in timestamps) keySorted.push(key);
+            for (key in timestamps) keySorted.push(parseInt(key));
             keySorted.sort();
             keySorted.reverse();
 
