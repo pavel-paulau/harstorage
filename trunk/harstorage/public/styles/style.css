@@ -21,6 +21,16 @@ border: 1px solid #498a2d;
 border-radius:10px;
 width: 480px;
 }
+.testflow-fs
+{
+margin-top:20px;
+margin-bottom:20px;
+border: 1px solid #498a2d;
+-moz-border-radius:10px;
+-webkit-border-radius:10px;
+border-radius:10px;
+width: 960px;
+}
 .upload-legend
 {
 color: #fff;
@@ -40,8 +50,9 @@ border: 1px;
 border-style:solid;
 border-color:#498a2d;
 -moz-border-radius:3px;
--webkit-border-radius:10px;
+-webkit-border-radius:3px;
 border-radius:3px;
+cursor:pointer;
 }
 .input-button
 {
@@ -57,8 +68,9 @@ border: 1px;
 border-style:solid;
 border-color:#498a2d;
 -moz-border-radius:3px;
--webkit-border-radius:10px;
+-webkit-border-radius:3px;
 border-radius:3px;
+cursor:pointer;
 }
 .single-button
 {
@@ -67,6 +79,7 @@ height:24px;
 margin-left:20px;
 margin-top:20px;
 margin-bottom:20px;
+margin-right:10px;
 color: #000;
 font-size: 12px;
 background: #d7e7cf;
@@ -74,8 +87,9 @@ border: 1px;
 border-style:solid;
 border-color:#498a2d;
 -moz-border-radius:3px;
--webkit-border-radius:10px;
+-webkit-border-radius:3px;
 border-radius:3px;
+cursor:pointer;
 }
 label
 {
@@ -218,4 +232,18 @@ width:230px;
 height:200px;
 float:left;
 margin-top:10px;
+}
+.step-text
+{
+float:left;
+font-size:14px;
+margin-left:10px;
+margin-right:10px;
+margin-top:4px;
+color:#498a2d;
+}
+.step-image
+{
+vertical-align:top;
+margin-left:20px;
 }

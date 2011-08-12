@@ -1,0 +1,43 @@
+<%inherit file="/base.html"/>
+<%def name="title()">Test Flow</%def>
+<center>
+	<div>
+        <form action="display" id="testFlowForm" method="post" onsubmit="return false;">
+            <fieldset class="testflow-fs">
+                <legend class="upload-legend">Create Test Flow</legend>
+                
+                <div id="container">
+                    <div id="step_1" style="text-align:left;margin-top:20px;">
+                        <div class="step-text" id="step_1_head" >Step 1 &gt;</div>
+                        <div class="step-text">Label:</div>
+
+                        <select name="step_1_label" id="step_1_label" style="float:left;width:200px;" onchange="setTimestamp(this.name);"> 
+                            % for label in c.labels:
+                            <option value="${label}">${label}</option>
+                            % endfor
+                        </select>
+                        
+                        <div class="step-text">Start TS:</div>
+                        
+                        <select name="step_1_start_ts" id="step_1_start_ts" style="float:left;width:170px;"> 
+                        </select>
+                        
+                        <div class="step-text">End TS:</div>
+                        
+                        <select name="step_1_end_ts" id="step_1_end_ts"style="width:170px;"> 
+                        </select>
+                        
+                        <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="step-image" onclick="addStep(this);">
+                        <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="step-image" onclick="delStep(this);" style="display:none">
+
+                    </div>
+                </div>
+                <input type="submit" class="single-button" value="Display Test Flow" onclick="return submitFlow();">
+            </fieldset>
+        </form>
+    </div>
+<center>
+
+<script type="text/javascript">
+    setTimestamp("step_1_label");
+</script>
