@@ -101,7 +101,7 @@ function delStep(button){
 function sortNumber(a,b)
 {
     return b - a;
-}  
+}
 
 function setTimestamp(id){
     var xmlhttp = new XMLHttpRequest();
