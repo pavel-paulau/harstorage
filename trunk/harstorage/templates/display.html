@@ -3,6 +3,29 @@
 
 <center>
 <div id="timeline_div" style="width:960px"></div>
+<div style="width:960px;margin-top:1em;" align="center"> 
+    <h4>Average Stats</h4> 
+</div>
+
+<table width="960px" align="center" class="stats_table">
+    <tr>
+        <th class="stats_th" width="40%" style="text-align:left;">Label</th>
+        <th class="stats_th" width="15%" style="">Page Speed Score</th>
+        <th class="stats_th" width="15%" style="">Total Size</th>
+        <th class="stats_th" width="15%" style="">Total Requests</th>
+        <th class="stats_th" width="15%" style="">Full Time</th>
+    </tr>
+    % for index in range(c.rowcount):
+    <tr>
+        <td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
+        <td class="stats_td" style="text-align:center;">${c.metrics_table[1][index]}</td>
+        <td class="stats_td" style="text-align:center;">${c.metrics_table[2][index]}</td>
+        <td class="stats_td" style="text-align:center;">${c.metrics_table[3][index]}</td>
+        <td class="stats_td" style="text-align:center;">${c.metrics_table[4][index]}</td>
+    </tr>
+    % endfor
+</table>
+
 </center>
 
 <script type='text/javascript'>

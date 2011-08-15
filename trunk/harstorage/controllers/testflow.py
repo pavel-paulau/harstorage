@@ -44,20 +44,40 @@ class TestflowController(BaseController):
         c.requests_hash = dict()
         c.score_hash    = dict()
         
+        # Initial row count
+        c.rowcount = 0
         
+        # Summary table canvas
+        c.metrics_table = list()
+        for index in range(6):
+            c.metrics_table.append(list())
+        
+        # Iteration
         for index in range( len(request.POST) /3 ):
+            # Parameters
             label       = request.POST[ 'step_'+str(index+1)+'_label' ]
             start_ts    = request.POST[ 'step_'+str(index+1)+'_start_ts' ]
             end_ts      = request.POST[ 'step_'+str(index+1)+'_end_ts' ]
             
+            # Average stats
             time, size, req, score = self.get_avg( label,start_ts,end_ts )
             
+            # Data for table
+            c.metrics_table[0].append( label    )
+            c.metrics_table[1].append( score    )
+            c.metrics_table[2].append( size     )
+            c.metrics_table[3].append( req      ) 
+            c.metrics_table[4].append( time     )
+            
+            c.rowcount += 1
+            
+            # Data for timeline
             label = str(index+1) + " - " + label
             c.time_hash[label]        = time
             c.size_hash[label]        = size
             c.requests_hash[label]    = req
             c.score_hash[label]       = score
-
+        
         return render('./display.html')
         
     def get_avg(self,label,start_ts,end_ts):
