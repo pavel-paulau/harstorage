@@ -47,8 +47,8 @@ def load_environment(global_conf, app_conf):
 
     # Setup the SQLAlchemy database engine
     #engine = engine_from_config(config, 'sqlalchemy.')
-    engine = create_engine('mysql://root:root@localhost/harstorage', pool_size= 1,pool_recycle = 3600)
-    init_model(engine)
+    #engine = create_engine('mysql://root:root@localhost/harstorage', pool_size= 1,pool_recycle = 3600)
+    #init_model(engine)
     
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
