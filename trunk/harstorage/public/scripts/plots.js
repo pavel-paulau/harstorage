@@ -54,7 +54,10 @@ function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
         exporting: {
             buttons : {
                 printButton: { enabled: false}
-            }
+            },
+            url:'/chart/export',
+            width: 960,
+            filename: 'timeline'
         },
         title: { text: 'Performance Trends' },
         xAxis: [{
@@ -144,7 +147,10 @@ function drawPageSpeed (json) {
         exporting: {
             buttons : {
                 printButton: { enabled: false}
-            }
+            },
+            url:'/chart/export',
+            width: 930,
+            filename: 'pagespeed'
         },
         title: {
             text: "Page Speed Scores"
@@ -204,7 +210,10 @@ function drawPie(div,title,hash,units) {
         exporting: {
             buttons : {
                 printButton: { enabled: false}
-            }
+            },
+            url:'/chart/export',
+            width: 450,
+            filename: 'resources'
         },
         title: {
             text: title,
