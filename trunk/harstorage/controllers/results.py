@@ -4,6 +4,7 @@ from harstorage.lib.MongoHandler import MongoDB
 import logging
 import json
 import os
+import hashlib
 
 from time import strftime, localtime
 
@@ -117,7 +118,7 @@ class ResultsController(BaseController):
         
         # HAR initialization
         har     = HAR( test_result['har'] )
-        har_id  = str(test_result['_id'])        
+        har_id  = str(test_result['_id'])
         har.analyze()
 
         # Summary stats
@@ -228,6 +229,76 @@ class ResultsController(BaseController):
             # MongoDB handler
             mdb_handler = MongoDB()
             
+            # Fix time format
+            for entry in har.har['log']['entries']:
+                entry['startedDateTime'] = entry['startedDateTime'].replace('+0000','+00:00')
+        
+            for page in har.har['log']['pages']:
+                page['startedDateTime'] = page['startedDateTime'].replace('+0000','+00:00')
+            
+            #Store HAR for Page Speed
+            filename = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() )
+            pagespeed_bin = os.path.join( config['app_conf']['bin_store'], "pagespeed_bin")
+            outfile = filename + ".out"
+            
+            file = open(filename,'w')
+            file.write(json.dumps(har.har))
+            file.close()
+            
+            # Run pagespeed_bin
+            os.system(pagespeed_bin + \
+                " -input_file " + \
+                filename + \
+                " -output_format formatted_json " + \
+                "-output_file " + \
+                outfile)
+            
+            # Output report (JSON)
+            filename = outfile
+            file = open(filename,'r')
+            output = json.loads(file.read())
+            file.close()
+
+            # Page Speed scores
+            scores = dict()
+            
+            # Default Values
+            scores['Avoid CSS @import'                      ] = 100
+            scores['Avoid bad requests'                     ] = 100
+            scores['Combine images into CSS sprites'        ] = 100
+            scores['Defer loading of JavaScript'            ] = 100
+            scores['Defer parsing of JavaScript'            ] = 100
+            scores['Enable Keep-Alive'                      ] = 100
+            scores['Enable compression'                     ] = 100
+            scores['Inline small CSS'                       ] = 100
+            scores['Inline small JavaScript'                ] = 100
+            scores['Leverage browser caching'               ] = 100
+            scores['Make redirects cacheable'               ] = 100
+            scores['Minify CSS'                             ] = 100
+            scores['Minify HTML'                            ] = 100
+            scores['Minify JavaScript'                      ] = 100
+            scores['Minimize redirects'                     ] = 100
+            scores['Minimize requests size'                 ] = 100
+            scores['Optimize images'                        ] = 100
+            scores['Optimize order of styles and scripts'   ] = 100
+            scores['Prefer asyncronous resources'           ] = 100
+            scores['Put CSS in the document head'           ] = 100
+            scores['Remove query string from statics'       ] = 100
+            scores['Remove unused css'                      ] = 100
+            scores['Serve resources from consistent URL'    ] = 100
+            scores['Serve scaled images'                    ] = 100
+            scores['Specify a Vary:Accept-Encoding'         ] = 100
+            scores['Specify a cache validator'              ] = 100
+            scores['Specify a character set'                ] = 100
+            scores['Use efficient CSS selectors'            ] = 100
+            
+            # Total Score
+            scores['Total Score'] = int(output['score'])
+            
+            # Rules updates
+            for rule in output['rule_results']:
+                scores[rule['localized_rule_name']]=int(rule['rule_score'])
+            
             # Add document to collection
             mdb_handler.collection.insert({
                 "label"         :har.label,
@@ -237,35 +308,35 @@ class ResultsController(BaseController):
                 "total_size"    :har.total_size,
                 "requests"      :har.requests,
                 "browser"       :har.browser,
-                "ps_scores"     :{  'Total Score'                           :100,
-                                    'Avoid CSS @import'                     :100,
-                                    'Avoid bad requests'                    :100,
-                                    'Combine images into CSS sprites'       :100,
-                                    'Defer loading of JavaScript'           :100,
-                                    'Defer parsing of JavaScript'           :100,
-                                    'Enable Keep-Alive'                     :100,
-                                    'Enable compression'                    :100,
-                                    'Inline small CSS'                      :100,
-                                    'Inline small JavaScript'               :100,
-                                    'Leverage browser caching'              :100,
-                                    'Make redirects cacheable'              :100,
-                                    'Minify CSS'                            :100,
-                                    'Minify HTML'                           :100,
-                                    'Minify JavaScript'                     :100,
-                                    'Minimize redirects'                    :100,
-                                    'Minimize requests size'                :100,
-                                    'Optimize images'                       :100,
-                                    'Optimize order of styles and scripts'  :100,
-                                    'Prefer asyncronous resources'          :100,
-                                    'Put CSS in the document head'          :100,
-                                    'Remove query string from statics'      :100,
-                                    'Remove unused css'                     :100,
-                                    'Serve resources from consistent URL'   :100,
-                                    'Serve scaled images'                   :100,
-                                    'Specify a Vary:Accept-Encoding'        :100,
-                                    'Specify a cache validator'             :100,
-                                    'Specify a character set'               :100,
-                                    'Use efficient CSS selectors'           :100,
+                "ps_scores"     :{  'Total Score'                           :scores['Total Score'],
+                                    'Avoid CSS @import'                     :scores['Avoid CSS @import'],
+                                    'Avoid bad requests'                    :scores['Avoid bad requests'],
+                                    'Combine images into CSS sprites'       :scores['Combine images into CSS sprites'],
+                                    'Defer loading of JavaScript'           :scores['Defer loading of JavaScript'],
+                                    'Defer parsing of JavaScript'           :scores['Defer parsing of JavaScript'],
+                                    'Enable Keep-Alive'                     :scores['Enable Keep-Alive'],
+                                    'Enable compression'                    :scores['Enable compression'],
+                                    'Inline small CSS'                      :scores['Inline small CSS'],
+                                    'Inline small JavaScript'               :scores['Inline small JavaScript'],
+                                    'Leverage browser caching'              :scores['Leverage browser caching'],
+                                    'Make redirects cacheable'              :scores['Make redirects cacheable'],
+                                    'Minify CSS'                            :scores['Minify CSS'],
+                                    'Minify HTML'                           :scores['Minify HTML'],
+                                    'Minify JavaScript'                     :scores['Minify JavaScript'],
+                                    'Minimize redirects'                    :scores['Minimize redirects'],
+                                    'Minimize requests size'                :scores['Minimize requests size'],
+                                    'Optimize images'                       :scores['Optimize images'],
+                                    'Optimize order of styles and scripts'  :scores['Optimize order of styles and scripts'],
+                                    'Prefer asyncronous resources'          :scores['Prefer asyncronous resources'],
+                                    'Put CSS in the document head'          :scores['Put CSS in the document head'],
+                                    'Remove query string from statics'      :scores['Remove query string from statics'],
+                                    'Remove unused css'                     :scores['Remove unused css'],
+                                    'Serve resources from consistent URL'   :scores['Serve resources from consistent URL'],
+                                    'Serve scaled images'                   :scores['Serve scaled images'],
+                                    'Specify a Vary:Accept-Encoding'        :scores['Specify a Vary:Accept-Encoding'],
+                                    'Specify a cache validator'             :scores['Specify a cache validator'],
+                                    'Specify a character set'               :scores['Specify a character set'],
+                                    'Use efficient CSS selectors'           :scores['Use efficient CSS selectors'],
                                 },
                 "har"           :har.origin
             })
