@@ -255,7 +255,7 @@ class ResultsController(BaseController):
                 "har"           :har.origin
             })
             
-            redirect('/')
+            redirect('/results/details?label=' + har.label)
         else:
             # Display error page
             return render('./upload.html')
