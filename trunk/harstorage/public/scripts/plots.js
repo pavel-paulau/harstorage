@@ -61,8 +61,9 @@ function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
         },
         title: { text: 'Performance Trends' },
         xAxis: [{
-            categories      : keySorted,
-            tickInterval    : Math.ceil(keySorted.length / 15)
+            categories          : keySorted,
+            tickInterval        : Math.ceil(keySorted.length / 10),
+            tickmarkPlacement   : 'on'
         }],
         yAxis: [{ // yAxis #1
             title: {
