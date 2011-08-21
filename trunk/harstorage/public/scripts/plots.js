@@ -131,17 +131,21 @@ function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
 function drawPageSpeed (json) {
     rules   = [];
     scores  = [];
+    rows    = 0;
 
     jQuery.each(json.pagespeed, function(key,value) {
         rules.push(key);
         scores.push(value);
+        rows += 1;
     });
+
+    height = 75 + 20 * rows;
 
     chart = new Highcharts.Chart({
         chart: {
             renderTo: 'pagespeed',
             defaultSeriesType: 'bar',
-            height  : 550,
+            height  : height,
             width   : 930, 
         },
         exporting: {

@@ -144,37 +144,12 @@ class ResultsController(BaseController):
         requests = har.req_ratio()
 
         # Page Speed Scores
-        scores =  { 'Total Score'                           :test_result['ps_scores']['Total Score'],
-                    'Avoid CSS @import'                     :test_result['ps_scores']['Avoid CSS @import'],
-                    'Avoid bad requests'                    :test_result['ps_scores']['Avoid bad requests'],
-                    'Combine images into CSS sprites'       :test_result['ps_scores']['Combine images into CSS sprites'],
-                    'Defer loading of JavaScript'           :test_result['ps_scores']['Defer loading of JavaScript'],
-                    'Defer parsing of JavaScript'           :test_result['ps_scores']['Defer parsing of JavaScript'],
-                    'Enable Keep-Alive'                     :test_result['ps_scores']['Enable Keep-Alive'],
-                    'Enable compression'                    :test_result['ps_scores']['Enable compression'],
-                    'Inline small CSS'                      :test_result['ps_scores']['Inline small CSS'],
-                    'Inline small JavaScript'               :test_result['ps_scores']['Inline small JavaScript'],
-                    'Leverage browser caching'              :test_result['ps_scores']['Leverage browser caching'],
-                    'Make redirects cacheable'              :test_result['ps_scores']['Make redirects cacheable'],
-                    'Minify CSS'                            :test_result['ps_scores']['Minify CSS'],
-                    'Minify HTML'                           :test_result['ps_scores']['Minify HTML'],
-                    'Minify JavaScript'                     :test_result['ps_scores']['Minify JavaScript'],
-                    'Minimize redirects'                    :test_result['ps_scores']['Minimize redirects'],
-                    'Minimize requests size'                :test_result['ps_scores']['Minimize requests size'],
-                    'Optimize images'                       :test_result['ps_scores']['Optimize images'],
-                    'Optimize order of styles and scripts'  :test_result['ps_scores']['Optimize order of styles and scripts'],
-                    'Prefer asyncronous resources'          :test_result['ps_scores']['Prefer asyncronous resources'],
-                    'Put CSS in the document head'          :test_result['ps_scores']['Put CSS in the document head'],
-                    'Remove query string from statics'      :test_result['ps_scores']['Remove query string from statics'],
-                    'Remove unused css'                     :test_result['ps_scores']['Remove unused css'],
-                    'Serve resources from consistent URL'   :test_result['ps_scores']['Serve resources from consistent URL'],
-                    'Serve scaled images'                   :test_result['ps_scores']['Serve scaled images'],
-                    'Specify a Vary:Accept-Encoding'        :test_result['ps_scores']['Specify a Vary:Accept-Encoding'],
-                    'Specify a cache validator'             :test_result['ps_scores']['Specify a cache validator'],
-                    'Specify a character set'               :test_result['ps_scores']['Specify a character set'],
-                    'Use efficient CSS selectors'           :test_result['ps_scores']['Use efficient CSS selectors'],
-                }
-
+        scores = dict()
+        
+        for rule,score in test_result['ps_scores'].items():
+            if rule != 'Total Score':
+                scores[rule] = score
+        
         # Data for HAR Viewer
         filename = os.path.join( config['app_conf']['temp_store'], har_id )
         file = open(filename, 'w')
@@ -262,40 +237,8 @@ class ResultsController(BaseController):
             # Page Speed scores
             scores = dict()
             
-            # Default Values
-            scores['Avoid CSS @import'                      ] = 100
-            scores['Avoid bad requests'                     ] = 100
-            scores['Combine images into CSS sprites'        ] = 100
-            scores['Defer loading of JavaScript'            ] = 100
-            scores['Defer parsing of JavaScript'            ] = 100
-            scores['Enable Keep-Alive'                      ] = 100
-            scores['Enable compression'                     ] = 100
-            scores['Inline small CSS'                       ] = 100
-            scores['Inline small JavaScript'                ] = 100
-            scores['Leverage browser caching'               ] = 100
-            scores['Make redirects cacheable'               ] = 100
-            scores['Minify CSS'                             ] = 100
-            scores['Minify HTML'                            ] = 100
-            scores['Minify JavaScript'                      ] = 100
-            scores['Minimize redirects'                     ] = 100
-            scores['Minimize requests size'                 ] = 100
-            scores['Optimize images'                        ] = 100
-            scores['Optimize order of styles and scripts'   ] = 100
-            scores['Prefer asyncronous resources'           ] = 100
-            scores['Put CSS in the document head'           ] = 100
-            scores['Remove query string from statics'       ] = 100
-            scores['Remove unused css'                      ] = 100
-            scores['Serve resources from consistent URL'    ] = 100
-            scores['Serve scaled images'                    ] = 100
-            scores['Specify a Vary:Accept-Encoding'         ] = 100
-            scores['Specify a cache validator'              ] = 100
-            scores['Specify a character set'                ] = 100
-            scores['Use efficient CSS selectors'            ] = 100
-            
-            # Total Score
             scores['Total Score'] = int(output['score'])
             
-            # Rules updates
             for rule in output['rule_results']:
                 scores[rule['localized_rule_name']]=int(rule['rule_score'])
             
@@ -308,36 +251,7 @@ class ResultsController(BaseController):
                 "total_size"    :har.total_size,
                 "requests"      :har.requests,
                 "browser"       :har.browser,
-                "ps_scores"     :{  'Total Score'                           :scores['Total Score'],
-                                    'Avoid CSS @import'                     :scores['Avoid CSS @import'],
-                                    'Avoid bad requests'                    :scores['Avoid bad requests'],
-                                    'Combine images into CSS sprites'       :scores['Combine images into CSS sprites'],
-                                    'Defer loading of JavaScript'           :scores['Defer loading of JavaScript'],
-                                    'Defer parsing of JavaScript'           :scores['Defer parsing of JavaScript'],
-                                    'Enable Keep-Alive'                     :scores['Enable Keep-Alive'],
-                                    'Enable compression'                    :scores['Enable compression'],
-                                    'Inline small CSS'                      :scores['Inline small CSS'],
-                                    'Inline small JavaScript'               :scores['Inline small JavaScript'],
-                                    'Leverage browser caching'              :scores['Leverage browser caching'],
-                                    'Make redirects cacheable'              :scores['Make redirects cacheable'],
-                                    'Minify CSS'                            :scores['Minify CSS'],
-                                    'Minify HTML'                           :scores['Minify HTML'],
-                                    'Minify JavaScript'                     :scores['Minify JavaScript'],
-                                    'Minimize redirects'                    :scores['Minimize redirects'],
-                                    'Minimize requests size'                :scores['Minimize requests size'],
-                                    'Optimize images'                       :scores['Optimize images'],
-                                    'Optimize order of styles and scripts'  :scores['Optimize order of styles and scripts'],
-                                    'Prefer asyncronous resources'          :scores['Prefer asyncronous resources'],
-                                    'Put CSS in the document head'          :scores['Put CSS in the document head'],
-                                    'Remove query string from statics'      :scores['Remove query string from statics'],
-                                    'Remove unused css'                     :scores['Remove unused css'],
-                                    'Serve resources from consistent URL'   :scores['Serve resources from consistent URL'],
-                                    'Serve scaled images'                   :scores['Serve scaled images'],
-                                    'Specify a Vary:Accept-Encoding'        :scores['Specify a Vary:Accept-Encoding'],
-                                    'Specify a cache validator'             :scores['Specify a cache validator'],
-                                    'Specify a character set'               :scores['Specify a character set'],
-                                    'Use efficient CSS selectors'           :scores['Use efficient CSS selectors'],
-                                },
+                "ps_scores"     :scores,
                 "har"           :har.origin
             })
             
