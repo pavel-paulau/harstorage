@@ -180,10 +180,15 @@ class ResultsController(BaseController):
         # Remove document from collection
         if mode == 'label':
             mdb_handler.collection.remove({"label":label,"timestamp":timestamp})
+            count = mdb_handler.collection.find({"label":label}).count()
         else:
             mdb_handler.collection.remove({"url":label,"timestamp":timestamp})
+            count = mdb_handler.collection.find({"url":label}).count()
 
-        return ("details?",mode,'=',label)
+        if count:
+            return ("details?",mode,'=',label)
+        else:
+            return ("/")
 
     def search(self):
         c.search_text = request.POST['search_text']
