@@ -153,7 +153,7 @@ class ResultsController(BaseController):
         # Data for HAR Viewer
         filename = os.path.join( config['app_conf']['temp_store'], har_id )
         file = open(filename, 'w')
-        file.write( test_result['har'] )
+        file.write( test_result['har'].encode('utf-8') )
         file.close()
 
         # Final JSON
