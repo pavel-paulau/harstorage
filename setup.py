@@ -8,13 +8,11 @@ except ImportError:
 setup(
     name='harstorage',
     version='0.1',
-    description='',
-    author='',
-    author_email='',
-    url='',
+    description='Standalone repository for automated client-side performance testing',
+    author='Pavel Paulau',
+    author_email='harstorage@googlegroups.com',
+    url='http://harstorage.com/',
     install_requires=[
-        "Pylons>=0.10",
-        "SQLAlchemy>=0.5",
     ],
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),

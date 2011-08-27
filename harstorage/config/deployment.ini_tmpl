@@ -18,6 +18,8 @@ port = 5000
 use = egg:harstorage
 full_stack = true
 static_files = true
+temp_store = %(here)s/data
+bin_store  = %(here)s/harstorage/lib
 
 cache_dir = %(here)s/data
 beaker.session.key = harstorage
@@ -30,14 +32,10 @@ app_instance_uuid = ${app_instance_uuid}
 #beaker.cache.data_dir = %(here)s/data/cache
 #beaker.session.data_dir = %(here)s/data/sessions
 
-# SQLAlchemy database URL
-sqlalchemy.url = sqlite:///production.db
-
 # WARNING: *THE LINE BELOW MUST BE UNCOMMENTED ON A PRODUCTION ENVIRONMENT*
 # Debug mode will enable the interactive debugging tool, allowing ANYONE to
 # execute malicious code after an exception is raised.
 set debug = false
-
 
 # Logging configuration
 [loggers]

@@ -8,3 +8,5 @@ syntax: regexp
 data
 # Temp har files
 harstorage/public/data
+# Builds
+dist
