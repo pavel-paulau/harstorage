@@ -5,8 +5,6 @@ Provides the BaseController class for subclassing.
 from pylons.controllers import WSGIController
 from pylons.templating import render_mako as render
 
-from harstorage.model.meta import Session
-
 class BaseController(WSGIController):
 
     def __call__(self, environ, start_response):
@@ -17,4 +15,4 @@ class BaseController(WSGIController):
         try:
             return WSGIController.__call__(self, environ, start_response)
         finally:
-            Session.remove()
+            None

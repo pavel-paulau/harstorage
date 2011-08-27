@@ -4,13 +4,10 @@ import os
 from mako.lookup import TemplateLookup
 from pylons.configuration import PylonsConfig
 from pylons.error import handle_mako_error
-from sqlalchemy import engine_from_config
-from sqlalchemy.engine import create_engine
 
 import harstorage.lib.app_globals as app_globals
 import harstorage.lib.helpers
 from harstorage.config.routing import make_map
-from harstorage.model import init_model
 
 def load_environment(global_conf, app_conf):
     """Configure the Pylons environment via the ``pylons.config``
@@ -45,11 +42,6 @@ def load_environment(global_conf, app_conf):
         input_encoding='utf-8', default_filters=['escape'],
         imports=['from webhelpers.html import escape'])
 
-    # Setup the SQLAlchemy database engine
-    #engine = engine_from_config(config, 'sqlalchemy.')
-    #engine = create_engine('mysql://root:root@localhost/harstorage', pool_size= 1,pool_recycle = 3600)
-    #init_model(engine)
-    
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
     
