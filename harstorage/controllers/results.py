@@ -5,7 +5,7 @@ import logging
 import json
 import os
 import hashlib
-
+from mimetypes import guess_type
 from time import strftime, localtime
 
 from pylons import request, response, session, tmpl_context as c, url
@@ -165,7 +165,7 @@ class ResultsController(BaseController):
                             })
         
     def harviewer(self):
-        c.url = h.url_for(str('/data/'+request.GET['har']))
+        c.url = h.url_for(str('/results/download?id='+request.GET['har']))
         return render('./harviewer.html')
     
     def deleterun(self):
@@ -264,3 +264,14 @@ class ResultsController(BaseController):
         else:
             # Display error page
             return render('./upload.html')
+
+    def download(self):
+        id = request.GET['id']
+        
+        filename = os.path.join( config['app_conf']['temp_store'], id )
+        file = open(filename, 'r')
+        data = file.read()
+        file.close()
+        
+        response.content_type = guess_type(filename)[0] or 'text/plain'
+        return data
