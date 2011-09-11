@@ -6,25 +6,30 @@
     <div style="width:960px;margin-top:1em;text-align:left;"> 
         <h4>Average Stats</h4> 
     </div>
-
-    <table width="960px" align="center" class="stats_table">
-        <tr>
-            <th class="stats_th" width="40%" style="text-align:left;">Label</th>
-            <th class="stats_th" width="15%" style="">Page Speed Score</th>
-            <th class="stats_th" width="15%" style="">Total Size</th>
-            <th class="stats_th" width="15%" style="">Total Requests</th>
-            <th class="stats_th" width="15%" style="">Full Time</th>
-        </tr>
-        % for index in range(c.rowcount):
-        <tr>
-            <td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
-            <td class="stats_td" style="text-align:center;">${c.metrics_table[1][index]}</td>
-            <td class="stats_td" style="text-align:center;">${c.metrics_table[2][index]}</td>
-            <td class="stats_td" style="text-align:center;">${c.metrics_table[3][index]}</td>
-            <td class="stats_td" style="text-align:center;">${c.metrics_table[4][index]}</td>
-        </tr>
-        % endfor
-    </table>
+	<div style="width:960px;">
+        <table class="display" id="stats_table" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th width="36%" style="text-align:left;">Label</th>
+                    <th width="16%" >Page Speed Score</th>
+                    <th width="16%" >Total Size</th>
+                    <th width="16%" >Total Requests</th>
+                    <th width="16%" >Full Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                % for index in range(c.rowcount):
+                <tr>
+                    <td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
+                    <td class="center">${c.metrics_table[1][index]}</td>
+                    <td class="center">${c.metrics_table[2][index]}</td>
+                    <td class="center">${c.metrics_table[3][index]}</td>
+                    <td class="center">${c.metrics_table[4][index]}</td>
+                </tr>
+                % endfor
+            <tbody>
+        </table>
+	</div>
 </center>
 
 <script type='text/javascript'>
@@ -51,3 +56,12 @@
    
     setTimeLine();
 </script>
+
+<script type="text/javascript" charset="utf-8"> 
+    $(document).ready(function() {
+        $('#stats_table').dataTable({
+             "bJQueryUI": true,
+             "sPaginationType": "full_numbers"
+        });
+    } );
+</script> 

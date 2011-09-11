@@ -6,6 +6,8 @@
 		<title>${self.title()}</title>
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/style.css')}" />
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
+        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/table_jui.css')}" />
+        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
 
         <script type="text/javascript">
             if (navigator.userAgent.indexOf("WebKit") == -1 && navigator.userAgent.indexOf("Firefox") == -1 ){
@@ -14,12 +16,17 @@
         </script>
 
         <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>
+
         <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 
         <script type="text/javascript" src="${h.url_for('/scripts/highcharts/highcharts.js')}"></script> 
         <script type="text/javascript" src="${h.url_for('/scripts/highcharts/themes/dark-green.js')}"></script>
         <script type="text/javascript" src="${h.url_for('/scripts/highcharts/modules/exporting.js')}"></script>
+
 		<script type='text/javascript' src="${h.url_for('/scripts/tabber.js')}"></script>
+
+        <script type='text/javascript' src="${h.url_for('/scripts/datatables/jquery.dataTables.js')}"></script>
+
         <script type='text/javascript' src="${h.url_for('/scripts/plots.js')}"></script>
         <script type='text/javascript' src="${h.url_for('/scripts/testflow.js')}"></script>
     </head>
