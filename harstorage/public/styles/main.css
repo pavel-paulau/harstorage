@@ -8,8 +8,7 @@ a {
 a:hover {
 	text-decoration: underline;
 }
-.upload-fs
-{
+.upload-fs {
 	margin-top:20px;
 	margin-bottom:20px;
 	border: 1px solid #498a2d;
@@ -18,8 +17,7 @@ a:hover {
 	border-radius:10px;
 	width: 480px;
 }
-.testflow-fs
-{
+.testflow-fs {
 	margin-top:20px;
 	margin-bottom:20px;
 	border: 1px solid #498a2d;
@@ -28,8 +26,7 @@ a:hover {
 	border-radius:10px;
 	width: 960px;
 }
-.upload-legend
-{
+.upload-legend {
 	color: #fff;
 	font-size: 14px;
 	background: #498a2d;
@@ -37,8 +34,7 @@ a:hover {
 	padding: 2px 6px;
 }
 
-.input-file
-{
+.input-file {
 	width:300px;
 	height:24px;
 	color: #000;
@@ -52,8 +48,7 @@ a:hover {
 	border-radius:3px;
 	cursor:pointer;
 }
-.input-button
-{
+.input-button {
     width:100px;
     height:24px;
     margin-left:20px;
@@ -70,8 +65,7 @@ a:hover {
     border-radius:3px;
     cursor:pointer;
 }
-.single-button
-{
+.single-button {
     width:200px;
     height:24px;
     margin-left:20px;
@@ -90,8 +84,7 @@ a:hover {
     cursor:pointer;
 }
 /*
-label
-{
+label {
     font-size: 12px;
     width: 11em;
     float: left;
@@ -99,35 +92,30 @@ label
     margin-right: 0.5em;
 }
 */
-.header_r
-{
+.header_r {
     text-align:right;
     font-size:12px;
     margin-top:0.5em;
 }
-.header_l
-{
+.header_l {
     float:left;
     text-align:left;
     color: #498a2d;
     font-weight: bold;
     font-size: 28px;
 }
-.footer_l
-{
+.footer_l {
     float:left;
     font-size: 11px;
     vertical-align:middle;
     height:25px;
 }
-.footer_r
-{
+.footer_r {
     float:right;
     font-size: 11px;
     margin-bottom:1em;
 }
-.details 
-{
+.details {
     border:1px;
     border-style:solid;
     border-color:#498a2d;
@@ -138,8 +126,7 @@ label
     width:960px;
     margin-bottom:5px;
 }
-hr
-{
+hr {
     background-color:#498a2d;
     height:1px;
     width:100%;
@@ -147,16 +134,14 @@ hr
 h4 {
     margin-top:0.0em;
 }
-.gauge
-{
+.gauge {
     margin-top:10px;
     float:left;
     text-align:left;
     width:200px;
     height:200px;
 }
-.stat-title-max
-{
+.stat-title-max {
     text-align:right;
     font-size:13px;
     font-weight:bold;
@@ -166,8 +151,7 @@ h4 {
     width:200px;
     float:left;
 }
-.stat-title-min
-{
+.stat-title-min {
     text-align:right;
     font-size:13px;
     font-weight:bold;
@@ -177,8 +161,7 @@ h4 {
     width:150px;
     float:left;
 }
-.stat-value
-{
+.stat-value {
     text-align:left;
     font-size:13px;
     color:#498a2d;
@@ -188,22 +171,19 @@ h4 {
     width:70px;
     float:left;
 }
-.stat-container-max
-{
+.stat-container-max {
     width:280px;
     height:200px;
     float:left;
     margin-top:10px;
 }
-.stat-container-min
-{
+.stat-container-min {
     width:230px;
     height:200px;
     float:left;
     margin-top:10px;
 }
-.step-text
-{
+.step-text {
     float:left;
     font-size:14px;
     margin-left:10px;
@@ -211,8 +191,7 @@ h4 {
     margin-top:4px;
     color:#498a2d;
 }
-.step-image
-{
+.step-image {
     vertical-align:top;
     margin-left:20px;
 }
