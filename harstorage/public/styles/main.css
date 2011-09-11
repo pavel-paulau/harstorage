@@ -1,12 +1,13 @@
+body {
+    color: #498a2d;
+}
 a {
 	color: #498a2d;
 	text-decoration: none;
 }
-
 a:hover {
 	text-decoration: underline;
 }
-
 .upload-fs
 {
 	margin-top:20px;
@@ -143,11 +144,8 @@ hr
     height:1px;
     width:100%;
 }
-h4
-{
+h4 {
     margin-top:0.0em;
-    margin-bottom:1em;
-    color:#498a2d;
 }
 .gauge
 {

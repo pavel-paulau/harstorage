@@ -8,8 +8,8 @@
     <div style="float:left;text-align:left;">
         <h4>Run Info</h4>
     </div>
-    <div style="text-align:right;margin-top:1em;margin-bottom:1.5em">
-            <select id="run_timestamp" onchange="displayRunInfo();">
+    <div style="text-align:right;margin-top:1em;">
+            <select id="run_timestamp" class="chosen-select" style="width:190px;" onchange="displayRunInfo();">
                 % for timestamp in c.timestamp:
                 <option value="${timestamp}"> ${timestamp}</option>
                 % endfor
@@ -89,4 +89,8 @@
    
     setTimeLine();
     displayRunInfo();
+</script>
+
+<script type='text/javascript'>
+    $(".chosen-select").chosen()
 </script>
