@@ -11,42 +11,37 @@
             </fieldset>
         </form>
     </div>
+    <div style="width:960px;margin-bottom:1em;text-align:left;">
+        <h4>Latest Results</h4>
+    </div>
     <div style="width:960px;">
-        <div style="margin-bottom:1em;">
-            <div style="float:left;text-align:left;width:760px;">
-                <h4>Latest Results</h4>
-            </div>
-            <div style="text-align:right;">
-                <h4><a href="/testflow/create">Create Test Flow</a></h4>
-            </div>
-        </div>
-        <div>
-            <table class="display" id="stats_table" cellpadding="0" cellspacing="0" border="0">
-                <thead>
-                    <tr>
-                        <th width="21%" style="text-align:left;">Label</th>
-                        <th width="37%" style="text-align:left;">URL</th>
-                        <th width="12%" style="">Page Speed Score</th>
-                        <th width="10%"  style="">Total Size</th>
-                        <th width="10%" style="">Total Requests</th>
-                        <th width="10%"  style="">Full Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    % for index in range(c.rowcount):
-                    <tr> 
-                        <td><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
-                        <td><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[1][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
-                        <td class="center">${c.metrics_table[2][index]}</td>
-                        <td class="center">${c.metrics_table[3][index]}</td>
-                        <td class="center">${c.metrics_table[4][index]}</td>
-                        <td class="center">${c.metrics_table[5][index]}</td>
-                    </tr>
-                    % endfor
-                </tbody>
-            </table>
-        </div>
-       
+        <table class="display" id="stats_table" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th width="21%" style="text-align:left;">Label</th>
+                    <th width="37%" style="text-align:left;">URL</th>
+                    <th width="12%" style="">Page Speed Score</th>
+                    <th width="10%"  style="">Total Size</th>
+                    <th width="10%" style="">Total Requests</th>
+                    <th width="10%"  style="">Full Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                % for index in range(c.rowcount):
+                <tr> 
+                    <td><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
+                    <td><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[1][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
+                    <td class="center">${c.metrics_table[2][index]}</td>
+                    <td class="center">${c.metrics_table[3][index]}</td>
+                    <td class="center">${c.metrics_table[4][index]}</td>
+                    <td class="center">${c.metrics_table[5][index]}</td>
+                </tr>
+                % endfor
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button type="button" class="single-button" id="${c.label}" onclick="window.location.href='/testflow/create';">Create Test Flow</button>
     </div>
 </center>
 
