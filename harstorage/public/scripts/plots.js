@@ -1,5 +1,3 @@
-google.load('visualization', '1', {packages:['gauge']});
-
 // draw Gauge Chart
 function drawScore(score) {
     // value for chart
