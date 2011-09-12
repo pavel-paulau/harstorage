@@ -65,6 +65,14 @@
 
 </center>
 
+<script>
+	$LAB
+        .script("${h.url_for('/scripts/tabber.js')}")
+        .script("${h.url_for('/scripts/chosen.jquery.js')}")
+</script>
+
+<script type='text/javascript' src="${h.url_for('/scripts/plots.js')}"></script>
+
 <script type='text/javascript'>
 	function setTimeLine(){
         var timeHash = new Array();
@@ -89,8 +97,4 @@
    
     setTimeLine();
     displayRunInfo();
-</script>
-
-<script type='text/javascript'>
-    $(".chosen-select").chosen()
 </script>

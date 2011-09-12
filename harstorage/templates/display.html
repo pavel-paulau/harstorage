@@ -32,6 +32,14 @@
 	</div>
 </center>
 
+<script>
+	$LAB
+        .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
+        .script("${h.url_for('/scripts/hs-ui.js')}").wait()
+</script>
+
+<script type='text/javascript' src="${h.url_for('/scripts/plots.js')}"></script>
+
 <script type='text/javascript'>
 	function setTimeLine(){
         var timeHash = new Array();
@@ -56,12 +64,3 @@
    
     setTimeLine();
 </script>
-
-<script type="text/javascript" charset="utf-8"> 
-    $(document).ready(function() {
-        $('#stats_table').dataTable({
-             "bJQueryUI": true,
-             "sPaginationType": "full_numbers"
-        });
-    } );
-</script> 

@@ -151,3 +151,5 @@ function setTimestamp(id){
 
     xmlhttp.send(parameters);
 }
+
+setTimestamp("step_1_label");

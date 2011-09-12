@@ -1,6 +1,5 @@
 <%inherit file="/base.html"/>
 <%def name="title()">HAR Storage</%def>
-
 <center>
     <div>
         <form action="/results/upload" enctype="multipart/form-data" method="post">
@@ -45,11 +44,8 @@
     </div>
 </center>
 
-<script type="text/javascript" charset="utf-8"> 
-    $(document).ready(function() {
-        $('#stats_table').dataTable({
-            "bJQueryUI": true,
-            "sPaginationType": "full_numbers",
-        });
-    } );
-</script> 
+<script>
+	$LAB
+        .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
+        .script("${h.url_for('/scripts/hs-ui.js')}").wait()
+</script>

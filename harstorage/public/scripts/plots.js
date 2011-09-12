@@ -1,3 +1,10 @@
+// Dynamically loading JS libs
+$.ajax({async: false, type: "GET", url: '/scripts/jsapi.js'});
+$.ajax({async: false, type: "GET", url: '/scripts/gauge.js'});
+$.ajax({async: false, type: "GET", url: '/scripts/highcharts/highcharts.js'});
+$.ajax({async: false, type: "GET", url: '/scripts/highcharts/themes/dark-green.js'});
+$.ajax({async: false, type: "GET", url: '/scripts/highcharts/modules/exporting.js'});
+
 // draw Gauge Chart
 function drawScore(score) {
     // value for chart

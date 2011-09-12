@@ -792,3 +792,5 @@
   };
   this.SelectParser = SelectParser;
 }).call(this);
+
+$(".chosen-select").chosen();
