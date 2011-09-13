@@ -69,32 +69,15 @@
 	$LAB
         .script("${h.url_for('/scripts/tabber.js')}")
         .script("${h.url_for('/scripts/chosen.jquery.js')}")
+        .script("${h.url_for('/scripts/jsapi.js')}")
+        .script("${h.url_for('/scripts/gauge.js')}")
+        .script("${h.url_for('/scripts/highcharts/highcharts.js')}")
+        .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}")
+        .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
+        .script("${h.url_for('/scripts/plots.js')}").wait()
+		.wait(function(){
+			setTimeLine("${c.url}","${c.label}","${c.mode}");
+			displayRunInfo();
+		})
 </script>
 
-<script type='text/javascript' src="${h.url_for('/scripts/plots.js')}"></script>
-
-<script type='text/javascript'>
-	function setTimeLine(){
-        var timeHash = new Array();
-        var sizeHash = new Array();
-        var reqHash = new Array();
-        var scoreHash = new Array();
-        % for key,value in c.time_hash.items():
-            timeHash["${key}"] = ${value};
-        % endfor
-        % for key,value in c.size_hash.items():
-            sizeHash["${key}"] = ${value};
-        % endfor
-        % for key,value in c.requests_hash.items():
-            reqHash["${key}"] = ${value};
-        % endfor
-        % for key,value in c.score_hash.items():
-            scoreHash["${key}"] = ${value};
-        % endfor
-
-        drawTimeLine(timeHash,sizeHash,reqHash,scoreHash);
-    }
-   
-    setTimeLine();
-    displayRunInfo();
-</script>

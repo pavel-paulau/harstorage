@@ -39,10 +39,10 @@ class TestflowController(BaseController):
             
     def display(self):
         # 4 Hashes for timeline chart
-        c.time_hash     = dict()
-        c.size_hash     = dict()
-        c.requests_hash = dict()
-        c.score_hash    = dict()
+        time_hash     = dict()
+        size_hash     = dict()
+        requests_hash = dict()
+        score_hash    = dict()
         
         # Initial row count
         c.rowcount = 0
@@ -62,6 +62,9 @@ class TestflowController(BaseController):
             # Average stats
             time, size, req, score = self.get_avg( label,start_ts,end_ts )
             
+            # Ordered labels
+            label = str(index + 1) + " - " + label
+            
             # Data for table
             c.metrics_table[0].append( label    )
             c.metrics_table[1].append( score    )
@@ -72,11 +75,17 @@ class TestflowController(BaseController):
             c.rowcount += 1
             
             # Data for timeline
-            label = str(index+1) + " - " + label
-            c.time_hash[label]        = time
-            c.size_hash[label]        = size
-            c.requests_hash[label]    = req
-            c.score_hash[label]       = score
+            time_hash[label]        = time
+            size_hash[label]        = size
+            requests_hash[label]    = req
+            score_hash[label]       = score
+        
+        c.json = json.dumps({
+            "time_hash"     : time_hash,
+            "size_hash"     : size_hash,
+            "requests_hash" : requests_hash,
+            "score_hash"    : score_hash
+        })
         
         return render('./display.html')
         

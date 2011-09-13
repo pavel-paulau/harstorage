@@ -63,25 +63,21 @@ class ResultsController(BaseController):
         # Try to fetch details for URL
         try:
             c.url = request.GET['url']
-            self.timeline(None,c.url)
-            c.mode='url'
+            self.selectors(None,c.url)
+            c.mode  = 'url'
+            c.label = c.url
         # Use Label instead of URL
         except:
             c.label = request.GET['label']
-            self.timeline(c.label,None)
-            c.mode='label'
+            self.selectors(c.label,None)
+            c.mode  = 'label'
+            c.url   = c.label
  
         return render('./details.html')
-
-    def timeline(self,label,url):
+    
+    def selectors(self,label,url):
         # MongoDB handler
         mdb_handler = MongoDB()
-        
-        # 4 Hashes for timeline chart
-        c.time_hash     = dict()
-        c.size_hash     = dict()
-        c.requests_hash = dict()
-        c.score_hash    = dict()
         
         # Timestamps for selector
         c.timestamp     = list()
@@ -89,22 +85,46 @@ class ResultsController(BaseController):
         # Querying data for timeline
         if label is not None:
             for result in mdb_handler.collection.find({"label":label}).sort("timestamp",-1):
-                c.time_hash[result["timestamp"]]        = result["full_load_time"]
-                c.size_hash[result["timestamp"]]        = result["total_size"]
-                c.requests_hash[result["timestamp"]]    = result["requests"]
-                c.score_hash[result["timestamp"]]       = result['ps_scores']['Total Score']
-
                 c.timestamp.append(result["timestamp"])
         else:
             for result in mdb_handler.collection.find({"url":url}).sort("timestamp",-1):
-                c.time_hash[result["timestamp"]]        = result["full_load_time"]
-                c.size_hash[result["timestamp"]]        = result["total_size"]
-                c.requests_hash[result["timestamp"]]    = result["requests"]
-                c.score_hash[result["timestamp"]]       = result['ps_scores']['Total Score']
-
                 c.timestamp.append(result["timestamp"])
 
-            c.label = c.url
+    def timeline(self):
+        # Options
+        url     = request.POST['url']
+        label   = request.POST['label']
+        mode    = request.POST['mode']
+        
+        # MongoDB handler
+        mdb_handler = MongoDB()
+        
+        # 4 Hashes for timeline chart
+        time_hash     = dict()
+        size_hash     = dict()
+        requests_hash = dict()
+        score_hash    = dict()
+        
+        # Querying data for timeline
+        if mode == 'label':
+            for result in mdb_handler.collection.find({"label":label}).sort("timestamp",-1):
+                time_hash[result["timestamp"]]        = result["full_load_time"]
+                size_hash[result["timestamp"]]        = result["total_size"]
+                requests_hash[result["timestamp"]]    = result["requests"]
+                score_hash[result["timestamp"]]       = result['ps_scores']['Total Score']
+        else:
+            for result in mdb_handler.collection.find({"url":url}).sort("timestamp",-1):
+                time_hash[result["timestamp"]]        = result["full_load_time"]
+                size_hash[result["timestamp"]]        = result["total_size"]
+                requests_hash[result["timestamp"]]    = result["requests"]
+                score_hash[result["timestamp"]]       = result['ps_scores']['Total Score']
+        
+        return json.dumps({
+            "time_hash"     : time_hash,
+            "size_hash"     : size_hash,
+            "requests_hash" : requests_hash,
+            "score_hash"    : score_hash
+        })
 
     def runinfo(self):
         # MongoDB handler

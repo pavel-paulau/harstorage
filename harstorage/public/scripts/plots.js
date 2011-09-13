@@ -1,10 +1,3 @@
-// Dynamically loading JS libs
-$.ajax({async: false, type: "GET", url: '/scripts/jsapi.js'});
-$.ajax({async: false, type: "GET", url: '/scripts/gauge.js'});
-$.ajax({async: false, type: "GET", url: '/scripts/highcharts/highcharts.js'});
-$.ajax({async: false, type: "GET", url: '/scripts/highcharts/themes/dark-green.js'});
-$.ajax({async: false, type: "GET", url: '/scripts/highcharts/modules/exporting.js'});
-
 // draw Gauge Chart
 function drawScore(score) {
     // value for chart
@@ -32,22 +25,42 @@ function drawScore(score) {
     chart.draw(data, options);
 }
 
-function drawTimeLine(timeHash,sizeHash,reqHash,scoreHash) {
-    // Prepair data for charts
+function setTimeLine(url,label,mode){
+	// Retrieve data for timeline via XHR calls
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			var json = eval("("+xmlhttp.responseText+")");
+			drawTimeLine(json);
+		}
+	}
+
+    xmlhttp.open("POST","timeline",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+	var parameters = "url=" + url + "&label=" + label + "&mode=" + mode;
+
+	xmlhttp.send(parameters);
+}
+
+function drawTimeLine(json) {
+	// Prepair data for charts
     var keySorted   = [];
     var timeSorted  = [];
     var sizeSorted  = [];
     var reqSorted   = [];
     var scoreSorted = [];
 
-    for (key in timeHash) keySorted.push(key);
+    for (key in json.time_hash) keySorted.push(key);
     keySorted.sort();
 
     for (var i = 0; i < keySorted.length; i++){
-        timeSorted.push( timeHash[ keySorted[i] ] );
-        sizeSorted.push( sizeHash[ keySorted[i] ] );
-        reqSorted.push( reqHash[ keySorted[i] ] );
-        scoreSorted.push( scoreHash[ keySorted[i] ] );
+        timeSorted.push( json.time_hash[ keySorted[i] ] );
+        sizeSorted.push( json.size_hash[ keySorted[i] ] );
+        reqSorted.push( json.requests_hash[ keySorted[i] ] );
+        scoreSorted.push( json.score_hash[ keySorted[i] ] );
     }
 
     chart = new Highcharts.Chart({
