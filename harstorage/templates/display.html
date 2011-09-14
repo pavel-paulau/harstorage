@@ -27,12 +27,12 @@
                     <td class="center">${c.metrics_table[4][index]}</td>
                 </tr>
                 % endfor
-            <tbody>
+            </tbody>
         </table>
 	</div>
 </center>
 
-<script>
+<script type='text/javascript'>
 	$LAB
         .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
         .script("${h.url_for('/scripts/hs-ui.js')}").wait()
