@@ -88,7 +88,7 @@ function drawTimeLine(json) {
                 text: 'Full Load Time (ms)',
                 style: { color: '#DDDF0D' }
             },
-            min: 0,
+            min: 0
         }, { // yAxis #2
             title: {
                 text: 'Total Requests',
@@ -165,7 +165,7 @@ function drawPageSpeed (json) {
             renderTo: 'pagespeed',
             defaultSeriesType: 'bar',
             height  : height,
-            width   : 930, 
+            width   : 930
         },
         exporting: {
             buttons : {
@@ -189,7 +189,7 @@ function drawPageSpeed (json) {
             max: 105,
             endOnTick: false,
             title: {
-                text: null,
+                text: null
             }
         },
         tooltip: {
@@ -205,7 +205,7 @@ function drawPageSpeed (json) {
             },
             series: {
                 showInLegend: false,
-                animation: false,
+                animation: false
             }
         },
         series: [{
@@ -228,7 +228,7 @@ function drawPie(div,title,hash,units) {
             plotBorderWidth: null,
             plotShadow: false,
             width: 450,
-            height: 300,
+            height: 300
         },
         exporting: {
             buttons : {
@@ -239,7 +239,7 @@ function drawPie(div,title,hash,units) {
             filename: 'resources'
         },
         title: {
-            text: title,
+            text: title
         },
         tooltip: {
             formatter: function() {
