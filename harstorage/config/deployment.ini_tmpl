@@ -20,6 +20,7 @@ full_stack = true
 static_files = true
 temp_store = %(here)s/data
 bin_store  = %(here)s/harstorage/lib
+ps_enabled = false
 
 cache_dir = %(here)s/data
 beaker.session.key = harstorage

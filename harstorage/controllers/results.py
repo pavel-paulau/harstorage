@@ -236,36 +236,42 @@ class ResultsController(BaseController):
             for page in har.har['log']['pages']:
                 page['startedDateTime'] = page['startedDateTime'].replace('+0000','+00:00')
             
-            #Store HAR for Page Speed
-            filename = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() )
-            pagespeed_bin = os.path.join( config['app_conf']['bin_store'], "pagespeed_bin")
-            outfile = filename + ".out"
-            
-            file = open(filename,'w')
-            file.write(json.dumps(har.har))
-            file.close()
-            
-            # Run pagespeed_bin
-            os.system(pagespeed_bin + \
-                " -input_file " + \
-                filename + \
-                " -output_format formatted_json " + \
-                "-output_file " + \
-                outfile)
-            
-            # Output report (JSON)
-            filename = outfile
-            file = open(filename,'r')
-            output = json.loads(file.read())
-            file.close()
+            if config['app_conf']['ps_enabled'] == 'true':
+                #Store HAR for Page Speed
+                filename = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() )
+                pagespeed_bin = os.path.join( config['app_conf']['bin_store'], "pagespeed_bin")
+                outfile = filename + ".out"
+                
+                file = open(filename,'w')
+                file.write(json.dumps(har.har))
+                file.close()
+                
+                # Run pagespeed_bin
+                os.system(pagespeed_bin + \
+                    " -input_file " + \
+                    filename + \
+                    " -output_format formatted_json " + \
+                    "-output_file " + \
+                    outfile)
+                
+                # Output report (JSON)
+                filename = outfile
+                file = open(filename,'r')
+                output = json.loads(file.read())
+                file.close()
 
-            # Page Speed scores
-            scores = dict()
+                # Page Speed scores
+                scores = dict()
+                
+                scores['Total Score'] = int(output['score'])
+                
+                for rule in output['rule_results']:
+                    scores[rule['localized_rule_name']]=int(rule['rule_score'])
             
-            scores['Total Score'] = int(output['score'])
-            
-            for rule in output['rule_results']:
-                scores[rule['localized_rule_name']]=int(rule['rule_score'])
+            else:
+                scores = dict()
+                
+                scores['Total Score'] = 100
             
             # Add document to collection
             mdb_handler.collection.insert({
