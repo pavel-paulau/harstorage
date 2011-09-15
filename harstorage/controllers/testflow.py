@@ -3,8 +3,7 @@ from harstorage.lib.MongoHandler import MongoDB
 import logging
 import json
 
-from pylons import request, response, session, tmpl_context as c, url
-from pylons.controllers.util import abort, redirect
+from pylons import request, tmpl_context as c
 
 from harstorage.lib.base import BaseController, render
 

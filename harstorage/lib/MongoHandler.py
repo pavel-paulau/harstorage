@@ -1,4 +1,4 @@
-from pymongo import objectid, Connection, ASCENDING, DESCENDING
+from pymongo import Connection
 
 class MongoDB():
     def __init__(self,host='localhost',port=27017):

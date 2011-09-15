@@ -8,9 +8,9 @@ import hashlib
 from mimetypes import guess_type
 from time import strftime, localtime
 
-from pylons import request, response, session, tmpl_context as c, url
+from pylons import request, response, tmpl_context as c
 from pylons import config
-from pylons.controllers.util import abort, redirect
+from pylons.controllers.util import redirect
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib import helpers as h
@@ -27,7 +27,7 @@ class ResultsController(BaseController):
         
         # Result table canvas
         c.metrics_table = list()
-        for index in range(7):
+        for i in range(7):
             c.metrics_table.append(list())
         
         # Result aggregation based on unique label and latest timestamp
@@ -159,10 +159,6 @@ class ResultsController(BaseController):
                     'hosts'         :har.hosts
                     }
         
-        # Resource stats
-        weights = har.weight_ratio()
-        requests = har.req_ratio()
-
         # Page Speed Scores
         scores = dict()
         

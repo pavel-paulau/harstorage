@@ -1,5 +1,5 @@
 import json
-from time import strftime, strptime, mktime
+from time import strptime, mktime
 from math import ceil
 from re import sub
 
