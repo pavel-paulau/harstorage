@@ -7,11 +7,13 @@ except ImportError:
 
 setup(
     name='harstorage',
-    version='0.1',
-    description='Standalone repository for automated client-side performance testing',
+    version='0.2',
+    description='Repository for automated client-side performance testing',
+    long_description="HAR Storage is repository for automated client-side performance testing. It's built on MongoDB and Pylons.",
     author='Pavel Paulau',
-    author_email='harstorage@googlegroups.com',
+    author_email='Pavel.Paulau@gmail.com',
     url='http://harstorage.com/',
+    license='BSD, see LICENSE.txt for details',
     install_requires=[
     ],
     setup_requires=["PasteScript>=1.6.3"],
