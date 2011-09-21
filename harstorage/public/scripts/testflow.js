@@ -1,8 +1,24 @@
 function submitFlow(){
+    selectors = document.getElementsByTagName('select');
+
+    selectors_num = selectors.length;
+    
+    for(i = 0; i < selectors_num/3; i++){
+        id = 1 + i*3;
+        start_ts    = selectors.item(id).options[ selectors.item(id).options.selectedIndex ].value;
+        end_ts      = selectors.item(id+1).options[ selectors.item(id+1).options.selectedIndex ].value;
+        if (end_ts < start_ts) {
+            alert("Invalid timestamps!");
+            return false;
+        }
+    }
     document.forms["testFlowForm"].onsubmit="return true;"
 }
 
 function addStep(button){
+    var i;
+    var prev_button;
+        
     // Find previous and new id
     prev_id = button.id.split("_")[0] + "_" + button.id.split("_")[1];
     new_id = prev_id.split("_")[0] + '_' + ( parseInt ( prev_id.split("_")[1], 10) +1 );
@@ -17,7 +33,7 @@ function addStep(button){
 
     // Update name and id of selectors
     selectors = new_div.getElementsByTagName('select');
-    for(var i = 0; i < selectors.length; i++)
+    for(i = 0; i < selectors.length; i++)
     {
         if(selectors.item(i).name == prev_id + '_label' )
         {
@@ -38,14 +54,14 @@ function addStep(button){
 
     // Update inputs
     inputs = new_div.getElementsByTagName('input');
-    for(var i = 0; i < inputs.length; i++)
+    for(i = 0; i < inputs.length; i++)
     {
         if(inputs.item(i).id == prev_id + '_add')
         {
             // Set new id
             inputs.item(i).id = new_id + '_add';
             // Hide previous button
-            var prev_button = document.getElementById(prev_id + '_add');
+            prev_button = document.getElementById(prev_id + '_add');
             prev_button.style.display = "none";
         }
         if(inputs.item(i).id == prev_id + '_del')
@@ -53,7 +69,7 @@ function addStep(button){
             // Set new id
             inputs.item(i).id = new_id + '_del';
             // Hide previous button
-            var prev_button = document.getElementById(prev_id + '_del');
+            prev_button = document.getElementById(prev_id + '_del');
             prev_button.style.display = "none";
             // Show current button
             inputs.item(i).style.display = "inline";
@@ -62,7 +78,7 @@ function addStep(button){
     }
     // Update head
     divs = new_div.getElementsByTagName('div');
-    for(var i = 0; i < divs.length; i++)
+    for(i = 0; i < divs.length; i++)
     {
         if(divs.item(i).id == prev_id + '_head' )
         {
@@ -77,6 +93,8 @@ function addStep(button){
 }
 
 function delStep(button){
+    var prev_button;
+    
     // Calculate id
     id      = button.id.split('_')[0] + '_' + button.id.split('_')[1];
     prev_id = button.id.split("_")[0] + '_' + ( parseInt ( button.id.split("_")[1], 10) - 1 );
@@ -89,11 +107,11 @@ function delStep(button){
     container.removeChild(div);
 
     // Show previous button
-    var prev_button = document.getElementById(prev_id + '_add');
+    prev_button = document.getElementById(prev_id + '_add');
     prev_button.style.display = "inline";
 
     if (prev_id != 'step_1') {
-        var prev_button = document.getElementById(prev_id + '_del');
+        prev_button = document.getElementById(prev_id + '_del');
         prev_button.style.display = "inline";
     }
 }
@@ -104,6 +122,8 @@ function sortNumber(a,b)
 }
 
 function setTimestamp(id){
+    var i;
+    
     var xmlhttp = new XMLHttpRequest();
 
     xmlhttp.onreadystatechange=function()
@@ -123,7 +143,7 @@ function setTimestamp(id){
             select = document.getElementById(id + '_start_ts');
             select.options.length = 0;
 
-            for (var i = 0; i < keySorted.length; i++){
+            for (i = 0; i < keySorted.length; i++){
                 ts = timestamps[ keySorted[i] ];
                 select.options[i]=new Option(ts, ts, false, false);
             }
@@ -133,7 +153,7 @@ function setTimestamp(id){
             select.options.length = 0;
             keySorted.reverse();
 
-            for (var i = 0; i < keySorted.length; i++){
+            for (i = 0; i < keySorted.length; i++){
                 ts = timestamps[ keySorted[i] ];
                 
                 select.options[i]=new Option(ts, ts, false, false);
