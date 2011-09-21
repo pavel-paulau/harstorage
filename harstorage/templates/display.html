@@ -36,7 +36,7 @@
 	$LAB
         .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
         .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()
-        .script("${h.url_for('/scripts/hs-ui.js')}").wait()
+        .script("${h.url_for('/scripts/datatables/TableTools.min.js')}").wait()
 		.script("${h.url_for('/scripts/jsapi.js')}")
         .script("${h.url_for('/scripts/gauge.js')}")
         .script("${h.url_for('/scripts/highcharts/highcharts.js')}")
@@ -46,5 +46,17 @@
 		.wait(function(){
 			json = eval("(" + "${c.json}".replace(/&quot;/g,'"') + ")");
  			drawTimeLine(json);
+
+			$(document).ready(function() {
+				$('#stats_table').dataTable({
+					"bJQueryUI": true,
+					"sPaginationType": "full_numbers",
+					"sDom": 'R<"H"Tfr>t<"F"ip>',
+					"oTableTools": {
+						"sSwfPath": "/swf/copy_cvs_xls.swf",
+						"aButtons": ["copy", "csv", "xls"]
+					}
+				});
+			});
 		})
 </script>
