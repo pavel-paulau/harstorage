@@ -50,8 +50,16 @@ class ChartController(BaseController):
         response.headers['Content-type']        = type
         
         # Response content        
-        with open(tempname, 'rn') as f:
-            shutil.copyfileobj(f, response)
+        img_file = open(img_name,'rb')
+
+        def stream_img():
+            chunk = img_file.read(1024)
+            while chunk:
+                yield chunk
+                chunk = img_file.read(1024)
+            img_file.close()
+            
+        return stream_img()
         
     def render_svg(self,svg,filename):
         # Render SVG
