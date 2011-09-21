@@ -62,7 +62,10 @@ class TestflowController(BaseController):
             time, size, req, score = self.get_avg( label,start_ts,end_ts )
             
             # Ordered labels
-            label = str(index + 1) + " - " + label
+            id = str(index + 1)
+            if index <9: id = '0' + id
+            
+            label = id + " - " + label
             
             # Data for table
             c.metrics_table[0].append( label    )
