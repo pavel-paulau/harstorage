@@ -5,13 +5,11 @@ import cairo
 import rsvg
 import hashlib
 import Image
+import shutil
 
-from pylons import request, response, session, tmpl_context as c, url
+from pylons import request, response
 from pylons import config
-from pylons.controllers.util import abort, redirect
-
-from harstorage.lib.base import BaseController, render
-from harstorage.lib import helpers as h
+from harstorage.lib.base import BaseController
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +20,7 @@ class ChartController(BaseController):
         svg         = request.POST['svg']
         filename    = request.POST['filename']
         width       = int( request.POST['width'] )
-
+        
         # Sizes
         if width == 960:
             height = 400
@@ -31,34 +29,29 @@ class ChartController(BaseController):
         elif width == 930:
             height = 550
 
-        # File type
-        response.headers['Content-type'] = type
-
         # Converting
         if type == 'image/png':
             # Filename
             ext         = '.png'
-            tempname    = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() + ext )
+            img_name    = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() + ext )
             
             # Create PNG file
-            self.render_png(svg,tempname,width,height)                                    
+            self.render_png(svg,img_name,width,height)
         elif type == 'image/svg+xml':
             # Filename
             ext         = '.svg'
-            tempname    = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() + ext )
+            img_name    = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() + ext )
             
             # Create SVG file
-            self.render_svg(svg,tempname)
+            self.render_svg(svg,img_name)
         
         # Response headers
-        file_size = os.path.getsize(tempname)            
         response.headers['Content-Disposition'] = "attachment; filename=" + filename + ext
-        response.headers['Content-Length']      = str(file_size)
-            
-        # Response content
-        f = open(tempname)        
-        response.write(f.read())
-        f.close()
+        response.headers['Content-type']        = type
+        
+        # Response content        
+        with open(tempname, 'rn') as f:
+            shutil.copyfileobj(f, response)
         
     def render_svg(self,svg,filename):
         # Render SVG
@@ -68,7 +61,7 @@ class ChartController(BaseController):
         
     def render_png(self,svg,filename,width,height):
         # Create PNG image
-        img =  cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        img = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         ctx = cairo.Context(img)
 
         rsvg.Handle(None, svg).render_cairo(ctx)
