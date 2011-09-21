@@ -35,6 +35,7 @@
 <script type='text/javascript'>
 	$LAB
         .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
+        .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()
         .script("${h.url_for('/scripts/hs-ui.js')}").wait()
 		.script("${h.url_for('/scripts/jsapi.js')}")
         .script("${h.url_for('/scripts/gauge.js')}")
