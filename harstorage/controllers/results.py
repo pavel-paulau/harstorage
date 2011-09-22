@@ -181,6 +181,9 @@ class ResultsController(BaseController):
                             })
         
     def harviewer(self):
+        # HAR Viewer customization
+        response.set_cookie('phaseInterval', '-1')
+        
         c.url = h.url_for(str('/results/download?id='+request.GET['har']))
         return render('./harviewer.html')
     
@@ -228,7 +231,7 @@ class ResultsController(BaseController):
             # Fix time format
             for entry in har.har['log']['entries']:
                 entry['startedDateTime'] = entry['startedDateTime'].replace('+0000','+00:00')
-        
+
             for page in har.har['log']['pages']:
                 page['startedDateTime'] = page['startedDateTime'].replace('+0000','+00:00')
             

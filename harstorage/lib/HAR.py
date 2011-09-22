@@ -5,6 +5,18 @@ from re import sub
 
 class HAR():
     def __init__(self,har):
+        # Fix Fidler HAR format
+        har = sub(
+                '"pages":null',
+                '"pages":[{\
+                    "startedDateTime":"1970-01-01T00:00:00.000+03:00",\
+                    "id":"Undefined",\
+                    "title":"Undefined",\
+                    "pageTimings": {}\
+                }]',
+                har)
+
+        # Parsing
         try:
             # Base case
             self.har = json.loads(har)
@@ -45,12 +57,15 @@ class HAR():
     def analyze(self):
         # Label
         self.label = self.har['log']['pages'][0]['id']
-
+        
         # URL
         self.url = self.har['log']['entries'][0]['request']['url']
         
         # Browser
-        self.browser = self.har['log']['browser']['name']
+        try:
+            self.browser = self.har['log']['browser']['name']
+        except:
+            self.browser = 'Udefined'
         
         # Requests
         self.requests = len( self.har['log']['entries'] )
@@ -63,7 +78,7 @@ class HAR():
         for entry in self.har['log']['entries']:
             # Full load time
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
-            start_time += float( entry['startedDateTime'].partition('.')[2].partition('+')[0] ) / 1000
+            start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('+')[0] )
             
             end_time =  start_time + entry['time']/1000
     
