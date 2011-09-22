@@ -135,7 +135,10 @@ class HAR():
                         hosts.append( header['value'] )
             
         # Full load time
-        self.full_load_time = int( (max - min)*1000 )
+        try:
+            self.full_load_time = self.har['log']['pages'][0]['pageTimings']['_myTime']
+        except:
+            self.full_load_time = int( (max - min)*1000 )
         
         # Average values
         self.connecting = self.connecting / self.requests
