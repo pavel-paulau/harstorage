@@ -35,16 +35,16 @@
 <script type='text/javascript'>
 	$LAB
         .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
-        .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()
+        .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()        
         .script("${h.url_for('/scripts/datatables/TableTools.min.js')}").wait()
-		.script("${h.url_for('/scripts/jsapi.js')}")
+	.script("${h.url_for('/scripts/jsapi.js')}")
         .script("${h.url_for('/scripts/gauge.js')}")
         .script("${h.url_for('/scripts/highcharts/highcharts.js')}")
         .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}")
         .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
         .script("${h.url_for('/scripts/plots.js')}").wait()
 		.wait(function(){
-			json = eval("(" + "${c.json}".replace(/&quot;/g,'"') + ")");
+			json = eval("(" + "${c.json}".replace(/&quot;/g,'"').replace(/&#34;/g,'"') + ")");
  			drawTimeLine(json);
 
 			$(document).ready(function() {
