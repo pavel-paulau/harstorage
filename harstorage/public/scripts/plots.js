@@ -1,3 +1,5 @@
+"use strict";
+
 // draw Gauge Chart
 function drawScore(score) {
     // value for chart
@@ -26,16 +28,16 @@ function drawScore(score) {
 }
 
 function setTimeLine(url,label,mode){
-	// Retrieve data for timeline via XHR calls
-	var xmlhttp = new XMLHttpRequest();
-	
-	xmlhttp.onreadystatechange=function()
-	{
-		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-			var json = eval("("+xmlhttp.responseText+")");
-			drawTimeLine(json);
-		}
-	}
+    // Retrieve data for timeline via XHR calls
+    var xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onreadystatechange=function()
+    {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    var json = eval("("+xmlhttp.responseText+")");
+                    drawTimeLine(json);
+            }
+    };
 
     xmlhttp.open("POST","timeline",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -46,24 +48,29 @@ function setTimeLine(url,label,mode){
 }
 
 function drawTimeLine(json) {
-	// Prepair data for charts
+    var key;
+    var i;
+
+    // Prepair data for charts
     var keySorted   = [];
     var timeSorted  = [];
     var sizeSorted  = [];
     var reqSorted   = [];
     var scoreSorted = [];
 
-    for (key in json.time_hash) keySorted.push(key);
+    for (key in json.time_hash) {
+        keySorted.push(key);
+    }
     keySorted.sort();
 
-    for (var i = 0; i < keySorted.length; i++){
+    for (i = 0; i < keySorted.length; i++){
         timeSorted.push( json.time_hash[ keySorted[i] ] );
         sizeSorted.push( json.size_hash[ keySorted[i] ] );
         reqSorted.push( json.requests_hash[ keySorted[i] ] );
         scoreSorted.push( json.score_hash[ keySorted[i] ] );
     }
 
-    chart = new Highcharts.Chart({
+    var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'timeline_div',
             zoomType: 'x',
@@ -278,9 +285,9 @@ function drawPie(div,title,hash,units) {
 function displayRunInfo() {
     var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.onreadystatechange=function()
+    xmlhttp.onreadystatechange = function()
     {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var json = eval("("+xmlhttp.responseText+")");
             
             // Page Speed Score - Gauge 
@@ -319,7 +326,7 @@ function displayRunInfo() {
             iframe.frameBorder = "0";
             $("#harviewer").html(iframe);
         }
-    }
+    };
 
     xmlhttp.open("POST","runinfo",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -336,13 +343,13 @@ function deleteRun(button,mode) {
     if (answer) {
         var xmlhttp = new XMLHttpRequest();
 
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 var response = xmlhttp.responseText;
                 window.location = response;
             }
-        }
+        };
 
         xmlhttp.open("POST","deleterun",true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

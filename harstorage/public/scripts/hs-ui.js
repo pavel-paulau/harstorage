@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(function() {
     $('#stats_table').dataTable({
         "bJQueryUI": true,
