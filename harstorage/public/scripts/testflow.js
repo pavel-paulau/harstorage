@@ -166,15 +166,13 @@ function setTimestamp(id){
         }
     };
 
-    xmlhttp.open("POST","dates",true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
     var select = document.getElementById(id);
     var label = select.options[select.selectedIndex].text;
+    var URI = "dates?label=" + label;
 
-    var parameters = "label="+label;
-
-    xmlhttp.send(parameters);
+    xmlhttp.open("GET", URI, true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send();
 }
 
 setTimestamp("step_1_label");

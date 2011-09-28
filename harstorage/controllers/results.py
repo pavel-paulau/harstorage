@@ -92,9 +92,9 @@ class ResultsController(BaseController):
 
     def timeline(self):
         # Options
-        url     = request.POST['url']
-        label   = request.POST['label']
-        mode    = request.POST['mode']
+        url     = request.GET['url']
+        label   = request.GET['label']
+        mode    = request.GET['mode']
         
         # MongoDB handler
         mdb_handler = MongoDB()
@@ -131,8 +131,8 @@ class ResultsController(BaseController):
         mdb_handler = MongoDB()
         
         # Timestamp from request
-        timestamp = request.POST['timestamp']
-        
+        timestamp = request.GET['timestamp']
+
         # MongoDB query
         test_result = mdb_handler.collection.find_one({"timestamp":timestamp})
         
@@ -192,9 +192,9 @@ class ResultsController(BaseController):
         mdb_handler = MongoDB()
         
         # Request parameters
-        label       = request.POST['label']
-        timestamp   = request.POST['timestamp']
-        mode        = request.POST['mode']
+        label       = request.GET['label']
+        timestamp   = request.GET['timestamp']
+        mode        = request.GET['mode']
         
         # Remove document from collection
         if mode == 'label':

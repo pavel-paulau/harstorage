@@ -39,12 +39,11 @@ function setTimeLine(url,label,mode){
             }
     };
 
-    xmlhttp.open("POST","timeline",true);
+    var URI = "timeline?url=" + url + "&label=" + label + "&mode=" + mode;
+
+    xmlhttp.open("GET",URI,true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-	var parameters = "url=" + url + "&label=" + label + "&mode=" + mode;
-
-	xmlhttp.send(parameters);
+    xmlhttp.send();
 }
 
 function drawTimeLine(json) {
@@ -155,9 +154,9 @@ function drawTimeLine(json) {
 }
 
 function drawPageSpeed (json) {
-    rules   = [];
-    scores  = [];
-    rows    = 0;
+    var rules   = [];
+    var scores  = [];
+    var rows    = 0;
 
     jQuery.each(json.pagespeed, function(key,value) {
         rules.push(key);
@@ -165,9 +164,9 @@ function drawPageSpeed (json) {
         rows += 1;
     });
 
-    height = 75 + 20 * rows;
+    var height = 75 + 20 * rows;
 
-    chart = new Highcharts.Chart({
+    var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'pagespeed',
             defaultSeriesType: 'bar',
@@ -222,13 +221,13 @@ function drawPageSpeed (json) {
 }
 
 function drawPie(div,title,hash,units) {
-    data  = [];
+    var data  = [];
 
     jQuery.each(hash, function(key,value) {
         data.push( [key,value]);
     });
 
-    chart = new Highcharts.Chart({
+    var chart = new Highcharts.Chart({
         chart: {
             renderTo: div,
             plotBackgroundColor: null,
@@ -328,14 +327,13 @@ function displayRunInfo() {
         }
     };
 
-    xmlhttp.open("POST","runinfo",true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
     var ts_selector = document.getElementById("run_timestamp");
-    timestamp = ts_selector.options[ts_selector.selectedIndex].text;
-    var parameters = "timestamp="+timestamp;
+    var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
+    var URI  = "runinfo?timestamp=" + timestamp;
 
-    xmlhttp.send(parameters);
+    xmlhttp.open("GET",URI,true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send();
 }
 
 function deleteRun(button,mode) {
@@ -351,13 +349,12 @@ function deleteRun(button,mode) {
             }
         };
 
-        xmlhttp.open("POST","deleterun",true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
         var ts_selector = document.getElementById("run_timestamp");
-        timestamp = ts_selector.options[ts_selector.selectedIndex].text;
-        var parameters = "timestamp="+timestamp+"&label="+button.id+"&mode="+mode;
+        var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
+        var URI = "deleterun?timestamp=" + timestamp + "&label="+ button.id + "&mode=" + mode;
 
-        xmlhttp.send(parameters);
+        xmlhttp.open("GET",URI,true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send();
     }
 }

@@ -23,8 +23,8 @@ class TestflowController(BaseController):
     
     def dates(self):
         # Label
-        label = request.POST['label']
-        
+        label = request.GET['label']
+
         # MongoDB handler
         md_handler = MongoDB()
         
