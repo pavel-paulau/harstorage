@@ -1,7 +1,7 @@
 <%inherit file="/base.html"/>
 <%def name="title()">Test Flow</%def>
 <center>
-	<div>
+    <div>
         <form action="display" id="testFlowForm" method="post" onsubmit="return false;">
             <fieldset class="testflow-fs">
                 <legend class="upload-legend">Create Test Flow</legend>
@@ -29,7 +29,6 @@
                         
                         <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="step-image" onclick="addStep(this);"/>
                         <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="step-image" onclick="delStep(this);" style="display:none"/>
-
                     </div>
                 </div>
                 <input type="submit" class="single-button" value="Display Test Flow" onclick="return submitFlow();"/>

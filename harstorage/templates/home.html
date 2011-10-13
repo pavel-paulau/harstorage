@@ -5,8 +5,8 @@
         <form action="/results/upload" enctype="multipart/form-data" method="post">
             <fieldset class="upload-fs">
                 <legend class="upload-legend">Upload new file</legend>
-                    <input id="file" name="file" size="25" type="file" class="input-file"/>
-                    <input id="upload" name="upload" type="submit" value="Upload" class="input-button"/>
+                <input id="file" name="file" size="25" type="file" class="input-file"/>
+                <input id="upload" name="upload" type="submit" value="Upload" class="input-button"/>
             </fieldset>
         </form>
     </div>
@@ -45,8 +45,8 @@
 </center>
 
 <script type='text/javascript'>
-	$LAB
-        .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
-        .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()
-        .script("${h.url_for('/scripts/hs-ui.js')}").wait()
+    $LAB
+    .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}")
+    .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()
+    .script("${h.url_for('/scripts/hs-ui.js')}").wait()
 </script>

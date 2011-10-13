@@ -9,36 +9,36 @@
         <h4>Run Info</h4>
     </div>
     <div style="text-align:right;margin-top:1em;">
-            <select id="run_timestamp" class="chosen-select" style="width:200px;" onchange="displayRunInfo();">
-                % for timestamp in c.timestamp:
-                <option value="${timestamp}"> ${timestamp}</option>
-                % endfor
-            </select>
+        <select id="run_timestamp" class="chosen-select" style="width:200px;" onchange="displayRunInfo();">
+            % for timestamp in c.timestamp:
+            <option value="${timestamp}"> ${timestamp}</option>
+            % endfor
+        </select>
     </div>
 </div>
 
 <div class="tabber">
     <div class="tabbertab" title="Summary">
-            <div class="gauge" id="gauge" ></div>
-            <div class="stat-container-max">
-                <div class="stat-title-max">Full Load Time:</div>       <div class="stat-value" id="full-load-time"></div>
-                <div class="stat-title-max">Total DNS Time:</div>       <div class="stat-value" id="dns"></div>
-                <div class="stat-title-max">Total Transfer Time:</div>  <div class="stat-value" id="transfer"></div>
-                <div class="stat-title-max">Total Server Time:</div>    <div class="stat-value" id="server"></div>
-                <div class="stat-title-max">AVG Connecting Time:</div>  <div class="stat-value" id="connecting"></div>
-                <div class="stat-title-max">AVG Blocking Time:</div>    <div class="stat-value" id="blocked"></div>
-            </div>
-            <div class="stat-container-min">
-                <div class="stat-title-min">Total Size:</div>           <div class="stat-value" id="total-size"></div>
-                <div class="stat-title-min">Text Files:</div>           <div class="stat-value" id="text-size"></div>
-                <div class="stat-title-min">Media Files:</div>          <div class="stat-value" id="media-size"></div>
-                <div class="stat-title-min">Cache Size:</div>           <div class="stat-value" id="cache-size"></div>
-            </div>
-            <div class="stat-container-min">
-                <div class="stat-title-min">Requests:</div>             <div class="stat-value" id="requests"></div>
-                <div class="stat-title-min">Redirects:</div>            <div class="stat-value" id="redirects"></div>
-                <div class="stat-title-min">Bad Requests:</div>         <div class="stat-value" id="bad-req"></div>
-                <div class="stat-title-min">Hosts:</div>                <div class="stat-value" id="hosts"></div>
+        <div class="gauge" id="gauge" ></div>
+        <div class="stat-container-max">
+            <div class="stat-title-max">Full Load Time:</div>       <div class="stat-value" id="full-load-time"></div>
+            <div class="stat-title-max">Total DNS Time:</div>       <div class="stat-value" id="dns"></div>
+            <div class="stat-title-max">Total Transfer Time:</div>  <div class="stat-value" id="transfer"></div>
+            <div class="stat-title-max">Total Server Time:</div>    <div class="stat-value" id="server"></div>
+            <div class="stat-title-max">AVG Connecting Time:</div>  <div class="stat-value" id="connecting"></div>
+            <div class="stat-title-max">AVG Blocking Time:</div>    <div class="stat-value" id="blocked"></div>
+        </div>
+        <div class="stat-container-min">
+            <div class="stat-title-min">Total Size:</div>           <div class="stat-value" id="total-size"></div>
+            <div class="stat-title-min">Text Files:</div>           <div class="stat-value" id="text-size"></div>
+            <div class="stat-title-min">Media Files:</div>          <div class="stat-value" id="media-size"></div>
+            <div class="stat-title-min">Cache Size:</div>           <div class="stat-value" id="cache-size"></div>
+        </div>
+        <div class="stat-container-min">
+            <div class="stat-title-min">Requests:</div>             <div class="stat-value" id="requests"></div>
+            <div class="stat-title-min">Redirects:</div>            <div class="stat-value" id="redirects"></div>
+            <div class="stat-title-min">Bad Requests:</div>         <div class="stat-value" id="bad-req"></div>
+            <div class="stat-title-min">Hosts:</div>                <div class="stat-value" id="hosts"></div>
             </div>
     </div>
 
@@ -66,16 +66,16 @@
 </center>
 <script type='text/javascript' src="${h.url_for('/scripts/tabber.js')}"></script>
 <script type='text/javascript'>
-	$LAB
-        .script("${h.url_for('/scripts/chosen.jquery.js')}")
-        .script("${h.url_for('/scripts/jsapi.js')}")
-        .script("${h.url_for('/scripts/gauge.js')}")
-        .script("${h.url_for('/scripts/highcharts/highcharts.js')}")
-        .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}")
-        .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
-        .script("${h.url_for('/scripts/plots.js')}").wait()
-		.wait(function(){
-			setTimeLine("${c.url}","${c.label}","${c.mode}");
-			displayRunInfo();
-		})
+    $LAB
+    .script("${h.url_for('/scripts/chosen.jquery.js')}")
+    .script("${h.url_for('/scripts/jsapi.js')}")
+    .script("${h.url_for('/scripts/gauge.js')}")
+    .script("${h.url_for('/scripts/highcharts/highcharts.js')}")
+    .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}")
+    .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
+    .script("${h.url_for('/scripts/plots.js')}").wait()
+            .wait(function(){
+                    setTimeLine("${c.url}","${c.label}","${c.mode}");
+                    displayRunInfo();
+            })
 </script>

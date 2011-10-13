@@ -1,32 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-	<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>${self.title()}</title>
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main.css')}" />
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/chosen/chosen.css')}" />
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/table_jui.css')}" />
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/ColReorder.css')}" />
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/TableTools_JUI.css')}" />
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>${self.title()}</title>
 
-        <script type="text/javascript">
-            if (navigator.userAgent.indexOf("WebKit") == -1 && navigator.userAgent.indexOf("Firefox") == -1 ){
-                alert("Unsupported browser! Use Chrome, Safari or Firefox instead.");
-            }
-        </script>
-		
-        <script type='text/javascript' src="${h.url_for('/scripts/jquery.min.js')}"></script>
-		<script type='text/javascript' src="${h.url_for('/scripts/LAB.min.js')}"></script>
-    </head>
-    <body>
-        <div class="header_l"><a href="/">HAR Storage</a></div>
-        <div class="header_r"><a href="http://code.google.com/p/harstorage/w/list">Documentation</a></div>
-        <div class="header_r"><a href="https://groups.google.com/group/harstorage/?hl=en">Discussion Group</a></div>
-        <hr />
-		${next.body()}
-		<hr />
-	</body>
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/chosen/chosen.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/table_jui.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/ColReorder.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/TableTools_JUI.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
+
+    <script type="text/javascript">
+        if (navigator.userAgent.indexOf("WebKit") == -1 && navigator.userAgent.indexOf("Firefox") == -1 ){
+            alert("Unsupported browser! Pleas use Chrome, Safari or Firefox instead.");
+        }
+    </script>
+    <script type='text/javascript' src="${h.url_for('/scripts/jquery-1.6.3.min.js')}"></script>
+    <script type='text/javascript' src="${h.url_for('/scripts/LAB.min.js')}"></script>
+</head>
+<body>
+    <div class="header_l"><a href="/">HAR Storage</a></div>
+    <div class="header_r"><a href="http://code.google.com/p/harstorage/w/list">Documentation</a></div>
+    <div class="header_r"><a href="https://groups.google.com/group/harstorage/?hl=en">Discussion Group</a></div>
+    <hr />
+
+    ${next.body()}
+
+    <hr />
+    </body>
 </html>
