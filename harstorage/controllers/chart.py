@@ -5,7 +5,6 @@ import cairo
 import rsvg
 import hashlib
 import Image
-import shutil
 
 from pylons import request, response
 from pylons import config
