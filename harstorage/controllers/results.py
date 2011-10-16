@@ -297,6 +297,7 @@ class ResultsController(BaseController):
         file = open(filename, 'r')
         data = file.read()
         file.close()
+        data = 'var HARjson = ' + data + ';'
         
         response.content_type = guess_type(filename)[0] or 'text/plain'
         return data

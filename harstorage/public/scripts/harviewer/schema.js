@@ -1,12 +1,4 @@
-/* See license.txt for terms of usage */
-
-require.def("preview/harSchema", [], function() {
-
-// ************************************************************************************************
-// HAR Schema Definition
-
-// Date time fields use ISO8601 (YYYY-MM-DDThh:mm:ss.sTZD, e.g. 2009-07-24T19:20:30.45+01:00)
-var dateTimePattern = /^(\d{4})(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))/;
+var dateTimePattern = /(\d\d\d\d)(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))/;
 
 /**
  * Root HTML Archive type.
@@ -23,9 +15,8 @@ var logType = {
                     "version": {"type": "string"},
                     "creator": {"$ref": "creatorType"},
                     "browser": {"$ref": "browserType"},
-                    "pages": {"type": "array", "optional": true, "items": {"$ref": "pageType"}},
-                    "entries": {"type": "array", "items": {"$ref": "entryType"}},
-                    "comment": {"type": "string", "optional": true}
+                    "pages": {"type": "array", "items": {"$ref": "pageType"}},
+                    "entries": {"type": "array", "items": {"$ref": "entryType"}}
                 }
             }
         }
@@ -38,9 +29,8 @@ var creatorType = {
         "description": "Name and version info of the log creator app.",
         "type": "object",
         "properties": {
-            "name": {"type": "string"},
-            "version": {"type": "string"},
-            "comment": {"type": "string", "optional": true}
+            "name" : {"type": "string"},
+            "version" : {"type": "string"}
         }
     }
 };
@@ -52,9 +42,8 @@ var browserType = {
         "type": "object",
         "optional": true,
         "properties": {
-            "name": {"type": "string"},
-            "version": {"type": "string"},
-            "comment": {"type": "string", "optional": true}
+            "name" : {"type": "string"},
+            "version" : {"type": "string"}
         }
     }
 };
@@ -68,8 +57,7 @@ var pageType = {
             "startedDateTime": {"type": "string", "format": "date-time", "pattern": dateTimePattern},
             "id": {"type": "string", "unique": true},
             "title": {"type": "string"},
-            "pageTimings": {"$ref": "pageTimingsType"},
-            "comment": {"type": "string", "optional": true}
+            "pageTimings": {"$ref": "pageTimingsType"}
         }
     }
 };
@@ -79,9 +67,8 @@ var pageTimingsType = {
         "id": "pageTimingsType",
         "description": "Timing info about page load",
         "properties": {
-            "onContentLoad": {"type": "number", "optional": true, "min": -1},
-            "onLoad": {"type": "number", "optional": true, "min": -1},
-            "comment": {"type": "string", "optional": true}
+            "onContentLoad": {"type": "number", "min": -1},
+            "onLoad": {"type": "number", "min": -1}
         }
     }
 };
@@ -98,10 +85,7 @@ var entryType = {
             "request" : {"$ref": "requestType"},
             "response" : {"$ref": "responseType"},
             "cache" : {"$ref": "cacheType"},
-            "timings" : {"$ref": "timingsType"},
-            "serverIPAddress" : {"type": "string", "optional": true},
-            "connection" : {"type": "string", "optional": true},
-            "comment": {"type": "string", "optional": true}
+            "timings" : {"$ref": "timingsType"}
         }
     }
 };
@@ -111,7 +95,7 @@ var requestType = {
         "id": "requestType",
         "description": "Monitored request",
         "properties": {
-            "method": {"type": "string"},
+            "method": {"type": "string", "enum": ["GET", "POST", "PUT", "DELETE"]},
             "url": {"type": "string"},
             "httpVersion": {"type" : "string"},
             "cookies" : {"type": "array", "items": {"$ref": "cookieType"}},
@@ -119,8 +103,7 @@ var requestType = {
             "queryString" : {"type": "array", "items": {"$ref": "recordType"}},
             "postData" : {"$ref": "postDataType"},
             "headersSize" : {"type": "integer"},
-            "bodySize" : {"type": "integer"},
-            "comment": {"type": "string", "optional": true}
+            "bodySize" : {"type": "integer"}
         }
     }
 };
@@ -131,8 +114,7 @@ var recordType = {
         "description": "Helper name-value pair structure.",
         "properties": {
             "name": {"type": "string"},
-            "value": {"type": "string"},
-            "comment": {"type": "string", "optional": true}
+            "value": {"type": "string"}
         }
     }
 };
@@ -150,8 +132,7 @@ var responseType = {
             "content" : {"$ref": "contentType"},
             "redirectURL" : {"type": "string"},
             "headersSize" : {"type": "integer"},
-            "bodySize" : {"type": "integer"},
-            "comment": {"type": "string", "optional": true}
+            "bodySize" : {"type": "integer"}
         }
     }
 };
@@ -166,9 +147,7 @@ var cookieType = {
             "path": {"type": "string", "optional": true},
             "domain" : {"type": "string", "optional": true},
             "expires" : {"type": "string", "optional": true},
-            "httpOnly" : {"type": "boolean", "optional": true},
-            "secure" : {"type": "boolean", "optional": true},
-            "comment": {"type": "string", "optional": true}
+            "httpOnly" : {"type": "boolean", "optional": true}
         }
     }
 }
@@ -188,11 +167,9 @@ var postDataType = {
                     "name": {"type": "string"},
                     "value": {"type": "string", "optional": true},
                     "fileName": {"type": "string", "optional": true},
-                    "contentType": {"type": "string", "optional": true},
-                    "comment": {"type": "string", "optional": true}
+                    "contentType": {"type": "string", "optional": true}
                 }
-            },
-            "comment": {"type": "string", "optional": true}
+            }
         }
     }
 };
@@ -205,9 +182,7 @@ var contentType = {
             "size": {"type": "integer"},
             "compression": {"type": "integer", "optional": true},
             "mimeType": {"type": "string"},
-            "text": {"type": "string", "optional": true},
-            "encoding": {"type": "string", "optional": true},
-            "comment": {"type": "string", "optional": true}
+            "text": {"type": "string", "optional": true}
         }
     }
 };
@@ -218,8 +193,7 @@ var cacheType = {
         "description": "Info about a response coming from the cache.",
         "properties": {
             "beforeRequest": {"$ref": "cacheEntryType"},
-            "afterRequest": {"$ref": "cacheEntryType"},
-            "comment": {"type": "string", "optional": true}
+            "afterRequest": {"$ref": "cacheEntryType"}
         }
     }
 };
@@ -233,8 +207,7 @@ var cacheEntryType = {
             "expires": {"type": "string", optional: "true"},
             "lastAccess": {"type": "string"},
             "eTag": {"type": "string"},
-            "hitCount": {"type": "integer"},
-            "comment": {"type": "string", "optional": true}
+            "hitCount": {"type": "integer"}
         }
     }
 };
@@ -244,14 +217,12 @@ var timingsType = {
         "id": "timingsType",
         "description": "Info about request-response timing.",
         "properties": {
-            "dns": {"type": "integer", "optional": true, "min": -1},
-            "connect": {"type": "integer", "optional": true, "min": -1},
-            "blocked": {"type": "integer", "optional": true, "min": -1},
+            "dns": {"type": "integer", "min": -1},
+            "connect": {"type": "integer", "min": -1},
+            "blocked": {"type": "integer", "min": -1},
             "send": {"type": "integer", "min": -1},
             "wait": {"type": "integer", "min": -1},
-            "receive": {"type": "integer", "min": -1},
-            "ssl": {"type": "integer", "optional": true, "min": -1},
-            "comment": {"type": "string", "optional": true}
+            "receive": {"type": "integer", "min": -1}
         }
     }
 };
@@ -265,7 +236,7 @@ Schema.prototype =
     registerType: function()
     {
         var doIt = function(my, obj){
-            for (var name in obj) {
+            for (name in obj) {
                 if (obj.hasOwnProperty(name) && name != "prototype") {
                     my[name] = obj[name];
                 }
@@ -302,7 +273,18 @@ schema.registerType(
 
 // ************************************************************************************************
 
-return schema;
+/**
+ * HAR file validation using Dojo:
+ * 
+ * dojo.require("dojox.json.schema");
+ * dojo.require("dojox.json.ref"); 
+ *
+ * var inputData = ... // Input HAR data (JSON string)
+ * var resolvedSchema = dojox.json.ref.resolveJson(schema);
+ * var results = dojox.json.schema.validate(inputData, resolvedSchema.logType);
+ * if (results.valid)
+ *     console.log("Input data OK!");
+ * else
+ *     console.log(results.errors);
+ */
 
-// ************************************************************************************************
-});
