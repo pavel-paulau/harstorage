@@ -14,8 +14,10 @@
     <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
 
     <script type="text/javascript">
-        if (navigator.userAgent.indexOf("WebKit") == -1 && navigator.userAgent.indexOf("Firefox") == -1 ){
-            alert("Unsupported browser! Pleas use Chrome, Safari or Firefox instead.");
+        if (navigator.userAgent.indexOf("WebKit")  == -1 &&
+            navigator.userAgent.indexOf("Opera")   == -1 &&
+            navigator.userAgent.indexOf("Firefox") == -1 ){
+                alert("Unsupported browser!");
         }
     </script>
     <script type='text/javascript' src="${h.url_for('/scripts/jquery-1.6.3.min.js')}"></script>
