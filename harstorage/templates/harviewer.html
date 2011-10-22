@@ -1,40 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>HAR Viewer</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet"  href="${h.url_for('/styles/harviewer/har.css')}" type="text/css"/>
-
-    <script type='text/javascript' src='${h.url_for("/scripts/harviewer/schema.js")}'></script>
-    <script type='text/javascript' src='${h.url_for("/scripts/harviewer/har.js")}'></script>
-
-    <script type='text/javascript' src='${h.url_for(c.url)}'></script>
-
-    <script type='text/javascript'>
-    function initHAR() {
-            var _3cb = document.getElementById('viewer');
-            var _3cc = HARjson;
-            if ( _3cc ) {
-                    // in IE there's a race condition
-                    if ( "undefined" === typeof(HAR.Model) ) {
-                            setTimeout(initHAR, 1000);
-                            return;
-                    }
-
-                    HAR.Model.appendData(_3cc);
-                    HAR.Tab.Preview.append(_3cc, _3cb);
-                    var _3ce = document.getElementById("tabDOMBody");
-                    _3ce.updated = false;
-            }
-    };
-
-    window.onload = initHAR;
-    </script>
+    <link rel="stylesheet" href="${h.url_for('/styles/harviewer/harPreview.css')}" type="text/css"/>
 </head>
-
-<body>
-    <div id=viewer></div>
-    <div class=tabDOMBody id=tabDOMBody></div>
+<body style="margin:0">
+    <div id="content"></div>
+    <script type='text/javascript' src="${h.url_for('/scripts/jquery-1.6.3.min.js')}"></script>
+    <script type='text/javascript' src="${h.url_for('/scripts/harviewer/require.js')}"></script>
+    <script type='text/javascript' src="${h.url_for('/scripts/harviewer/core/trace.js')}"></script>
+    <script type='text/javascript' src="${h.url_for('/scripts/harviewer/domplate/domplate.js')}"></script>
+    <script type='text/javascript' src="${h.url_for('/scripts/harviewer/harPreview.js')}"></script>
 </body>
-
 </html>

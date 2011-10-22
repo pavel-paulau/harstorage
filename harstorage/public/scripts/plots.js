@@ -312,7 +312,7 @@ function displayRunInfo() {
 
             // HAR Viewer
             var iframe = document.createElement('iframe');
-            iframe.src = "/results/harviewer?har="+json.har;
+            iframe.src = "/results/harviewer?inputUrl=/results/download%3Fid%3D"+json.har+"&expand=true";
             iframe.width = "940";
             iframe.height = "400";
             iframe.frameBorder = "0";

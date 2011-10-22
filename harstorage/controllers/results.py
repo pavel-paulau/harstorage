@@ -185,8 +185,7 @@ class ResultsController(BaseController):
     def harviewer(self):
         # HAR Viewer customization
         response.set_cookie('phaseInterval', '-1')
-        
-        c.url = h.url_for(str('/results/download?id='+request.GET['har']))
+
         return render('./harviewer.html')
     
     def deleterun(self):
@@ -296,12 +295,13 @@ class ResultsController(BaseController):
 
     def download(self):
         id = request.GET['id']
-        
+
         filename = os.path.join( config['app_conf']['temp_store'], id )
         file = open(filename, 'r')
         data = file.read()
         file.close()
-        data = 'var HARjson = ' + data + ';'
-        
+
+        data = "onInputData(" + data + ");"
+
         response.content_type = guess_type(filename)[0] or 'text/plain'
         return data
