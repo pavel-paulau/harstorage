@@ -18,30 +18,34 @@ class HAR():
 
         # Parsing
         try:
-            # Base case
             self.har = json.loads(har)
             self.origin = har
-            self.status = 'Ok'
+            self.status = 'Successful'
+        except ValueError as error:
+            if len(har) == 0:
+                self.status = 'Empty file'
+            else:
+                try:
+                    self.har = json.loads(har.decode('latin-1').encode('utf-8'))
+                    self.origin = har.decode('latin-1').encode('utf-8')
+                    self.status = 'Successful'
+                except Exception as error:
+                    self.status = error            
+        finally:
+            self.total_size = self.text_size = self.media_size = self.cached = 0
+            self.full_load_time = self.dns = self.transfer = self.connecting = self.server = self.blocked = 0
+            self.redirects = self.bad_req = 0
+            self.hosts = 0
+
+        '''
         except:
-            try:
-                # Fix for latin-1
-                self.har = json.loads(har.decode('latin-1').encode('utf-8'))
-                self.origin = har.decode('latin-1').encode('utf-8')
-                self.status = 'Ok'
-            except:
                 try:
                     # Fix for unicode
                     temp = sub("'","\"", sub("u'","\"", har) )
                     self.har = json.loads( temp )
                     self.origin = temp 
                     self.status = 'Ok'
-                except:
-                    self.status = "Failed to read HAR"
-                    
-        self.total_size = self.text_size = self.media_size = self.cached = 0
-        self.full_load_time = self.dns = self.transfer = self.connecting = self.server = self.blocked = 0
-        self.redirects = self.bad_req = 0
-        self.hosts = 0
+        '''
     
     # Convert Bytes to Kilobytes
     def b2k(self,value):

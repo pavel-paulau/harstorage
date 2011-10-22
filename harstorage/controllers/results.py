@@ -223,7 +223,7 @@ class ResultsController(BaseController):
             har = HAR( request.POST['file'] )
         
         # Check for initialization status
-        if har.status == 'Ok':
+        if har.status == 'Successful':
             # Parsing imported HAR file
             har.analyze()
             
@@ -286,11 +286,17 @@ class ResultsController(BaseController):
                 "ps_scores"     :scores,
                 "har"           :har.origin
             })
-            
-            redirect('/results/details?label=' + har.label)
+
+            try:
+                if request.headers['automated'] == 'true': return 'Successful'
+            except KeyError:
+                redirect('/results/details?label=' + har.label) # redirect to details
         else:
-            # Display error page
-            return render('./upload.html')
+            try:
+                if request.headers['automated'] == 'true': return har.status # Return exception
+            except KeyError:
+                c.error = har.status
+                return render('./upload.html') # Display error page
 
     def download(self):
         id = request.GET['id']
