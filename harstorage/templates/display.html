@@ -44,8 +44,7 @@
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        json = eval("(" + "${c.json}".replace(/&quot;/g,'"').replace(/&#34;/g,'"') + ")");
-        drawTimeLine(json);
+        drawTimeLine("${c.points}");
 
         $(document).ready(function() {
             $('#stats_table').dataTable({

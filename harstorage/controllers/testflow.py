@@ -1,7 +1,6 @@
 from harstorage.lib.MongoHandler import MongoDB
 
 import logging
-import json
 
 from pylons import request, tmpl_context as c
 
@@ -28,21 +27,21 @@ class TestflowController(BaseController):
         # MongoDB handler
         md_handler = MongoDB()
         
-        dates = dict()
-        index = 0
-        for document in md_handler.collection.find({'label':label}).sort("timestamp",-1):
-            dates[index] = (document['timestamp'])
-            index += 1
-        
-        return json.dumps(dates)
+        dates = str()
+
+        for document in md_handler.collection.find({'label':label}).sort("timestamp",1):
+            dates += document['timestamp'] + ';'
+            
+        return dates[:-1]
             
     def display(self):
-        # 4 Hashes for timeline chart
-        time_hash     = dict()
-        size_hash     = dict()
-        requests_hash = dict()
-        score_hash    = dict()
-        
+        # 5 Arrays for timeline chart
+        lbl_points      = str()
+        time_points     = str()
+        size_points     = str()
+        req_points      = str()
+        score_points    = str()
+
         # Initial row count
         c.rowcount = 0
         
@@ -76,19 +75,18 @@ class TestflowController(BaseController):
             
             c.rowcount += 1
             
-            # Data for timeline
-            time_hash[label]        = time
-            size_hash[label]        = size
-            requests_hash[label]    = req
-            score_hash[label]       = score
-        
-        c.json = json.dumps({
-            "time_hash"     : time_hash,
-            "size_hash"     : size_hash,
-            "requests_hash" : requests_hash,
-            "score_hash"    : score_hash
-        })
-        
+            lbl_points      += str(label)+"#"
+            time_points     += str(time)+"#"
+            size_points     += str(size)+"#"
+            req_points      += str(req)+"#"
+            score_points    += str(score)+"#"
+
+        c.points = lbl_points[:-1]+";"\
+                    +time_points[:-1]+";"\
+                    +size_points[:-1]+";"\
+                    +req_points[:-1]+";"\
+                    +score_points[:-1]
+
         return render('./display.html')
         
     def get_avg(self,label,start_ts,end_ts):

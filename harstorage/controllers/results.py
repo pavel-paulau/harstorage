@@ -99,32 +99,34 @@ class ResultsController(BaseController):
         # MongoDB handler
         mdb_handler = MongoDB()
         
-        # 4 Hashes for timeline chart
-        time_hash     = dict()
-        size_hash     = dict()
-        requests_hash = dict()
-        score_hash    = dict()
+        # 5 Arrays for timeline chart
+        ts_points       = str()
+        time_points     = str()
+        size_points     = str()
+        req_points      = str()
+        score_points    = str()
         
         # Querying data for timeline
         if mode == 'label':
-            for result in mdb_handler.collection.find({"label":label}).sort("timestamp",-1):
-                time_hash[result["timestamp"]]        = result["full_load_time"]
-                size_hash[result["timestamp"]]        = result["total_size"]
-                requests_hash[result["timestamp"]]    = result["requests"]
-                score_hash[result["timestamp"]]       = result['ps_scores']['Total Score']
+            for result in mdb_handler.collection.find({"label":label}).sort("timestamp",1):
+                ts_points       += str(result["timestamp"])+"#"
+                time_points     += str(result["full_load_time"])+"#"
+                size_points     += str(result["total_size"])+"#"
+                req_points      += str(result["requests"])+"#"
+                score_points    += str(result['ps_scores']['Total Score'])+"#"
         else:
-            for result in mdb_handler.collection.find({"url":url}).sort("timestamp",-1):
-                time_hash[result["timestamp"]]        = result["full_load_time"]
-                size_hash[result["timestamp"]]        = result["total_size"]
-                requests_hash[result["timestamp"]]    = result["requests"]
-                score_hash[result["timestamp"]]       = result['ps_scores']['Total Score']
-        
-        return json.dumps({
-            "time_hash"     : time_hash,
-            "size_hash"     : size_hash,
-            "requests_hash" : requests_hash,
-            "score_hash"    : score_hash
-        })
+            for result in mdb_handler.collection.find({"url":url}).sort("timestamp",1):
+                ts_points       += str(result["timestamp"])+"#"
+                time_points     += str(result["full_load_time"])+"#"
+                size_points     += str(result["total_size"])+"#"
+                req_points      += str(result["requests"])+"#"
+                score_points    += str(result['ps_scores']['Total Score'])+"#"
+
+        return ts_points[:-1]+";"\
+                +time_points[:-1]+";"\
+                +size_points[:-1]+";"\
+                +req_points[:-1]+";"\
+                +score_points[:-1]
 
     def runinfo(self):
         # MongoDB handler

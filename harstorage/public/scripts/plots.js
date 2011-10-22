@@ -34,39 +34,32 @@ function setTimeLine(url,label,mode){
     xmlhttp.onreadystatechange=function()
     {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                    var json = eval("("+xmlhttp.responseText+")");
-                    drawTimeLine(json);
+                    drawTimeLine(xmlhttp.responseText);
             }
     };
 
     var URI = "timeline?url=" + url + "&label=" + label + "&mode=" + mode;
 
     xmlhttp.open("GET",URI,true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send();
 }
 
-function drawTimeLine(json) {
-    var key;
-    var i;
+function drawTimeLine(points) {
+    var index;
 
-    // Prepair data for charts
-    var keySorted   = [];
-    var timeSorted  = [];
-    var sizeSorted  = [];
-    var reqSorted   = [];
-    var scoreSorted = [];
+    var splitResults = points.split(';');
 
-    for (key in json.time_hash) {
-        keySorted.push(key);
-    }
-    keySorted.sort();
+    var tsArray     = splitResults[0].split('#');
+    var timeArray   = splitResults[1].split('#');
+    var sizeArray   = splitResults[2].split('#');
+    var reqArray    = splitResults[3].split('#');
+    var scoreArray  = splitResults[4].split('#');
 
-    for (i = 0; i < keySorted.length; i++){
-        timeSorted.push( json.time_hash[ keySorted[i] ] );
-        sizeSorted.push( json.size_hash[ keySorted[i] ] );
-        reqSorted.push( json.requests_hash[ keySorted[i] ] );
-        scoreSorted.push( json.score_hash[ keySorted[i] ] );
+    for (index = 0; index < tsArray.length; index++) {
+        timeArray[index]    =   parseInt(timeArray[index]);
+        sizeArray[index]    =   parseInt(sizeArray[index]);
+        reqArray[index]     =   parseInt(reqArray[index]);
+        scoreArray[index]   =   parseInt(scoreArray[index]);
     }
 
     var chart = new Highcharts.Chart({
@@ -85,8 +78,8 @@ function drawTimeLine(json) {
         },
         title: { text: 'Performance Trends' },
         xAxis: [{
-            categories          : keySorted,
-            tickInterval        : Math.ceil(keySorted.length / 10),
+            categories          : tsArray,
+            tickInterval        : Math.ceil(tsArray.length / 10),
             tickmarkPlacement   : 'on'
         }],
         yAxis: [{ // yAxis #1
@@ -133,22 +126,22 @@ function drawTimeLine(json) {
             name: 'Full Load Time',
             type: 'spline',
             yAxis: 0,
-            data: timeSorted
+            data: timeArray
         }, {
             name: 'Total Requests',
             type: 'spline',
             yAxis: 1,
-            data: reqSorted
+            data: reqArray
         }, {
             name: 'Total Size',
             type: 'spline',
             yAxis: 2,
-            data: sizeSorted
+            data: sizeArray
         }, {
             name: 'Page Speed Score',
             type: 'spline',
             yAxis: 3,
-            data: scoreSorted
+            data: scoreArray
         } ]
     });
 }
@@ -332,7 +325,6 @@ function displayRunInfo() {
     var URI  = "runinfo?timestamp=" + timestamp;
 
     xmlhttp.open("GET",URI,true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send();
 }
 

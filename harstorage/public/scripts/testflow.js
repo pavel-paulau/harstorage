@@ -132,35 +132,29 @@ function setTimestamp(id){
         var i;
         var ts;
 
+        // Calculate id
+        id  = id.split('_')[0] + '_' + id.split('_')[1];
+
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            // Calculate Id
-            id  = id.split('_')[0] + '_' + id.split('_')[1];
-            // Timestamps for response
-            var timestamps = eval("("+xmlhttp.responseText+")");
+            // Dates of tests
+            var dates = xmlhttp.responseText.split(';');
 
-            // Sorted timestamps
-            var keySorted   = [];
-            for (var key in timestamps){
-                keySorted.push( parseInt(key,10) );
-            }
-            keySorted.sort(sortNumber);
-
-            // Start TS
+            // Start timestamps
             var select = document.getElementById(id + '_start_ts');
             select.options.length = 0;
 
-            for (i = 0; i < keySorted.length; i++){
-                ts = timestamps[ keySorted[i] ];
+            for (i = 0; i < dates.length; i++){
+                ts = dates[i];
                 select.options[i] = new Option(ts, ts, false, false);
             }
 
-            // End TS
+            // End timestamps
             select = document.getElementById(id + '_end_ts');
             select.options.length = 0;
-            keySorted.reverse();
+            dates.reverse();
 
-            for (i = 0; i < keySorted.length; i++){
-                ts = timestamps[ keySorted[i] ];
+            for (i = 0; i < dates.length; i++){
+                ts = dates[i];
                 select.options[i] = new Option(ts, ts, false, false);
             }
         }
@@ -171,7 +165,6 @@ function setTimestamp(id){
     var URI = "dates?label=" + label;
 
     xmlhttp.open("GET", URI, true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send();
 }
 
