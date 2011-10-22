@@ -211,10 +211,6 @@ class ResultsController(BaseController):
         else:
             return ("/")
 
-    def search(self):
-        c.search_text = request.POST['search_text']
-        return render('./search.html')
-
     def upload(self):
         # HAR initialization
         try:
