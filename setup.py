@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
     name='harstorage',
-    version='0.2',
+    version='0.3',
     description='Repository for automated client-side performance testing',
     long_description="HAR Storage is repository for automated client-side performance testing. It's built on MongoDB and Pylons.",
     author='Pavel Paulau',
