@@ -64,8 +64,6 @@ class TestflowController(BaseController):
             id = str(index + 1)
             if index <9: id = '0' + id
             
-            label = id + " - " + label
-            
             # Data for table
             c.metrics_table[0].append( label    )
             c.metrics_table[1].append( score    )
@@ -74,7 +72,9 @@ class TestflowController(BaseController):
             c.metrics_table[4].append( time     )
             
             c.rowcount += 1
-            
+
+            label = id + " - " + label
+
             lbl_points      += str(label)+"#"
             time_points     += str(time)+"#"
             size_points     += str(size)+"#"
@@ -98,7 +98,7 @@ class TestflowController(BaseController):
         avg_req     = 0
         avg_score   = 0
         count       = md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }).count()
-        
+
         for document in md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }):
             avg_size    += document["total_size"]
             avg_time    += document["full_load_time"]
