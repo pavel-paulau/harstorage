@@ -5,6 +5,7 @@ $(document).ready(function() {
         "bJQueryUI": true,
         "sPaginationType": "full_numbers",
         "sDom": 'R<"H"lfr>t<"F"ip<',
-        "bAutoWidth": false
+        "bAutoWidth": false,
+        "iDisplayLength": 25
     });
 });
