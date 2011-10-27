@@ -83,15 +83,6 @@ a:hover {
     border-radius:3px;
     cursor:pointer;
 }
-/*
-label {
-    font-size: 12px;
-    width: 11em;
-    float: left;
-    text-align: right;
-    margin-right: 0.5em;
-}
-*/
 .header_r {
     text-align:right;
     font-size:12px;
@@ -104,34 +95,12 @@ label {
     font-weight: bold;
     font-size: 28px;
 }
-/*
-.footer_l {
-    float:left;
-    font-size: 11px;
-    vertical-align:middle;
-    height:25px;
-}
-.footer_r {
-    float:right;
-    font-size: 11px;
-    margin-bottom:1em;
-}
-.details {
-    border:1px;
-    border-style:solid;
-    border-color:#498a2d;
-    -moz-border-radius:10px;
-    -webkit-border-radius:10px;
-    border-radius:10px;
-    overflow:auto;
-    width:960px;
-    margin-bottom:5px;
-}
-*/
-hr {
-    background-color:#498a2d;
+.hr-css {
     height:1px;
     width:100%;
+    background-color:#498a2d;
+    margin-top:10px;
+    margin-bottom:10px;
 }
 h4 {
     margin-top:0.0em;
