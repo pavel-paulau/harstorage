@@ -67,15 +67,16 @@
 <script type='text/javascript' src="${h.url_for('/scripts/tabber.js')}"></script>
 <script type='text/javascript'>
     $LAB
-    .script("${h.url_for('/scripts/chosen.jquery.js')}")
-    .script("${h.url_for('/scripts/jsapi.js')}")
-    .script("${h.url_for('/scripts/gauge.js')}")
-    .script("${h.url_for('/scripts/highcharts/highcharts.js')}")
+    .script("${h.url_for('/scripts/jquery-1.6.3.min.js')}").wait()    
+    .script("${h.url_for('/scripts/highcharts/highcharts.js')}").wait()
     .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}")
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
+    .script("${h.url_for('/scripts/chosen.jquery.js')}")
+    .script("${h.url_for('/scripts/jsapi.js')}").wait()
+    .script("${h.url_for('/scripts/gauge.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
-            .wait(function(){
-                    setTimeLine("${c.url}","${c.label}","${c.mode}");
-                    displayRunInfo();
-            })
+    .wait(function(){
+        setTimeLine("${c.url}","${c.label}","${c.mode}");
+        displayRunInfo();
+    })
 </script>
