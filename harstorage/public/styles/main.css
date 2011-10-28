@@ -9,6 +9,9 @@
 .header a:hover {
     text-decoration: none;
 }
+.header .right a:hover {
+    text-decoration: underline;
+}
 .header .right {
     text-align:right;
     font-size:77%;
