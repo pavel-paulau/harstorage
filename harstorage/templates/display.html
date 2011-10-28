@@ -2,25 +2,25 @@
 <%def name="title()">Superposed Tests</%def>
 
 <center>
-<div id="timeline_div" style="width:960px"></div>
-    <div style="width:960px;margin-top:1em;text-align:left;"> 
+    <div class="sp-display">
+        <div id="timeline_div"></div>
+    
         <h4>Average Stats</h4> 
-    </div>
-    <div style="width:960px;">
-        <table class="display" id="stats_table" cellpadding="0" cellspacing="0" border="0">
+    
+        <table class="display" id="stats_table">
             <thead>
                 <tr>
-                    <th width="36%" style="text-align:left;">Label</th>
-                    <th width="16%" >Page Speed Score</th>
-                    <th width="16%" >Total Size</th>
-                    <th width="16%" >Total Requests</th>
-                    <th width="16%" >Full Time</th>
+                    <th width="36%" class="left">Label</th>
+                    <th width="16%" class="center">Page Speed Score</th>
+                    <th width="16%" class="center">Total Size</th>
+                    <th width="16%" class="center">Total Requests</th>
+                    <th width="16%" class="center">Full Time</th>
                 </tr>
             </thead>
             <tbody>
                 % for index in range(c.rowcount):
                 <tr>
-                    <td class="stats_td"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
+                    <td class="left"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
                     <td class="center">${c.metrics_table[1][index]}</td>
                     <td class="center">${c.metrics_table[2][index]}</td>
                     <td class="center">${c.metrics_table[3][index]}</td>
@@ -28,7 +28,7 @@
                 </tr>
                 % endfor
             </tbody>
-        </table>
+        </table>    
     </div>
 </center>
 

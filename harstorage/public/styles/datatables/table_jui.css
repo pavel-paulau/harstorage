@@ -42,6 +42,14 @@ table.display thead th {
 	* cursor: hand;
 }
 
+table.display thead th.left {
+	text-align:left;
+}
+
+table.display thead th.center {
+	text-align:center;
+}
+
 div.dataTables_wrapper .ui-widget-header {
 	font-weight: normal;
 	font: 80%/1.45em "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
@@ -165,6 +173,11 @@ table.display td {
 table.display td.center {
 	text-align: center;
 	color: #498a2d;
+}
+table.display td.left {
+	text-align: left;
+	color: #498a2d;
+        overflow:hidden;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

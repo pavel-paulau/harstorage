@@ -1,15 +1,54 @@
+/* Document Header */
+.header {
+    color: #498a2d;
+}
+.header a {
+    color: #498a2d;
+    text-decoration: none;
+}
+.header a:hover {
+    text-decoration: none;
+}
+.header .right {
+    text-align:right;
+    font-size:12px;
+    margin-top:12px;
+}
+.header .left {
+    float:left;
+    text-align:left;
+    font-weight: bold;
+    font-size: 28px;
+}
+.header .hr {
+    height:1px;
+    width:100%;
+    background-color:#498a2d;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+/* Document Footer */
+.footer .hr {
+    height:1px;
+    width:100%;
+    background-color:#498a2d;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+/* Document Body */
 body {
     color: #498a2d;
 }
-a {
-	color: #498a2d;
-	text-decoration: none;
+body a {
+    color: #498a2d;
+    text-decoration: none;
 }
-a:hover {
+body a:hover {
 	text-decoration: underline;
 }
-.upload-fs {
-	margin-top:20px;
+/* Manual uploader */
+.uploader fieldset {
+        margin-top:20px;
 	margin-bottom:20px;
 	border: 1px solid #498a2d;
 	-moz-border-radius:10px;
@@ -17,24 +56,14 @@ a:hover {
 	border-radius:10px;
 	width: 480px;
 }
-.testflow-fs {
-	margin-top:20px;
-	margin-bottom:20px;
-	border: 1px solid #498a2d;
-	-moz-border-radius:10px;
-	-webkit-border-radius:10px;
-	border-radius:10px;
-	width: 960px;
-}
-.upload-legend {
+.uploader legend {
 	color: #fff;
 	font-size: 14px;
 	background: #498a2d;
 	border: 1px solid #498a2d;
 	padding: 2px 6px;
 }
-
-.input-file {
+.uploader .file {
 	width:300px;
 	height:24px;
 	color: #000;
@@ -48,7 +77,7 @@ a:hover {
 	border-radius:3px;
 	cursor:pointer;
 }
-.input-button {
+.uploader .button {
     width:100px;
     height:24px;
     margin-left:20px;
@@ -65,7 +94,18 @@ a:hover {
     border-radius:3px;
     cursor:pointer;
 }
-.single-button {
+.summary {
+    width:960px;
+}
+
+.summary h4 {
+    margin-bottom:12px;
+    text-align:left;
+}
+.summary table {
+    table-layout:fixed;
+}
+.summary button {
     width:200px;
     height:24px;
     margin-left:20px;
@@ -83,78 +123,43 @@ a:hover {
     border-radius:3px;
     cursor:pointer;
 }
-.header_r {
-    text-align:right;
-    font-size:12px;
-    margin-top:0.5em;
+/* Superposed Test */
+.sp-display {
+    width:960px;
 }
-.header_l {
-    float:left;
+
+.sp-display h4{
+    margin-top:1em;
     text-align:left;
-    color: #498a2d;
-    font-weight: bold;
-    font-size: 28px;
 }
-.hr-css {
-    height:1px;
-    width:100%;
-    background-color:#498a2d;
-    margin-top:10px;
-    margin-bottom:10px;
+.sp-create fieldset {
+    margin-top:20px;
+    margin-bottom:20px;
+    border: 1px solid #498a2d;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    border-radius:10px;
+    width: 960px;
 }
-h4 {
-    margin-top:0.0em;
+.sp-create legend {
+	color: #fff;
+	font-size: 14px;
+	background: #498a2d;
+	border: 1px solid #498a2d;
+	padding: 2px 6px;
 }
-.gauge {
-    margin-top:10px;
+.sp-create .slct-label {
     float:left;
-    text-align:left;
     width:200px;
-    height:200px;
 }
-.stat-title-max {
-    text-align:right;
-    font-size:13px;
-    font-weight:bold;
-    color:#498a2d;
-    margin-top:8px;
-    margin-bottom:8px;
-    width:200px;
+.sp-create .slct-start {
     float:left;
+    width:170px;
 }
-.stat-title-min {
-    text-align:right;
-    font-size:13px;
-    font-weight:bold;
-    color:#498a2d;
-    margin-top:8px;
-    margin-bottom:8px;
-    width:150px;
-    float:left;
+.sp-create .slct-end {
+    width:170px;
 }
-.stat-value {
-    text-align:left;
-    font-size:13px;
-    color:#498a2d;
-    margin-left:10px;
-    margin-top:8px;
-    margin-bottom:8px;
-    width:70px;
-    float:left;
-}
-.stat-container-max {
-    width:280px;
-    height:200px;
-    float:left;
-    margin-top:10px;
-}
-.stat-container-min {
-    width:230px;
-    height:200px;
-    float:left;
-    margin-top:10px;
-}
-.step-text {
+.sp-create .text {
     float:left;
     font-size:14px;
     margin-left:10px;
@@ -162,7 +167,133 @@ h4 {
     margin-top:4px;
     color:#498a2d;
 }
-.step-image {
+.sp-create .image {
     vertical-align:top;
     margin-left:20px;
+}
+.sp-create .submit {
+    width:200px;
+    height:24px;
+    margin-left:20px;
+    margin-top:20px;
+    margin-bottom:20px;
+    margin-right:10px;
+    color: #000;
+    font-size: 12px;
+    background: #d7e7cf;
+    border: 1px;
+    border-style:solid;
+    border-color:#498a2d;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    cursor:pointer;
+}
+
+/* Results */
+.results {
+    width:960px;    
+    color:#498a2d;
+}
+.results h4 {
+    margin-top:1em;
+    float:left;
+    text-align:left;
+}
+.results select {
+    width:200px;
+    text-align:right;
+    margin-top:1em;
+}
+
+.results .selector {
+    text-align:right;
+    margin-top:1em;
+}
+
+.results #gauge {
+    margin-top:10px;
+    float:left;
+    text-align:left;
+    width:200px;
+    height:200px;
+}
+.results .container-max {
+    width:280px;
+    height:200px;
+    float:left;
+    margin-top:10px;
+    font-size:13px;
+}
+.results .container-min {
+    width:230px;
+    height:200px;
+    float:left;
+    margin-top:10px;
+    font-size:13px;
+}
+.results .container-max .title-max {
+    text-align:right;    
+    font-weight:bold;    
+    margin-top:8px;
+    margin-bottom:8px;
+    width:200px;
+    float:left;
+}
+.results .container-min .title-min {
+    text-align:right;    
+    font-weight:bold;    
+    margin-top:8px;
+    margin-bottom:8px;
+    width:150px;
+    float:left;
+}
+.results .value {
+    text-align:left;    
+    margin-left:10px;
+    margin-top:8px;
+    margin-bottom:8px;
+    width:70px;
+    float:left;
+}
+.results #by-size {
+    width:450px;
+    margin-left:15px;
+    height:300px;
+    float:left;
+    margin-top:10px;
+}
+.results #by-req {
+    width:450px;
+    margin-left:20px;
+    height:300px;
+    float:left;
+    margin-top:10px;
+}
+.results #pagespeed {
+    margin-top:10px;
+}
+.results #harviewer {
+    margin-top:10px;    
+}
+.results #manager {
+    text-align:left;
+}
+.results button {
+    width:200px;
+    height:24px;
+    margin-left:20px;
+    margin-top:20px;
+    margin-bottom:20px;
+    margin-right:10px;
+    color: #000;
+    font-size: 12px;
+    background: #d7e7cf;
+    border: 1px;
+    border-style:solid;
+    border-color:#498a2d;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    cursor:pointer;
 }

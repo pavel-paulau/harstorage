@@ -2,67 +2,65 @@
 <%def name="title()">Details | ${c.label}</%def>
 
 <center>
-<div id="timeline_div" style="width:960px"></div>
+    <div class="results">
+        <div id="timeline_div"></div>
 
-<div style="width:960px" align="center">
-    <div style="float:left;text-align:left;">
         <h4>Run Info</h4>
-    </div>
-    <div style="text-align:right;margin-top:1em;">
-        <select id="run_timestamp" class="chosen-select" style="width:200px;" onchange="displayRunInfo();">
-            % for timestamp in c.timestamp:
-            <option value="${timestamp}"> ${timestamp}</option>
-            % endfor
-        </select>
-    </div>
-</div>
 
-<div class="tabber">
-    <div class="tabbertab" title="Summary">
-        <div class="gauge" id="gauge" ></div>
-        <div class="stat-container-max">
-            <div class="stat-title-max">Full Load Time:</div>       <div class="stat-value" id="full-load-time"></div>
-            <div class="stat-title-max">Total DNS Time:</div>       <div class="stat-value" id="dns"></div>
-            <div class="stat-title-max">Total Transfer Time:</div>  <div class="stat-value" id="transfer"></div>
-            <div class="stat-title-max">Total Server Time:</div>    <div class="stat-value" id="server"></div>
-            <div class="stat-title-max">AVG Connecting Time:</div>  <div class="stat-value" id="connecting"></div>
-            <div class="stat-title-max">AVG Blocking Time:</div>    <div class="stat-value" id="blocked"></div>
+        <div class="selector">
+            <select id="run_timestamp" class="chosen-select" onchange="displayRunInfo();">
+                % for timestamp in c.timestamp:
+                <option value="${timestamp}"> ${timestamp}</option>
+                % endfor
+            </select>
         </div>
-        <div class="stat-container-min">
-            <div class="stat-title-min">Total Size:</div>           <div class="stat-value" id="total-size"></div>
-            <div class="stat-title-min">Text Files:</div>           <div class="stat-value" id="text-size"></div>
-            <div class="stat-title-min">Media Files:</div>          <div class="stat-value" id="media-size"></div>
-            <div class="stat-title-min">Cache Size:</div>           <div class="stat-value" id="cache-size"></div>
-        </div>
-        <div class="stat-container-min">
-            <div class="stat-title-min">Requests:</div>             <div class="stat-value" id="requests"></div>
-            <div class="stat-title-min">Redirects:</div>            <div class="stat-value" id="redirects"></div>
-            <div class="stat-title-min">Bad Requests:</div>         <div class="stat-value" id="bad-req"></div>
-            <div class="stat-title-min">Hosts:</div>                <div class="stat-value" id="hosts"></div>
+
+        <div class="tabber">
+            <div class="tabbertab" title="Summary">
+                <div id="gauge" ></div>
+                
+                <div class="container-max">
+                    <div class="title-max">Full Load Time:</div>       <div class="value" id="full-load-time"></div>
+                    <div class="title-max">Total DNS Time:</div>       <div class="value" id="dns"></div>
+                    <div class="title-max">Total Transfer Time:</div>  <div class="value" id="transfer"></div>
+                    <div class="title-max">Total Server Time:</div>    <div class="value" id="server"></div>
+                    <div class="title-max">AVG Connecting Time:</div>  <div class="value" id="connecting"></div>
+                    <div class="title-max">AVG Blocking Time:</div>    <div class="value" id="blocked"></div>
+                </div>
+                <div class="container-min">
+                    <div class="title-min">Total Size:</div>           <div class="value" id="total-size"></div>
+                    <div class="title-min">Text Files:</div>           <div class="value" id="text-size"></div>
+                    <div class="title-min">Media Files:</div>          <div class="value" id="media-size"></div>
+                    <div class="title-min">Cache Size:</div>           <div class="value" id="cache-size"></div>
+                </div>
+                <div class="container-min">
+                    <div class="title-min">Requests:</div>             <div class="value" id="requests"></div>
+                    <div class="title-min">Redirects:</div>            <div class="value" id="redirects"></div>
+                    <div class="title-min">Bad Requests:</div>         <div class="value" id="bad-req"></div>
+                    <div class="title-min">Hosts:</div>                <div class="value" id="hosts"></div>
+                </div>
             </div>
-    </div>
 
-    <div class="tabbertab" title="Resources">
-        <div id="by-size" style="width:450px;margin-left:15px;height:300px;float:left;margin-top:10px;"></div>
-        <div id="by-req"  style="width:450px;margin-left:20px;height:300px;float:left;margin-top:10px;"></div>
-    </div>
-    
-    <div class="tabbertab" title="Page Speed Details">
-          <div id='pagespeed' style="margin-top:10px;"></div>
-    </div>
-    
-    <div class="tabbertab" title="HAR Viewer">
-          <div id="harviewer" style="margin-top:10px;"></div>
-    </div>
+            <div class="tabbertab" title="Resources">
+                <div id="by-size"></div>
+                <div id="by-req"></div>
+            </div>
 
-    <div class="tabbertab" title="Manage Data">
-        <div id="data-management" style="text-align:left;">
-            <button type="button" class="single-button" id="${c.label}" onclick="deleteRun(this,'${c.mode}');">Delete current test</button>
+            <div class="tabbertab" title="Page Speed Details">
+                <div id="pagespeed"></div>
+            </div>
+
+            <div class="tabbertab" title="HAR Viewer">
+                <div id="harviewer"></div>
+            </div>
+
+            <div class="tabbertab" title="Manage Data">
+                <div id="manager">
+                    <button type="button" id="${c.label}" onclick="deleteRun(this,'${c.mode}');">Delete current test</button>
+                </div>
+            </div>
         </div>
-    </div>
-
 </div>
-
 </center>
 <script type='text/javascript' src="${h.url_for('/scripts/tabber.js')}"></script>
 <script type='text/javascript'>

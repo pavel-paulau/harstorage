@@ -1,35 +1,35 @@
 <%inherit file="/base.html"/>
 <%def name="title()">HAR Storage</%def>
 <center>
-    <div>
+    <div class="uploader">
         <form action="/results/upload" enctype="multipart/form-data" method="post">
-            <fieldset class="upload-fs">
-                <legend class="upload-legend">Upload new file</legend>
-                <input id="file" name="file" size="25" type="file" class="input-file"/>
-                <input id="upload" name="upload" type="submit" value="Upload" class="input-button"/>
+            <fieldset>
+                <legend>Upload new file</legend>
+                <input class="file"     id="file"   name="file"     type="file"     size="25" />
+                <input class="button"   id="upload" name="upload"   type="submit"   value="Upload"/>
             </fieldset>
         </form>
     </div>
-    <div style="width:960px;margin-bottom:1em;text-align:left;">
+
+    <div class="summary">
         <h4>Latest Results</h4>
-    </div>
-    <div style="width:960px;">
-        <table class="display" id="stats_table" cellpadding="0" cellspacing="0" border="0" style="table-layout:fixed;">
+    
+        <table class="display" id="stats_table">
             <thead>
                 <tr>
-                    <th width="21%" style="text-align:left;">Label</th>
-                    <th width="37%" style="text-align:left;">URL</th>
-                    <th width="12%" style="">Page Speed Score</th>
-                    <th width="10%" style="">Total Size</th>
-                    <th width="10%" style="">Total Requests</th>
-                    <th width="10%" style="">Full Time</th>
+                    <th width="21%" class="left">Label</th>
+                    <th width="37%" class="left">URL</th>
+                    <th width="12%" class="center">Page Speed Score</th>
+                    <th width="10%" class="center">Total Size</th>
+                    <th width="10%" class="center">Total Requests</th>
+                    <th width="10%" class="center">Full Time</th>
                 </tr>
             </thead>
             <tbody>
                 % for index in range(c.rowcount):
                 <tr> 
-                    <td style="overflow:hidden;"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
-                    <td style="overflow:hidden;"><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[1][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
+                    <td class="left"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[0][index]}</a></td>
+                    <td class="left"><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[1][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
                     <td class="center">${c.metrics_table[2][index]}</td>
                     <td class="center">${c.metrics_table[3][index]}</td>
                     <td class="center">${c.metrics_table[4][index]}</td>
@@ -38,9 +38,8 @@
                 % endfor
             </tbody>
         </table>
-    </div>
-    <div>
-        <button type="button" class="single-button" onclick="window.location.href='/testflow/create';">Superpose Tests</button>
+        
+        <button type="button" onclick="window.location.href='/testflow/create';">Superpose Tests</button>
     </div>
 </center>
 
@@ -49,5 +48,15 @@
     .script("${h.url_for('/scripts/jquery-1.6.3.min.js')}").wait()
     .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}").script("${h.url_for('/scripts/jquery-1.6.3.min.js')}").wait()
     .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}").wait()
-    .script("${h.url_for('/scripts/hs-ui.js')}")
+    .wait(function(){
+        $(document).ready(function() {
+            $('#stats_table').dataTable({
+                "bJQueryUI": true,
+                "sPaginationType": "full_numbers",
+                "sDom": 'R<"H"lfr>t<"F"ip<',
+                "bAutoWidth": false,
+                "iDisplayLength": 25
+            });
+        });
+    })
 </script>
