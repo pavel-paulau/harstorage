@@ -140,11 +140,18 @@ body a:hover {
 .sp-create .slct-end {
     width: 170px;
 }
-.sp-create .text {
+.sp-create .container {
+    text-align:left;
+    margin-top:20px;
+}
+.sp-create .title,.sp-create .text {
     float: left;
     font-size: 100%;
     margin: 4px 10px 0 10px;
     color: #498a2d;
+}
+.sp-create .title {
+    font-weight: bold;
 }
 .sp-create .image {
     vertical-align: top;
@@ -153,7 +160,7 @@ body a:hover {
 .sp-create .submit {
     width: 220px;
     height: 24px;
-    margin: 20px 10px 20px 20px;
+    margin: 30px 10px 20px 20px;
     color: #000;
     font-size: 77%;
     background: #d7e7cf;
