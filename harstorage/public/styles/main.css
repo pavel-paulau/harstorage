@@ -16,7 +16,7 @@ body a:hover {
 .header .right {
     text-align: right;
     font-size: 77%;
-    margin-top: 6px;
+    margin: 6px 0 0 0;
 }
 .header .left {
     float: left;
@@ -28,8 +28,7 @@ body a:hover {
     height: 1px;
     width: 100%;
     background-color: #498a2d;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0 10px 0;
 }
 /* Manual uploader */
 .uploader fieldset {
@@ -82,7 +81,7 @@ body a:hover {
 .summary .title {
     font-weight: bold;
     font-size: 108%;
-    margin-bottom: 12px;
+    margin: 0 0 12px 0;
     text-align: left;
 }
 .summary table {
@@ -108,12 +107,12 @@ body a:hover {
 .sp-display .title {
     font-weight: bold;
     font-size: 108%;
-    margin-top: 1em;
+    margin: 12px 0;
     text-align: left;
 }
 .sp-create fieldset {
     width: 960px;
-    margin: 20px 0 20px 0;
+    margin: 20px 0;
     border: 1px solid #498a2d;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
@@ -141,8 +140,8 @@ body a:hover {
     width: 170px;
 }
 .sp-create .container {
-    text-align:left;
-    margin-top:20px;
+    text-align: left;
+    margin: 20px 0 0 0;
 }
 .sp-create .title,.sp-create .text {
     float: left;
@@ -155,7 +154,7 @@ body a:hover {
 }
 .sp-create .image {
     vertical-align: top;
-    margin-left: 20px;
+    margin: 0 0 0 20px;
 }
 .sp-create .submit {
     width: 220px;
@@ -177,7 +176,7 @@ body a:hover {
 .results .title {
     font-weight: bold;
     font-size: 108%;
-    margin-top: 12px;
+    margin: 12px 0 0 0;
     float: left;
     text-align: left;
 }
@@ -186,10 +185,10 @@ body a:hover {
 }
 .results .selector {
     text-align: right;
-    margin-top: 12px;
+    margin: 12px 0 0 0;
 }
 .results #gauge {
-    margin-top: 10px;
+    margin: 10px 0 0 0;
     float: left;
     text-align: left;
     width: 200px;
@@ -198,7 +197,7 @@ body a:hover {
 .results .container-max,.results .container-min {
     height: 210px;
     float: left;
-    margin-top: 10px;
+    margin: 10px 0 0 0;
     font-size: 93%;
 }
 .results .container-max {
@@ -231,16 +230,16 @@ body a:hover {
     float:left;
 }
 .results #by-size {
-    margin: 10px 0 0 15px;
+    margin: 10px 0 10px 10px;
 }
 .results #by-req {
-    margin: 10px 0 0 20px;
+    margin: 10px 0 10px 30px;
 }
 .results #pagespeed {
-    margin-top: 10px;
+    margin: 10px 0;
 }
 .results #harviewer {
-    margin-top: 10px;
+    margin: 10px 0;
 }
 .results #manager {
     text-align: left;
