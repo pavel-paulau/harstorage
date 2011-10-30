@@ -8,7 +8,7 @@ from harstorage.lib.base import BaseController, render
 
 log = logging.getLogger(__name__)
 
-class TestflowController(BaseController):
+class SuperposedController(BaseController):
     def create(self):
         # MongoDB handler
         md_handler = MongoDB()
