@@ -282,9 +282,6 @@ function displayRunInfo() {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var json = eval("("+xmlhttp.responseText+")");
             
-            // Page Speed Score - Gauge 
-            drawScore(json.summary.score);
-            
             // Summary
             $("#full-load-time").html(json.summary.full_time+' ms');
             $("#dns").html(json.summary.dns+' ms');
@@ -303,12 +300,15 @@ function displayRunInfo() {
             $("#bad-req").html(json.summary.bad_req);
             $("#hosts").html(json.summary.hosts);
 
-            // Page Speed Details
-            drawPageSpeed(json);
+            // Page Speed Score - Gauge
+            drawScore(json.summary.score);
 
             // Resources
             drawPie("by-size","Resources by Size",json.weights,' kB');
             drawPie("by-req","Resources by Count",json.requests,'');
+
+            // Page Speed Details
+            drawPageSpeed(json);
 
             // HAR Viewer
             var iframe = document.createElement('iframe');
