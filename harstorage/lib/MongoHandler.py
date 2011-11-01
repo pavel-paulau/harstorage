@@ -7,6 +7,21 @@ class MongoDB():
         self.collection = db['results']
         
         self.collection.ensure_index([
-            ('label',     1),
+            ('label',      1),
             ('timestamp', -1)
+        ])
+
+        self.collection.ensure_index([
+            ('label',      1),
+            ('timestamp',  1)
+        ])
+
+        self.collection.ensure_index([
+            ('url',        1),
+            ('timestamp', -1)
+        ])
+
+        self.collection.ensure_index([
+            ('url',        1),
+            ('timestamp',  1)
         ])
