@@ -8,7 +8,7 @@
                 
                 <div id="container">
                     <div id="step_1" class="container">
-                        <div class="title" id="step_1_head" >Point 1 &gt;</div>
+                        <div class="title" id="step_1_head" >Set 1 &gt;</div>
                         <div class="text">Label:</div>
 
                         <select name="step_1_label" id="step_1_label" class="slct-label" onchange="SuperposeForm.setTimestamps(this.name);">
@@ -31,7 +31,7 @@
                         <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="SuperposeForm.del(this);" style="display:none"/>
                     </div>
                 </div>
-                <input type="submit" class="submit" value="Display Superposed Tests" onclick="return SuperposeForm.submit();"/>
+                <input type="submit" class="submit" value="View Result" onclick="return SuperposeForm.submit();"/>
             </fieldset>
         </form>
     </div>

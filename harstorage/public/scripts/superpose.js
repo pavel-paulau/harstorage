@@ -98,7 +98,7 @@ SuperposeForm.prototype.add = function(button){
             // New id
             divs.item(i).id = new_id + '_head';
             // New label
-            divs.item(i).innerHTML = 'Point ' + new_id.split('_')[1] + ' &gt;';
+            divs.item(i).innerHTML = 'Set ' + new_id.split('_')[1] + ' &gt;';
         }
     }
     // Update timestamp
