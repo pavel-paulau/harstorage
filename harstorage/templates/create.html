@@ -2,7 +2,7 @@
 <%def name="title()">Superposed Tests</%def>
 <center>
     <div class="sp-create">
-        <form action="display" id="testFlowForm" method="post" onsubmit="return false;">
+        <form action="display" id="SuperposeForm" method="post" onsubmit="return false;">
             <fieldset>
                 <legend>Superpose Tests</legend>
                 
@@ -11,7 +11,7 @@
                         <div class="title" id="step_1_head" >Point 1 &gt;</div>
                         <div class="text">Label:</div>
 
-                        <select name="step_1_label" id="step_1_label" class="slct-label" onchange="setTimestamp(this.name);">
+                        <select name="step_1_label" id="step_1_label" class="slct-label" onchange="SuperposeForm.setTimestamps(this.name);">
                             % for label in c.labels:
                             <option value="${label}">${label}</option>
                             % endfor
@@ -27,14 +27,21 @@
                         <select name="step_1_end_ts" id="step_1_end_ts" class="slct-end" >
                         </select>
                         
-                        <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" onclick="addStep(this);"/>
-                        <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="delStep(this);" style="display:none"/>
+                        <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" onclick="SuperposeForm.add(this);"/>
+                        <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="SuperposeForm.del(this);" style="display:none"/>
                     </div>
                 </div>
-                <input type="submit" class="submit" value="Display Superposed Tests" onclick="return submitFlow();"/>
+                <input type="submit" class="submit" value="Display Superposed Tests" onclick="return SuperposeForm.submit();"/>
             </fieldset>
         </form>
     </div>
 </center>
 
-<script type='text/javascript' src="${h.url_for('/scripts/superpose.js')}"></script>
+<script type='text/javascript'>
+    $LAB
+    .script("${h.url_for('/scripts/superpose.js')}").wait()
+    .wait(function(){
+        SuperposeForm = new SuperposeForm();
+        SuperposeForm.setTimestamps('step_1_label');
+    })
+</script>

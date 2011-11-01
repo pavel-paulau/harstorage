@@ -3,7 +3,7 @@
 
 <center>
     <div class="sp-display">
-        <div id="timeline_div"></div>
+        <div id="timeline"></div>
     
         <p class="title">Average Stats</p>
     
@@ -43,7 +43,8 @@
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        drawTimeLine("${c.points}");
+        Timeline = new Timeline();
+        Timeline.draw("${c.points}");
 
         $(document).ready(function() {
             $('#stats_table').dataTable({

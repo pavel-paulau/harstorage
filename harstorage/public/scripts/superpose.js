@@ -1,6 +1,14 @@
 "use strict";
 
-function submitFlow(){
+// Common function
+function sortNumber(a,b) {
+    return b - a;
+}
+
+var SuperposeForm = function(){};
+
+// Form validation
+SuperposeForm.prototype.submit = function(){
     var selectors = document.getElementsByTagName('select');
 
     var selectors_num = selectors.length;
@@ -14,20 +22,21 @@ function submitFlow(){
             return false;
         }
     }
-    document.forms.testFlowForm.onsubmit='return true';
+    document.forms.SuperposeForm.onsubmit='return true';
 
     return true;
-}
+};
 
-function addStep(button){
+// Add new step
+SuperposeForm.prototype.add = function(button){
     var i;
     var prev_button;
         
     // Find previous and new id
-    var prev_id = button.id.split("_")[0] + "_" + button.id.split("_")[1];
-    var new_id = prev_id.split("_")[0] + '_' + ( parseInt ( prev_id.split("_")[1], 10) +1 );
+    var prev_id = button.id.split('_')[0] + '_' + button.id.split('_')[1];
+    var new_id = prev_id.split('_')[0] + '_' + ( parseInt ( prev_id.split('_')[1], 10) +1 );
     
-    // Add new line to DIV container
+    // Add new line to container
     var prev_div = document.getElementById(prev_id);
     var new_div = prev_div.cloneNode(true);
     new_div.setAttribute('id',new_id );
@@ -66,7 +75,7 @@ function addStep(button){
             inputs.item(i).id = new_id + '_add';
             // Hide previous button
             prev_button = document.getElementById(prev_id + '_add');
-            prev_button.style.display = "none";
+            prev_button.style.display = 'none';
         }
         if(inputs.item(i).id === prev_id + '_del')
         {
@@ -74,9 +83,9 @@ function addStep(button){
             inputs.item(i).id = new_id + '_del';
             // Hide previous button
             prev_button = document.getElementById(prev_id + '_del');
-            prev_button.style.display = "none";
+            prev_button.style.display = 'none';
             // Show current button
-            inputs.item(i).style.display = "inline";
+            inputs.item(i).style.display = 'inline';
         }
 
     }
@@ -93,38 +102,36 @@ function addStep(button){
         }
     }
     // Update timestamp
-    setTimestamp(new_id + "_label");
-}
+    SuperposeForm.setTimestamps(new_id + '_label');
+};
 
-function delStep(button){
+// Delete selected step
+SuperposeForm.prototype.del = function(button){
     var prev_button;
     
     // Calculate id
     var id      = button.id.split('_')[0] + '_' + button.id.split('_')[1];
-    var prev_id = button.id.split("_")[0] + '_' + ( parseInt ( button.id.split("_")[1], 10) - 1 );
+    var prev_id = button.id.split('_')[0] + '_' + ( parseInt ( button.id.split('_')[1], 10) - 1 );
 
     // Get DIVs
     var div         = document.getElementById(id);
-    var container   = document.getElementById("container");
+    var container   = document.getElementById('container');
 
     // Delete current line
     container.removeChild(div);
 
     // Show previous button
     prev_button = document.getElementById(prev_id + '_add');
-    prev_button.style.display = "inline";
+    prev_button.style.display = 'inline';
 
     if (prev_id !== 'step_1') {
         prev_button = document.getElementById(prev_id + '_del');
-        prev_button.style.display = "inline";
+        prev_button.style.display = 'inline';
     }
-}
+};
 
-function sortNumber(a,b) {
-    return b - a;
-}
-
-function setTimestamp(id){
+// Set timelines for selected label
+SuperposeForm.prototype.setTimestamps = function(id){
     var xmlhttp = new XMLHttpRequest();
 
     xmlhttp.onreadystatechange = function()
@@ -162,10 +169,8 @@ function setTimestamp(id){
 
     var select = document.getElementById(id);
     var label = select.options[select.selectedIndex].text;
-    var URI = "dates?label=" + label;
+    var URI = 'dates?label=' + label;
 
-    xmlhttp.open("GET", URI, true);
+    xmlhttp.open('GET', URI, true);
     xmlhttp.send();
 }
-
-setTimestamp("step_1_label");

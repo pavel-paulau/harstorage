@@ -3,12 +3,12 @@
 
 <center>
     <div class="results">
-        <div id="timeline_div"></div>
+        <div id="timeline"></div>
 
         <p class="title">Run Info</p>
 
         <div class="selector">
-            <select id="run_timestamp" class="chosen-select" onchange="displayRunInfo();">
+            <select id="run_timestamp" class="chosen-select" onchange="RunInfo.get();">
                 % for timestamp in c.timestamp:
                 <option value="${timestamp}"> ${timestamp}</option>
                 % endfor
@@ -56,7 +56,7 @@
 
             <div class="tabbertab" title="Manage Data">
                 <div id="manager">
-                    <button type="button" id="${c.label}" onclick="deleteRun(this,'${c.mode}');">Delete current test</button>
+                    <button type="button" id="${c.label}" onclick="RunInfo.del(this,'${c.mode}');">Delete current test</button>
                 </div>
             </div>
         </div>
@@ -73,7 +73,10 @@
     .script("${h.url_for('/scripts/gauge.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        setTimeLine("${c.url}","${c.label}","${c.mode}");
-        displayRunInfo();
+        Timeline = new Timeline();
+        Timeline.get("${c.url}","${c.label}","${c.mode}");
+
+        RunInfo = new RunInfo();
+        RunInfo.get();
     })
 </script>

@@ -1,50 +1,30 @@
 "use strict";
 
-// draw Gauge Chart
-function drawScore(score) {
-    // value for chart
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Score');
-    data.addColumn('number', 'Value');
-    data.addRows(1);
-    data.setValue(0, 0, 'PS Score');
-    data.setValue(0, 1, score);
+/*
+ * Timeline chart
+ */
+var Timeline = function() {};
 
-    // chart options
-    var options = {
-      width: 200,
-      height: 200,
-      redFrom: 0,
-      redTo: 59,
-      yellowFrom: 60,
-      yellowTo: 79,
-      greenFrom: 80,
-      greenTo: 100,
-      minorTicks: 10};
-
-    // chart object
-    var chart = new google.visualization.Gauge(document.getElementById('gauge'));
-    chart.draw(data, options);
-}
-
-function setTimeLine(url,label,mode){
-    // Retrieve data for timeline via XHR calls
+// Get data for timeline
+Timeline.prototype.get = function(url,label,mode){
+    // Retrieve data for timeline via XHR call
     var xmlhttp = new XMLHttpRequest();
 
     xmlhttp.onreadystatechange=function()
     {
-            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                    drawTimeLine(xmlhttp.responseText);
-            }
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            Timeline.draw(xmlhttp.responseText);
+        }
     };
 
-    var URI = "timeline?url=" + url + "&label=" + label + "&mode=" + mode;
+    var URI = 'timeline?url=' + url + '&label=' + label + '&mode=' + mode;
 
-    xmlhttp.open("GET",URI,true);
+    xmlhttp.open('GET', URI, true);
     xmlhttp.send();
-}
+};
 
-function drawTimeLine(points) {
+// Draw timeline
+Timeline.prototype.draw = function(points) {
     var index;
 
     var splitResults = points.split(';');
@@ -64,19 +44,21 @@ function drawTimeLine(points) {
 
     var chart = new Highcharts.Chart({
         chart: {
-            renderTo: 'timeline_div',
-            zoomType: 'x',
-            alignTicks: false
+            renderTo    : 'timeline',
+            zoomType    : 'x',
+            alignTicks  : false
         },
         exporting: {
             buttons : {
-                printButton: { enabled: false}
+                printButton : {enabled: false}
             },
-            url:'/chart/export',
-            width: 960,
-            filename: 'timeline'
+            url         : '/chart/export',
+            filename    : 'timeline',
+            width       : 960            
         },
-        title: { text: 'Performance Trends' },
+        title: {
+            text: 'Performance Trends'
+        },
         xAxis: [{
             categories          : tsArray,
             tickInterval        : Math.ceil(tsArray.length / 10),
@@ -84,158 +66,129 @@ function drawTimeLine(points) {
         }],
         yAxis: [{ // yAxis #1
             title: {
-                text: 'Full Load Time (ms)',
-                style: { color: '#DDDF0D' }
+                text    : 'Full Load Time (ms)',
+                style   : { color: '#DDDF0D' }
             },
-            min: 0
+            min         : 0
         }, { // yAxis #2
             title: {
-                text: 'Total Requests',
-                style: { color: '#55BF3B' }
+                text    : 'Total Requests',
+                style   : { color: '#55BF3B' }
             },
-            min: 0,
-            opposite: true
+            min         : 0,
+            opposite    : true
         }, { // yAxis #3
             title: {
-                text: 'Total Size (kB)',
-                style: { color: '#DF5353' }
+                text    : 'Total Size (kB)',
+                style   : { color: '#DF5353' }
             },
-            min: 0,
-            opposite: true
+            min         : 0,
+            opposite    : true
         }, { // yAxis #4
             title: {
-                text: 'Page Speed Score',
-                style: { color: '#7798BF' }
+                text    : 'Page Speed Score',
+                style   : { color: '#7798BF' }
             },
-            min: 0,
-            endOnTick: false
+            min         : 0,
+            endOnTick   : false
         }],
         tooltip: {
             formatter: function() {
-                    var unit = {
-                        'Full Load Time': 'ms',
-                        'Total Requests': '',
-                        'Total Size': 'kB',
-                        'Page Speed Score': ''
-                    }[this.series.name];
+                var unit = {
+                    'Full Load Time (ms)'   : 'ms',
+                    'Total Requests'        : '',
+                    'Total Size (kB)'       : 'kB',
+                    'Page Speed Score'      : ''
+                } [this.series.name];
 
                 return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
         },
         series: [{
-            name: 'Full Load Time',
-            type: 'spline',
-            yAxis: 0,
-            data: timeArray
+            name    : 'Full Load Time (ms)',
+            type    : 'spline',
+            yAxis   : 0,
+            data    : timeArray
         }, {
-            name: 'Total Requests',
-            type: 'spline',
-            yAxis: 1,
-            data: reqArray
+            name    : 'Total Requests',
+            type    : 'spline',
+            yAxis   : 1,
+            data    : reqArray
         }, {
-            name: 'Total Size',
-            type: 'spline',
-            yAxis: 2,
-            data: sizeArray
+            name    : 'Total Size (kB)',
+            type    : 'spline',
+            yAxis   : 2,
+            data    : sizeArray
         }, {
-            name: 'Page Speed Score',
-            type: 'spline',
-            yAxis: 3,
-            data: scoreArray
+            name    : 'Page Speed Score',
+            type    : 'spline',
+            yAxis   : 3,
+            data    : scoreArray
         } ]
     });
-}
+};
 
-function drawPageSpeed (json) {
-    var rules   = [];
-    var scores  = [];
-    var rows    = 0;
+/*
+ * Test results
+ */
+var RunInfo = function() {};
 
-    jQuery.each(json.pagespeed, function(key,value) {
-        rules.push(key);
-        scores.push(value);
-        rows += 1;
-    });
+//Gauge chart
+RunInfo.prototype.score = function(score) {
+    // Value for chart
+    var data = new google.visualization.DataTable();
 
-    var height = 75 + 20 * rows;
+    data.addColumn('string');
+    data.addColumn('number');
+    data.addRows(1);
+    data.setValue(0, 0, 'PS Score');
+    data.setValue(0, 1, score);
 
+    // Chart options
+    var options = {
+        width       : 200,
+        height      : 200,
+        redFrom     : 0,
+        redTo       : 59,
+        yellowFrom  : 60,
+        yellowTo    : 79,
+        greenFrom   : 80,
+        greenTo     : 100,
+        minorTicks  : 10
+    };
+
+    // Chart object
+    var chart = new google.visualization.Gauge( document.getElementById('gauge') );
+    
+    chart.draw(data, options);
+};
+
+//Page Resources
+RunInfo.prototype.resources = function (div,title,hash,units) {
+    // Extract data
+    var data  = new Array();
+
+    for (var key in hash) {
+        data.push( [key, hash[key] ]);
+    }
+
+    // Chart object
     var chart = new Highcharts.Chart({
         chart: {
-            renderTo: 'pagespeed',
-            defaultSeriesType: 'bar',
-            height  : height,
-            width   : 930
+            renderTo            : div,
+            plotBackgroundColor : null,
+            plotBorderWidth     : null,
+            plotShadow          : false,
+            width               : 450,
+            height              : 300
         },
         exporting: {
             buttons : {
                 printButton: { enabled: false}
             },
-            url:'/chart/export',
-            width: 930,
-            filename: 'pagespeed'
-        },
-        title: {
-            text: "Page Speed Scores"
-        },
-        xAxis: {
-            categories: rules,
-            title: {
-                text: null
-            }
-        },
-        yAxis: {
-            min: 0,
-            max: 105,
-            endOnTick: false,
-            title: {
-                text: null
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return this.x +': '+ this.y;
-            }
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: true
-                }
-            },
-            series: {
-                showInLegend: false,
-                animation: false
-            }
-        },
-        series: [{
-            data: scores
-        }]
-    });
-}
-
-function drawPie(div,title,hash,units) {
-    var data  = [];
-
-    jQuery.each(hash, function(key,value) {
-        data.push( [key,value]);
-    });
-
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: div,
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            width: 450,
-            height: 300
-        },
-        exporting: {
-            buttons : {
-                printButton: { enabled: false}
-            },
-            url:'/chart/export',
-            width: 450,
-            filename: 'resources'
+            url         :'/chart/export',
+            filename    : 'resources',
+            width       : 450            
         },
         title: {
             text: title
@@ -247,14 +200,14 @@ function drawPie(div,title,hash,units) {
         },
         plotOptions: {
             pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                size: '65%',
+                allowPointSelect    : true,
+                cursor              : 'pointer',
+                size                : '65%',
                 dataLabels: {
-                    enabled: true,
-                    color: '#FFF',
-                    distance: 25,
-                    connectorColor: '#FFF',
+                    enabled         : true,
+                    color           : '#FFF',
+                    distance        : 25,
+                    connectorColor  : '#FFF',
                     formatter: function() {
                         return this.point.name;
                     }
@@ -269,67 +222,140 @@ function drawPie(div,title,hash,units) {
             data: data    
         }]
     });
-}
+};
 
+//Page Speed details
+RunInfo.prototype.pagespeed = function (pagespeed) {
+    // Spliting data for chart
+    var rules   = new Array;
+    var scores  = new Array;
 
-// Ajax stuff
-// Dislpay details for selected test run
-function displayRunInfo() {
+    for (var rule in pagespeed) {
+        rules.push(rule);
+        scores.push(pagespeed[rule]);
+    }
+
+    // Chart height
+    var height = 75 + 20 * rules.length;
+
+    // Chart object
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo            : 'pagespeed',
+            defaultSeriesType   : 'bar',
+            height              : height,
+            width               : 930
+        },
+        exporting: {
+            buttons : {
+                printButton: { enabled: false}
+            },
+            url         :'/chart/export',
+            filename    : 'pagespeed',
+            width       : 930
+        },
+        title: {
+            text: 'Page Speed Scores'
+        },
+        xAxis: {
+            title: {
+                text: null
+            },
+            categories  : rules
+        },
+        yAxis: {
+            title: {
+                text: null
+            },
+            min         : 0,
+            max         : 105,
+            endOnTick   : false
+
+        },
+        tooltip: {
+            formatter: function() {
+                return this.x +': '+ this.y;
+            }
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled     : true
+                }
+            },
+            series: {
+                showInLegend    : false,
+                animation       : false
+            }
+        },
+        series: [{
+            data: scores
+        }]
+    });
+};
+
+//Get data for Run Info
+RunInfo.prototype.get = function() {
+    // Retrieve data for Run Infor via XHR call
     var xmlhttp = new XMLHttpRequest();
 
     xmlhttp.onreadystatechange = function()
     {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            var json = eval("("+xmlhttp.responseText+")");
+            var json = eval('('+xmlhttp.responseText+')');
             
             // Summary
-            $("#full-load-time").html(json.summary.full_time+' ms');
-            $("#dns").html(json.summary.dns+' ms');
-            $("#transfer").html(json.summary.transfer+' ms');
-            $("#connecting").html(json.summary.connecting+' ms');
-            $("#server").html(json.summary.server+' ms');
-            $("#blocked").html(json.summary.blocked+' ms');
+            $('#full-load-time').html(json.summary.full_time+' ms');
+            $('#dns').html(json.summary.dns+' ms');
+            $('#transfer').html(json.summary.transfer+' ms');
+            $('#connecting').html(json.summary.connecting+' ms');
+            $('#server').html(json.summary.server+' ms');
+            $('#blocked').html(json.summary.blocked+' ms');
             
-            $("#total-size").html(json.summary.total_size+' kB');
-            $("#text-size").html(json.summary.text_size+' kB');
-            $("#media-size").html(json.summary.media_size+' kB');
-            $("#cache-size").html(json.summary.cache_size+' kB');
+            $('#total-size').html(json.summary.total_size+' kB');
+            $('#text-size').html(json.summary.text_size+' kB');
+            $('#media-size').html(json.summary.media_size+' kB');
+            $('#cache-size').html(json.summary.cache_size+' kB');
 
-            $("#requests").html(json.summary.requests);
-            $("#redirects").html(json.summary.redirects);
-            $("#bad-req").html(json.summary.bad_req);
-            $("#hosts").html(json.summary.hosts);
+            $('#requests').html(json.summary.requests);
+            $('#redirects').html(json.summary.redirects);
+            $('#bad-req').html(json.summary.bad_req);
+            $('#hosts').html(json.summary.hosts);
 
             // Page Speed Score - Gauge
-            drawScore(json.summary.score);
+            RunInfo.score(json.summary.score);
 
             // Resources
-            drawPie("by-size","Resources by Size",json.weights,' kB');
-            drawPie("by-req","Resources by Count",json.requests,'');
+            RunInfo.resources('by-size','Resources by Size',json.weights,' kB');
+            RunInfo.resources('by-req','Resources by Count',json.requests,'');
 
             // Page Speed Details
-            drawPageSpeed(json);
+            RunInfo.pagespeed(json.pagespeed);
 
             // HAR Viewer
             var iframe = document.createElement('iframe');
-            iframe.src = "/results/harviewer?inputUrl=/results/download%3Fid%3D"+json.har+"&expand=true";
-            iframe.width = "940";
-            iframe.height = "600";
-            iframe.frameBorder = "0";
-            $("#harviewer").html(iframe);
+            iframe.src          = '/results/harviewer?inputUrl=/results/download%3Fid%3D'+json.har+'&expand=true';
+            iframe.width        = '940';
+            iframe.height       = '600';
+            iframe.frameBorder  = '0';
+
+            $('#harviewer').html(iframe);
         }
     };
 
-    var ts_selector = document.getElementById("run_timestamp");
-    var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
-    var URI  = "runinfo?timestamp=" + timestamp;
+    var selector    = document.getElementById('run_timestamp');
+    var timestamp   = selector.options[selector.selectedIndex].text;
+    var URI         = 'runinfo?timestamp=' + timestamp;
 
-    xmlhttp.open("GET",URI,true);
+    xmlhttp.open('GET', URI, true);
     xmlhttp.send();
 }
 
-function deleteRun(button,mode) {
-    var answer = confirm ("Are you sure?");
+//Delete current run from set of test results
+RunInfo.prototype.del = function(button,mode) {
+    //
+    var answer = confirm ('Are you sure?');
+
     if (answer) {
         var xmlhttp = new XMLHttpRequest();
 
@@ -341,12 +367,11 @@ function deleteRun(button,mode) {
             }
         };
 
-        var ts_selector = document.getElementById("run_timestamp");
+        var ts_selector = document.getElementById('run_timestamp');
         var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
-        var URI = "deleterun?timestamp=" + timestamp + "&label="+ button.id + "&mode=" + mode;
+        var URI         = 'deleterun?timestamp=' + timestamp + '&label='+ button.id + '&mode=' + mode;
 
-        xmlhttp.open("GET",URI,true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.open('GET', URI, true);
         xmlhttp.send();
     }
 }
