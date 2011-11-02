@@ -47,13 +47,13 @@ class ResultsController(BaseController):
         for set in latest_results:
             result = mdb_handler.collection.find_one({'label':set['label'],'timestamp':set['timestamp']})
             
-            c.metrics_table[0].append( result['label']                      )
-            c.metrics_table[1].append( result['url']                        )
-            c.metrics_table[2].append( result['ps_scores']['Total Score']   )
-            c.metrics_table[3].append( result["total_size"]                 )
-            c.metrics_table[4].append( result["requests"]                   ) 
-            c.metrics_table[5].append( result["full_load_time"]             )
-            c.metrics_table[6].append( result["timestamp"]                  )
+            c.metrics_table[0].append( result['label']                          )
+            c.metrics_table[1].append( result['url']                            )
+            c.metrics_table[2].append( result['ps_scores']['Total Score']       )
+            c.metrics_table[3].append( result["total_size"]                     )
+            c.metrics_table[4].append( result["requests"]                       )
+            c.metrics_table[5].append( round(result["full_load_time"]/1000.0,1) )
+            c.metrics_table[6].append( result["timestamp"]                      )
             
             c.rowcount += 1
         
@@ -110,14 +110,14 @@ class ResultsController(BaseController):
         if mode == 'label':
             for result in mdb_handler.collection.find({"label":label}).sort("timestamp",1):
                 ts_points       += str(result["timestamp"])+"#"
-                time_points     += str(result["full_load_time"])+"#"
+                time_points     += str(round(result["full_load_time"]/1000.0,1))+"#"
                 size_points     += str(result["total_size"])+"#"
                 req_points      += str(result["requests"])+"#"
                 score_points    += str(result['ps_scores']['Total Score'])+"#"
         else:
             for result in mdb_handler.collection.find({"url":url}).sort("timestamp",1):
                 ts_points       += str(result["timestamp"])+"#"
-                time_points     += str(result["full_load_time"])+"#"
+                time_points     += str(round(result["full_load_time"]/1000.0,1))+"#"
                 size_points     += str(result["total_size"])+"#"
                 req_points      += str(result["requests"])+"#"
                 score_points    += str(result['ps_scores']['Total Score'])+"#"

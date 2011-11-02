@@ -60,10 +60,6 @@ class SuperposedController(BaseController):
             # Average stats
             time, size, req, score = self.get_avg( label,start_ts,end_ts )
             
-            # Ordered labels
-            id = str(index + 1)
-            if index <9: id = '0' + id
-            
             # Data for table
             c.metrics_table[0].append( label    )
             c.metrics_table[1].append( score    )
@@ -72,8 +68,6 @@ class SuperposedController(BaseController):
             c.metrics_table[4].append( time     )
             
             c.rowcount += 1
-
-            label = id + " - " + label
 
             lbl_points      += str(label)+"#"
             time_points     += str(time)+"#"
@@ -101,13 +95,13 @@ class SuperposedController(BaseController):
 
         for document in md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }):
             avg_size    += document["total_size"]
-            avg_time    += document["full_load_time"]
+            avg_time    += round(document["full_load_time"]/1000.0,1)
             avg_req     += document["requests"]
             avg_score   += document['ps_scores']['Total Score']
             
-        avg_size    /= count
-        avg_time    /= count
-        avg_req     /= count
-        avg_score   /= count
+        avg_size    = int( round( avg_size  / count, 0 ) )
+        avg_time    = round( avg_time  / count, 1 )
+        avg_req     = int( round( avg_req   / count, 0 ) )
+        avg_score   = int( round( avg_score / count, 0 ) )
         
         return avg_time, avg_size, avg_req, avg_score

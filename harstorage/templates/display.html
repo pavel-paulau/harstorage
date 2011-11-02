@@ -3,7 +3,7 @@
 
 <center>
     <div class="sp-display">
-        <div id="timeline"></div>
+        <div id="chart"></div>
     
         <p class="title">Average Stats</p>
     
@@ -12,7 +12,7 @@
                 <tr>
                     <th width="36%" class="left">Label</th>
                     <th width="16%" class="center">Page Speed Score</th>
-                    <th width="16%" class="center">Total Size</th>
+                    <th width="16%" class="center">Total Size (kB)</th>
                     <th width="16%" class="center">Total Requests</th>
                     <th width="16%" class="center">Full Time</th>
                 </tr>
@@ -43,8 +43,8 @@
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        Timeline = new Timeline();
-        Timeline.draw("${c.points}");
+        Column = new Column();
+        Column.draw("${c.points}");
 
         $(document).ready(function() {
             $('#stats_table').dataTable({

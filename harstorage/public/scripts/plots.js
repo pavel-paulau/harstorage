@@ -36,8 +36,8 @@ Timeline.prototype.draw = function(points) {
     var scoreArray  = splitResults[4].split('#');
 
     for (index = 0; index < tsArray.length; index++) {
-        timeArray[index]    =   parseInt(timeArray[index]);
-        sizeArray[index]    =   parseInt(sizeArray[index]);
+        timeArray[index]    =   parseFloat(timeArray[index]);
+        sizeArray[index]    =   parseFloat(sizeArray[index]);
         reqArray[index]     =   parseInt(reqArray[index]);
         scoreArray[index]   =   parseInt(scoreArray[index]);
     }
@@ -45,8 +45,7 @@ Timeline.prototype.draw = function(points) {
     var chart = new Highcharts.Chart({
         chart: {
             renderTo    : 'timeline',
-            zoomType    : 'x',
-            alignTicks  : false
+            zoomType    : 'x'
         },
         exporting: {
             buttons : {
@@ -66,10 +65,15 @@ Timeline.prototype.draw = function(points) {
         }],
         yAxis: [{ // yAxis #1
             title: {
-                text    : 'Full Load Time (ms)',
+                text    : 'Full Load Time',
                 style   : { color: '#DDDF0D' }
             },
-            min         : 0
+            min         : 0,
+            labels: {
+                formatter: function() {
+                    return this.value;
+                }
+            }
         }, { // yAxis #2
             title: {
                 text    : 'Total Requests',
@@ -83,7 +87,141 @@ Timeline.prototype.draw = function(points) {
                 style   : { color: '#DF5353' }
             },
             min         : 0,
+            opposite    : true,
+            labels: {
+                formatter: function() {
+                    return this.value;
+                }
+            }
+        }, { // yAxis #4
+            title: {
+                text    : 'Page Speed Score',
+                style   : { color: '#7798BF' }
+            },
+            min         : 0            
+        }],
+        tooltip: {
+            formatter: function() {
+                var unit = {
+                    'Full Load Time'    : 's',
+                    'Total Requests'    : '',
+                    'Total Size'        : 'kB',
+                    'Page Speed Score'  : ''
+                } [this.series.name];
+
+                return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
+            }
+        },
+        plotOptions: {
+            series: {
+                events: {
+                    hide: function() {
+                        this.yAxis.axisTitle.hide();
+                    },
+                    show: function() {
+                        this.yAxis.axisTitle.show();
+                    }
+                }
+            }
+        },
+        series: [{
+            name    : 'Full Load Time',
+            type    : 'spline',
+            yAxis   : 0,
+            data    : timeArray
+        }, {
+            name    : 'Total Requests',
+            type    : 'spline',
+            yAxis   : 1,
+            data    : reqArray
+        }, {
+            name    : 'Total Size',
+            type    : 'spline',
+            yAxis   : 2,
+            data    : sizeArray
+        }, {
+            name    : 'Page Speed Score',
+            type    : 'spline',
+            yAxis   : 3,
+            data    : scoreArray
+        } ]
+    });
+};
+
+/*
+ * Column Chart
+ */
+var Column = function() {};
+
+Column.prototype.draw = function(points) {
+    var index;
+
+    var splitResults = points.split(';');
+
+    var tsArray     = splitResults[0].split('#');
+    var timeArray   = splitResults[1].split('#');
+    var sizeArray   = splitResults[2].split('#');
+    var reqArray    = splitResults[3].split('#');
+    var scoreArray  = splitResults[4].split('#');
+
+    for (index = 0; index < tsArray.length; index++) {
+        timeArray[index]    =   parseFloat(timeArray[index]);
+        sizeArray[index]    =   parseFloat(sizeArray[index]);
+        reqArray[index]     =   parseInt(reqArray[index]);
+        scoreArray[index]   =   parseInt(scoreArray[index]);
+    }
+
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo    : 'chart',
+            defaultSeriesType: 'column'
+        },
+        exporting: {
+            buttons : {
+                printButton : {enabled: false}
+            },
+            url         : '/chart/export',
+            filename    : 'superposed',
+            width       : 960            
+        },
+        title: {
+            text: 'Performance Trends'
+        },
+        xAxis: [{
+            categories          : tsArray,
+            tickInterval        : Math.ceil(tsArray.length / 10),
+            tickmarkPlacement   : 'on'
+        }],
+        yAxis: [{ // yAxis #1
+            title: {
+                text    : 'Full Load Time',
+                style   : { color: '#DDDF0D' }
+            },
+            min         : 0,
+            labels: {
+                formatter: function() {
+                    return this.value;
+                }
+            }
+        }, { // yAxis #2
+            title: {
+                text    : 'Total Requests',
+                style   : { color: '#55BF3B' }
+            },
+            min         : 0,
             opposite    : true
+        }, { // yAxis #3
+            title: {
+                text    : 'Total Size (kB)',
+                style   : { color: '#DF5353' }
+            },
+            min         : 0,
+            opposite    : true,
+            labels: {
+                formatter: function() {
+                    return this.value;                    
+                }
+            }
         }, { // yAxis #4
             title: {
                 text    : 'Page Speed Score',
@@ -95,37 +233,49 @@ Timeline.prototype.draw = function(points) {
         tooltip: {
             formatter: function() {
                 var unit = {
-                    'Full Load Time (ms)'   : 'ms',
-                    'Total Requests'        : '',
-                    'Total Size (kB)'       : 'kB',
-                    'Page Speed Score'      : ''
+                    'Full Load Time'    : 's',
+                    'Total Requests'    : '',
+                    'Total Size'        : 'kB',
+                    'Page Speed Score'  : ''
                 } [this.series.name];
 
                 return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
         },
+        plotOptions: {
+            series: {
+                events: {
+                    hide: function() {
+                        this.yAxis.axisTitle.hide();
+                    },
+                    show: function() {
+                        this.yAxis.axisTitle.show();
+                    }
+                }
+            },
+            column: {
+                pointPadding: 0.3,
+                borderWidth: 0
+            }
+        },
         series: [{
-            name    : 'Full Load Time (ms)',
-            type    : 'spline',
+            name    : 'Full Load Time',
             yAxis   : 0,
-            data    : timeArray
+            data    : timeArray            
         }, {
-            name    : 'Total Requests',
-            type    : 'spline',
+            name    : 'Total Requests',            
             yAxis   : 1,
             data    : reqArray
         }, {
-            name    : 'Total Size (kB)',
-            type    : 'spline',
+            name    : 'Total Size',            
             yAxis   : 2,
             data    : sizeArray
         }, {
-            name    : 'Page Speed Score',
-            type    : 'spline',
+            name    : 'Page Speed Score',            
             yAxis   : 3,
             data    : scoreArray
-        } ]
-    });
+        }]
+    });    
 };
 
 /*
