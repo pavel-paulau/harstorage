@@ -223,6 +223,9 @@ body a:hover {
     width: 70px;
     float: left;
 }
+.results .image {
+    margin: 35px 0 0 190px;
+}
 .results #by-size,.results #by-req {
     width:450px;
     height:300px;
