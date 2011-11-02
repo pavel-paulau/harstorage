@@ -333,13 +333,20 @@ RunInfo.prototype.get = function() {
             RunInfo.pagespeed(json.pagespeed);
 
             // HAR Viewer
-            var iframe = document.createElement('iframe');
-            iframe.src          = '/results/harviewer?inputUrl=/results/download%3Fid%3D'+json.har+'&expand=true';
+            var iframe  = document.createElement('iframe');
+            var url     = '/results/harviewer?inputUrl=/results/download%3Fid%3D'+json.har+'&expand=true';
+            iframe.src          = url;
             iframe.width        = '940';
             iframe.height       = '600';
             iframe.frameBorder  = '0';
 
             $('#harviewer').html(iframe);
+            
+            // New tab feature of HAR Viewer
+            var newtab = document.getElementById('newtab');
+            newtab.onclick = function (){
+                window.open(url);
+            }
         }
     };
 
