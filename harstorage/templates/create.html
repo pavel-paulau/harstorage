@@ -41,14 +41,29 @@
                 </fieldset>
             </form>
         </div>
+
+        <div class="spinner" id="spinner"></div>        
     </div>
 </center>
 
 <script type='text/javascript'>
     $LAB
+    .script("${h.url_for('/scripts/spin.js')}").wait()
     .script("${h.url_for('/scripts/superpose.js')}").wait()
     .wait(function(){
         SuperposeForm = new SuperposeForm();
         SuperposeForm.setTimestamps('step_1_label');
+
+        var opts = {
+            lines: 10,
+            length: 6,
+            width: 3,
+            radius: 6,
+            color: '#498a2d',
+            speed: 0.8,
+            trail: 80
+        };
+        var target = document.getElementById('spinner');
+        var spinner = new Spinner(opts).spin(target);
     })
 </script>

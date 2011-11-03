@@ -6,6 +6,9 @@
     <title>${self.title()}</title>
 
     <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main.css')}" />
+    <!--[if IE]>
+        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main-ie.css')}" />
+    <![endif]-->
     <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
     <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/chosen/chosen.css')}" />
     <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/table_jui.css')}" />

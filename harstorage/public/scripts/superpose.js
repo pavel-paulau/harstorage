@@ -143,6 +143,9 @@ SuperposeForm.prototype.setTimestamps = function(id){
         id  = id.split('_')[0] + '_' + id.split('_')[1];
 
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            // Hide Ajax spinner
+            spinner.style.display = 'none';
+
             // Dates of tests
             var dates = xmlhttp.responseText.split(';');
 
@@ -173,4 +176,8 @@ SuperposeForm.prototype.setTimestamps = function(id){
 
     xmlhttp.open('GET', URI, true);
     xmlhttp.send();
+
+    // Show Ajax spinner
+    var spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
 }
