@@ -47,9 +47,22 @@ Timeline.prototype.draw = function(points) {
             renderTo    : 'timeline',
             zoomType    : 'x'
         },
+        credits: {
+            enabled: false
+        },
         exporting: {
             buttons : {
-                printButton : {enabled: false}
+                printButton : {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
             },
             url         : '/chart/export',
             filename    : 'timeline',
@@ -176,9 +189,22 @@ Column.prototype.draw = function(points) {
             renderTo    : 'chart',
             defaultSeriesType: 'column'
         },
+        credits: {
+            enabled: false
+        },
         exporting: {
             buttons : {
-                printButton : {enabled: false}
+                printButton : {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
             },
             url         : '/chart/export',
             filename    : 'superposed',
@@ -338,9 +364,22 @@ RunInfo.prototype.resources = function (div,title,hash,units) {
             width               : 450,
             height              : 300
         },
+        credits: {
+            enabled: false
+        },
         exporting: {
             buttons : {
-                printButton: { enabled: false}
+                printButton: {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
             },
             url         :'/chart/export',
             filename    : 'resources',
@@ -402,9 +441,22 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
             height              : height,
             width               : 930
         },
+        credits: {
+            enabled: false
+        },
         exporting: {
             buttons : {
-                printButton: { enabled: false}
+                printButton: {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
             },
             url         :'/chart/export',
             filename    : 'pagespeed',
