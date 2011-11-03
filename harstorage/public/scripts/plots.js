@@ -431,7 +431,7 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
     }
 
     // Chart height
-    var height = 75 + 20 * rules.length;
+    var height = Math.max(75 + 20 * rules.length, 100);
 
     // Chart object
     var chart = new Highcharts.Chart({
@@ -450,17 +450,9 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
                     enabled: false
                 },
                 exportButton: {
-                    menuItems: [
-                        {},
-                        null,
-                        null,
-                        {}
-                    ]
+                    enabled: false
                 }
-            },
-            url         :'/chart/export',
-            filename    : 'pagespeed',
-            width       : 930
+            }
         },
         title: {
             text: 'Page Speed Scores'

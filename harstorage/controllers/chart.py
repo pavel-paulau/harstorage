@@ -19,14 +19,12 @@ class ChartController(BaseController):
         svg         = request.POST['svg']
         filename    = request.POST['filename']
         width       = int( request.POST['width'] )
-        
+
         # Sizes
         if width == 960:
             height = 400
         elif width == 450:
             height = 300
-        elif width == 930:
-            height = 550
 
         # Converting
         if type == 'image/png':
