@@ -24,7 +24,7 @@ class ChartController(BaseController):
         if width == 960:
             height = 400
         elif width == 450:
-            height = 350
+            height = 300
         elif width == 930:
             height = 550
 
