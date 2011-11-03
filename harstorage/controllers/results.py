@@ -13,7 +13,6 @@ from pylons import config
 from pylons.controllers.util import redirect
 
 from harstorage.lib.base import BaseController, render
-from harstorage.lib import helpers as h
 
 log = logging.getLogger(__name__)
 
