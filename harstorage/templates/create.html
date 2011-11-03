@@ -2,38 +2,45 @@
 <%def name="title()">Superposed Tests</%def>
 <center>
     <div class="sp-create">
-        <form action="display" id="SuperposeForm" method="post" onsubmit="return false;">
-            <fieldset>
-                <legend>Aggregate and Compare</legend>
-                
-                <div id="container">
-                    <div id="step_1" class="container">
-                        <div class="title" id="step_1_head" >Set 1 &gt;</div>
-                        <div class="text">Label:</div>
+        <div class="howto">
+            <a href="http://code.google.com/p/harstorage/wiki/SuperposedTests" target="_blank"><strong>How to aggregate and compare results?</strong></a>
+        </div>
 
-                        <select name="step_1_label" id="step_1_label" class="slct-label" onchange="SuperposeForm.setTimestamps(this.name);">
-                            % for label in c.labels:
-                            <option value="${label}">${label}</option>
-                            % endfor
-                        </select>
-                        
-                        <div class="text">Start TS:</div>
-                        
-                        <select name="step_1_start_ts" id="step_1_start_ts" class="slct-start" >
-                        </select>
-                        
-                        <div class="text">End TS:</div>
-                        
-                        <select name="step_1_end_ts" id="step_1_end_ts" class="slct-end" >
-                        </select>
-                        
-                        <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" onclick="SuperposeForm.add(this);"/>
-                        <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="SuperposeForm.del(this);" style="display:none"/>
+        <div class="form">
+            <form action="display" id="SuperposeForm" method="post" onsubmit="return false;">
+                <fieldset>
+                    <legend>Aggregate and Compare</legend>
+
+                    <div id="container">
+                        <div id="step_1" class="container">
+                            <div class="title" id="step_1_head" >Set 1 &gt;</div>
+                            <div class="text">Label:</div>
+
+                            <select name="step_1_label" id="step_1_label" class="slct-label" onchange="SuperposeForm.setTimestamps(this.name);">
+                                % for label in c.labels:
+                                <option value="${label}">${label}</option>
+                                % endfor
+                            </select>
+
+                            <div class="text">Start TS:</div>
+
+                            <select name="step_1_start_ts" id="step_1_start_ts" class="slct-start" >
+                            </select>
+
+                            <div class="text">End TS:</div>
+
+                            <select name="step_1_end_ts" id="step_1_end_ts" class="slct-end" >
+                            </select>
+
+                            <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" onclick="SuperposeForm.add(this);"/>
+                            <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="SuperposeForm.del(this);" style="display:none"/>
+                        </div>
                     </div>
-                </div>
-                <input type="submit" class="submit" value="View Result" onclick="return SuperposeForm.submit();"/>
-            </fieldset>
-        </form>
+
+                    <input type="submit" class="submit" value="View Result" onclick="return SuperposeForm.submit();"/>
+                </fieldset>
+            </form>
+        </div>
     </div>
 </center>
 

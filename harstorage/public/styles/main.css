@@ -111,8 +111,7 @@ body a:hover {
     text-align: left;
 }
 .sp-create fieldset {
-    width: 960px;
-    margin: 20px 0;
+    width: 960px;    
     border: 1px solid #498a2d;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
@@ -127,6 +126,17 @@ body a:hover {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     padding: 2px 20px;
+}
+.sp-create .howto {
+    width: 960px;
+    margin: 20px 0 10px 0;
+    text-align: right;
+}
+.sp-create .howto a {
+    text-decoration: none;
+}
+.sp-create .howto a:hover {
+    text-decoration: underline;
 }
 .sp-create .slct-label {
     float: left;
