@@ -559,7 +559,7 @@ RunInfo.prototype.get = function() {
 }
 
 //Delete current run from set of test results
-RunInfo.prototype.del = function(button,mode) {
+RunInfo.prototype.del = function(button,mode,all) {
     //
     var answer = confirm ('Are you sure?');
 
@@ -576,7 +576,10 @@ RunInfo.prototype.del = function(button,mode) {
 
         var ts_selector = document.getElementById('run_timestamp');
         var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
-        var URI         = 'deleterun?timestamp=' + timestamp + '&label='+ button.id + '&mode=' + mode;
+        var URI         = 'deleterun?timestamp=' + timestamp
+                        + '&label='+ button.id
+                        + '&mode=' + mode
+                        + '&all=' + all;
 
         xmlhttp.open('GET', URI, true);
         xmlhttp.send();

@@ -195,13 +195,24 @@ class ResultsController(BaseController):
         label       = request.GET['label']
         timestamp   = request.GET['timestamp']
         mode        = request.GET['mode']
-        
+
+        if request.GET['all'] == 'true':
+            all = True
+        else:
+            all = False
+            
         # Remove document from collection
         if mode == 'label':
-            mdb_handler.collection.remove({"label":label,"timestamp":timestamp})
+            if all:
+                mdb_handler.collection.remove({"label":label})
+            else:
+                mdb_handler.collection.remove({"label":label,"timestamp":timestamp})
             count = mdb_handler.collection.find({"label":label}).count()
         else:
-            mdb_handler.collection.remove({"url":label,"timestamp":timestamp})
+            if all:
+                mdb_handler.collection.remove({"url":label})
+            else:
+                mdb_handler.collection.remove({"url":label,"timestamp":timestamp})
             count = mdb_handler.collection.find({"url":label}).count()
 
         if count:

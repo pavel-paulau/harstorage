@@ -61,7 +61,9 @@
 
             <div class="tabbertab" title="Manage Data">
                 <div id="manager">
-                    <button type="button" id="${c.label}" onclick="RunInfo.del(this,'${c.mode}');">Delete current test</button>
+                    <button type="button" id="${c.label}" onclick="RunInfo.del(this,'${c.mode}',false);">Delete current test</button>
+                    
+                    <button type="button" id="${c.label}" onclick="RunInfo.del(this,'${c.mode}',true);">Delete all tests</button>
                 </div>
             </div>
         </div>
