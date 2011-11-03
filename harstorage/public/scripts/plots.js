@@ -254,14 +254,20 @@ Column.prototype.draw = function(points) {
                 }
             },
             column: {
-                pointPadding: 0.3,
-                borderWidth: 0
+                pointPadding: 0.1,
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    color: 'white',
+                    align: 'left',
+                    y: -5
+                }
             }
         },
         series: [{
             name    : 'Full Load Time',
             yAxis   : 0,
-            data    : timeArray            
+            data    : timeArray
         }, {
             name    : 'Total Requests',            
             yAxis   : 1,
