@@ -139,7 +139,7 @@ body a:hover {
     z-index: 2;
     width: 24px;
     top: 32px;
-    left: 470px;
+    left: 480px;
     display: none;
 }
 .sp-create .howto {
@@ -304,7 +304,7 @@ body a:hover {
 .results .spinner {
     position: relative;
     width: 26px;
-    left: 510px;
+    left: 515px;
     top: -27px;
     margin: 12px 0 0 0;
     display: none;
