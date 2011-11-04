@@ -79,7 +79,7 @@ Timeline.prototype.draw = function(points) {
         yAxis: [{ // yAxis #1
             title: {
                 text    : 'Full Load Time',
-                style   : { color: '#DDDF0D' }
+                style   : {color: '#DDDF0D'}
             },
             min         : 0,
             labels: {
@@ -90,14 +90,14 @@ Timeline.prototype.draw = function(points) {
         }, { // yAxis #2
             title: {
                 text    : 'Total Requests',
-                style   : { color: '#55BF3B' }
+                style   : {color: '#55BF3B'}
             },
             min         : 0,
             opposite    : true
         }, { // yAxis #3
             title: {
                 text    : 'Total Size (kB)',
-                style   : { color: '#DF5353' }
+                style   : {color: '#DF5353'}
             },
             min         : 0,
             opposite    : true,
@@ -109,7 +109,7 @@ Timeline.prototype.draw = function(points) {
         }, { // yAxis #4
             title: {
                 text    : 'Page Speed Score',
-                style   : { color: '#7798BF' }
+                style   : {color: '#7798BF'}
             },
             min         : 0            
         }],
@@ -120,7 +120,7 @@ Timeline.prototype.draw = function(points) {
                     'Total Requests'    : '',
                     'Total Size'        : 'kB',
                     'Page Speed Score'  : ''
-                } [this.series.name];
+                }[this.series.name];
 
                 return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
@@ -221,7 +221,7 @@ Column.prototype.draw = function(points) {
         yAxis: [{ // yAxis #1
             title: {
                 text    : 'Full Load Time',
-                style   : { color: '#DDDF0D' }
+                style   : {color: '#DDDF0D'}
             },
             min         : 0,
             labels: {
@@ -232,14 +232,14 @@ Column.prototype.draw = function(points) {
         }, { // yAxis #2
             title: {
                 text    : 'Total Requests',
-                style   : { color: '#55BF3B' }
+                style   : {color: '#55BF3B'}
             },
             min         : 0,
             opposite    : true
         }, { // yAxis #3
             title: {
                 text    : 'Total Size (kB)',
-                style   : { color: '#DF5353' }
+                style   : {color: '#DF5353'}
             },
             min         : 0,
             opposite    : true,
@@ -251,7 +251,7 @@ Column.prototype.draw = function(points) {
         }, { // yAxis #4
             title: {
                 text    : 'Page Speed Score',
-                style   : { color: '#7798BF' }
+                style   : {color: '#7798BF'}
             },
             min         : 0,
             endOnTick   : false
@@ -263,7 +263,7 @@ Column.prototype.draw = function(points) {
                     'Total Requests'    : '',
                     'Total Size'        : 'kB',
                     'Page Speed Score'  : ''
-                } [this.series.name];
+                }[this.series.name];
 
                 return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
@@ -537,7 +537,7 @@ RunInfo.prototype.get = function() {
             var url     = '/results/harviewer?inputUrl=/results/download%3Fid%3D'+json.har+'&expand=true';
             iframe.src          = url;
             iframe.width        = '940';
-            iframe.height       = '600';
+            iframe.height       = Math.min(json.summary.requests*20+20,600).toString();
             iframe.frameBorder  = '0';
 
             $('#harviewer').html(iframe);
