@@ -2,5 +2,8 @@
     width: 960px;
 }
 .sp-create .spinner {
-    left: 455px;
+    left: 460px;
+}
+.results .spinner {
+    margin: 12px 0 -12px 0;
 }

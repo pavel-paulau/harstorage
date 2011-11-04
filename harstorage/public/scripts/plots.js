@@ -547,6 +547,10 @@ RunInfo.prototype.get = function() {
             newtab.onclick = function (){
                 window.open(url);
             }
+
+            // Hide Ajax spinner
+            var spinner = document.getElementById('spinner');
+            spinner.style.display = 'none';
         }
     };
 
@@ -556,6 +560,10 @@ RunInfo.prototype.get = function() {
 
     xmlhttp.open('GET', URI, true);
     xmlhttp.send();
+
+    // Show Ajax spinner
+    var spinner = document.getElementById('spinner');
+    spinner.style.display = 'block';
 }
 
 //Delete current run from set of test results
@@ -584,4 +592,32 @@ RunInfo.prototype.del = function(button,mode,all) {
         xmlhttp.open('GET', URI, true);
         xmlhttp.send();
     }
+}
+
+// Add delay for async rendering
+RunInfo.prototype.changeVisibility = function (){
+    var buttons = document.getElementsByTagName('button');
+
+    for(var i=0; i<buttons.length; i++){
+        buttons[i].style.display = 'inline';
+    }
+};
+
+RunInfo.prototype.timedStyleChange = function ()
+{
+    setTimeout("RunInfo.changeVisibility()",1000);
+};
+
+RunInfo.prototype.addSpinner = function(){
+    var opts = {
+            lines: 10,
+            length: 5,
+            width: 3,
+            radius: 5,
+            color: '#498a2d',
+            speed: 0.8,
+            trail: 80
+    };
+    var target = document.getElementById('spinner');
+    var spinner = new Spinner(opts).spin(target);
 }

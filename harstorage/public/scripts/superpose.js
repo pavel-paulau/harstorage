@@ -181,3 +181,17 @@ SuperposeForm.prototype.setTimestamps = function(id){
     var spinner = document.getElementById('spinner');
     spinner.style.display = 'block';
 }
+// Add Ajax spinner
+SuperposeForm.prototype.addSpinner = function(){
+    var opts = {
+            lines: 10,
+            length: 6,
+            width: 3,
+            radius: 6,
+            color: '#498a2d',
+            speed: 0.8,
+            trail: 80
+        };
+    var target = document.getElementById('spinner');
+    var spinner = new Spinner(opts).spin(target);
+}

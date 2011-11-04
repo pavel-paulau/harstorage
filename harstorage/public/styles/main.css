@@ -135,11 +135,11 @@ body a:hover {
     z-index: 1;
 }
 .sp-create .spinner {
-    position: absolute;
+    position: relative;
     z-index: 2;
-    width: 100%;
-    top: 60px;    
-    left: 470px;    
+    width: 24px;
+    top: 32px;
+    left: 470px;
     display: none;
 }
 .sp-create .howto {
@@ -283,6 +283,7 @@ body a:hover {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
+    display: none;
 }
 .results .newtab {
     text-align: center;
@@ -299,4 +300,12 @@ body a:hover {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
+}
+.results .spinner {
+    position: relative;
+    width: 26px;
+    left: 510px;
+    top: -27px;
+    margin: 12px 0 0 0;
+    display: none;
 }

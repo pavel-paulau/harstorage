@@ -15,6 +15,8 @@
             </select>
         </div>
 
+        <div class="spinner" id="spinner"></div>
+
         <div class="tabber">
             <div class="tabbertab" title="Summary">
                 <div id="gauge" ></div>
@@ -76,6 +78,7 @@
     .script("${h.url_for('/scripts/highcharts/highcharts.js')}").wait()
     .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}").wait()
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
+    .script("${h.url_for('/scripts/spin.js')}").wait()
     .script("${h.url_for('/scripts/chosen.jquery.js')}")
     .script("${h.url_for('/scripts/gauge.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
@@ -84,6 +87,8 @@
         Timeline.get("${c.url}","${c.label}","${c.mode}");
 
         RunInfo = new RunInfo();
+        RunInfo.addSpinner();
         RunInfo.get();
+        RunInfo.timedStyleChange();        
     })
 </script>
