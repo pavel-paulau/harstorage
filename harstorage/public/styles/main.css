@@ -104,6 +104,10 @@ body a:hover {
 .sp-display {
     width: 960px;
 }
+.sp-display #chart{
+    width: 960px;
+    height: 400px;
+}
 .sp-display .title {
     font-weight: bold;
     font-size: 108%;
@@ -159,10 +163,10 @@ body a:hover {
 }
 .sp-create .slct-start {
     float: left;
-    width: 170px;
+    width: 150px;
 }
 .sp-create .slct-end {
-    width: 170px;
+    width: 150px;
 }
 .sp-create .container {
     text-align: left;
@@ -170,11 +174,15 @@ body a:hover {
 }
 .sp-create .title,.sp-create .text {
     float: left;
-    font-size: 100%;
-    margin: 4px 10px 0 10px;
+    font-size: 93%;
+}
+.sp-create .text {
+    margin: 4px 10px 0 20px;
 }
 .sp-create .title {
+    width: 60px;
     font-weight: bold;
+    margin: 4px 0 0 10px;
 }
 .sp-create .image {
     vertical-align: top;
@@ -196,6 +204,10 @@ body a:hover {
 /* Results */
 .results {
     width: 960px;
+}
+.results #timeline{
+    width: 960px;
+    height: 400px;
 }
 .results .title {
     font-weight: bold;
