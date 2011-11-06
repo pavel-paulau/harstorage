@@ -537,7 +537,7 @@ RunInfo.prototype.get = function() {
             var url     = '/results/harviewer?inputUrl=/results/download%3Fid%3D'+json.har+'&expand=true';
             iframe.src          = url;
             iframe.width        = '940';
-            iframe.height       = Math.min(json.summary.requests*40+20,600).toString();
+            iframe.height       = Math.max(Math.min(json.summary.requests*40+20,600),300).toString();
             iframe.frameBorder  = '0';
 
             $('#harviewer').html(iframe);
