@@ -20,7 +20,7 @@ harstorage/controllers/__init__.py
 harstorage/controllers/chart.py
 harstorage/controllers/error.py
 harstorage/controllers/results.py
-harstorage/controllers/testflow.py
+harstorage/controllers/superposed.py
 harstorage/lib/HAR.py
 harstorage/lib/MongoHandler.py
 harstorage/lib/__init__.py
@@ -30,17 +30,17 @@ harstorage/lib/helpers.py
 harstorage/public/favicon.ico
 harstorage/public/data/.data
 harstorage/public/images/add_button.png
+harstorage/public/images/help_button.png
 harstorage/public/images/pylons.png
 harstorage/public/images/remove_button.png
 harstorage/public/scripts/LAB.min.js
 harstorage/public/scripts/chosen.jquery.js
 harstorage/public/scripts/gauge.js
-harstorage/public/scripts/hs-ui.js
 harstorage/public/scripts/jquery-1.6.3.min.js
-harstorage/public/scripts/jsapi.js
 harstorage/public/scripts/plots.js
+harstorage/public/scripts/spin.js
+harstorage/public/scripts/superpose.js
 harstorage/public/scripts/tabber.js
-harstorage/public/scripts/testflow.js
 harstorage/public/scripts/datatables/ColReorder.min.js
 harstorage/public/scripts/datatables/TableTools.min.js
 harstorage/public/scripts/datatables/jquery.dataTables.min.js
@@ -51,6 +51,7 @@ harstorage/public/scripts/harviewer/domplate/domplate.js
 harstorage/public/scripts/highcharts/highcharts.js
 harstorage/public/scripts/highcharts/modules/exporting.js
 harstorage/public/scripts/highcharts/themes/dark-green.js
+harstorage/public/styles/main-ie.css
 harstorage/public/styles/main.css
 harstorage/public/styles/tabber.css
 harstorage/public/styles/chosen/chosen-sprite.png
