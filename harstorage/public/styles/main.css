@@ -63,7 +63,7 @@ body a:hover {
 }
 .uploader .button {
     width: 100px;
-    height: 24px;
+    padding: 4px 0;
     margin: 20px 0 20px 20px;
     color: #000;
     font-size: 77%;
@@ -89,8 +89,8 @@ body a:hover {
 }
 .summary button {
     width: 220px;
-    height: 24px;
-    margin: 20px 10px 20px 20px;
+    padding: 4px 0;
+    margin: 20px 0;
     color: #000;
     font-size: 77%;
     background: #d7e7cf;
@@ -190,8 +190,8 @@ body a:hover {
 }
 .sp-create .submit {
     width: 220px;
-    height: 24px;
-    margin: 30px 10px 20px 20px;
+    padding: 4px 0;
+    margin: 30px 0 20px 0;
     color: #000;
     font-size: 77%;
     background: #d7e7cf;
@@ -282,11 +282,12 @@ body a:hover {
 }
 .results #manager {
     text-align: left;
+    padding: 20px 0 20px 10px;
 }
 .results button {
     width: 200px;
-    height: 24px;
-    margin: 20px 10px 20px 20px;
+    padding: 4px 0;
+    margin: 0 10px;    
     color: #000;
     font-size: 77%;
     background: #d7e7cf;
@@ -302,7 +303,7 @@ body a:hover {
 }
 .results .newtab button {
     width: 200px;
-    height: 24px;
+    padding: 4px 0;
     margin: 5px 0px 10px 0px;
     color: #000;
     font-size: 77%;
