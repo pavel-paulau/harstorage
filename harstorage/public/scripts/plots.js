@@ -124,12 +124,20 @@ Timeline.prototype.draw = function(points) {
         },
         plotOptions: {
             series: {
+                cursor: 'pointer',
                 events: {
                     hide: function() {
                         this.yAxis.axisTitle.hide();
                     },
                     show: function() {
                         this.yAxis.axisTitle.show();
+                    }
+                },
+                point: {
+                    events: {
+                        click: function() {                            
+                            RunInfo.get(this.category);
+                        }
                     }
                 }
             }
@@ -490,7 +498,7 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
 };
 
 //Get data for Run Info
-RunInfo.prototype.get = function() {
+RunInfo.prototype.get = function(opt_ts) {
     // Retrieve data for Run Infor via XHR call
     var xmlhttp = new XMLHttpRequest();
 
@@ -548,8 +556,23 @@ RunInfo.prototype.get = function() {
         }
     };
 
+    // Get timestamp from argument of function or from select box
     var selector    = document.getElementById('run_timestamp');
-    var timestamp   = selector.options[selector.selectedIndex].text;
+    var timestamp;
+    if (typeof(opt_ts) !== 'undefined') {
+        timestamp = opt_ts;
+
+        // Update select box
+        for(var i=0, len = selector.options.length; i < len; i++) {
+            if(selector.options[i].value === opt_ts) {
+                selector.selectedIndex = i;
+                $("#run_timestamp").trigger("liszt:updated");
+                break;
+            }
+        }
+    } else {
+        timestamp   = selector.options[selector.selectedIndex].text;
+    }
     var URI         = 'runinfo?timestamp=' + timestamp;
 
     xmlhttp.open('GET', URI, true);
