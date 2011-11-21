@@ -6,14 +6,14 @@
 var Timeline = function() {};
 
 // Get data for timeline
-Timeline.prototype.get = function(url,label,mode){
+Timeline.prototype.get = function(url,label,mode) {
     // Retrieve data for timeline via XHR call
     var xmlhttp = new XMLHttpRequest();
 
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            Timeline.draw(xmlhttp.responseText);
+            window.Timeline.draw(xmlhttp.responseText);
         }
     };
 
@@ -25,21 +25,19 @@ Timeline.prototype.get = function(url,label,mode){
 
 // Draw timeline
 Timeline.prototype.draw = function(points) {
-    var index;
-
     var splitResults = points.split(';');
 
-    var tsArray     = splitResults[0].split('#');
-    var timeArray   = splitResults[1].split('#');
-    var sizeArray   = splitResults[2].split('#');
-    var reqArray    = splitResults[3].split('#');
-    var scoreArray  = splitResults[4].split('#');
+    var tsArray     = splitResults[0].split('#'),
+        timeArray   = splitResults[1].split('#'),
+        sizeArray   = splitResults[2].split('#'),
+        reqArray    = splitResults[3].split('#'),
+        scoreArray  = splitResults[4].split('#');
 
-    for (index = 0; index < tsArray.length; index++) {
-        timeArray[index]    =   parseFloat(timeArray[index]);
-        sizeArray[index]    =   parseFloat(sizeArray[index]);
-        reqArray[index]     =   parseInt(reqArray[index]);
-        scoreArray[index]   =   parseInt(scoreArray[index]);
+    for (var index = 0, len = tsArray.length; index < len; index++) {
+        timeArray[index]    =   parseFloat(timeArray[index], 10);
+        sizeArray[index]    =   parseFloat(sizeArray[index], 10);
+        reqArray[index]     =   parseInt(reqArray[index], 10);
+        scoreArray[index]   =   parseInt(scoreArray[index], 10);
     }
 
     var chart = new Highcharts.Chart({
@@ -167,21 +165,19 @@ Timeline.prototype.draw = function(points) {
 var Column = function() {};
 
 Column.prototype.draw = function(points) {
-    var index;
-
     var splitResults = points.split(';');
 
-    var tsArray     = splitResults[0].split('#');
-    var timeArray   = splitResults[1].split('#');
-    var sizeArray   = splitResults[2].split('#');
-    var reqArray    = splitResults[3].split('#');
-    var scoreArray  = splitResults[4].split('#');
+    var tsArray     = splitResults[0].split('#'),
+        timeArray   = splitResults[1].split('#'),
+        sizeArray   = splitResults[2].split('#'),
+        reqArray    = splitResults[3].split('#'),
+        scoreArray  = splitResults[4].split('#');
 
-    for (index = 0; index < tsArray.length; index++) {
-        timeArray[index]    =   parseFloat(timeArray[index]);
-        sizeArray[index]    =   parseFloat(sizeArray[index]);
-        reqArray[index]     =   parseInt(reqArray[index]);
-        scoreArray[index]   =   parseInt(scoreArray[index]);
+    for (var index = 0, len = tsArray.length; index < len; index++) {
+        timeArray[index]    =   parseFloat(timeArray[index], 10);
+        sizeArray[index]    =   parseFloat(sizeArray[index], 10);
+        reqArray[index]     =   parseInt(reqArray[index], 10);
+        scoreArray[index]   =   parseInt(scoreArray[index], 10);
     }
 
     var chart = new Highcharts.Chart({
@@ -348,7 +344,7 @@ RunInfo.prototype.score = function(score) {
 //Page Resources
 RunInfo.prototype.resources = function (div,title,hash,units) {
     // Extract data
-    var data  = new Array();
+    var data  = [];
 
     for (var key in hash) {
         data.push( [key, hash[key] ]);
@@ -422,8 +418,8 @@ RunInfo.prototype.resources = function (div,title,hash,units) {
 //Page Speed details
 RunInfo.prototype.pagespeed = function (pagespeed) {
     // Spliting data for chart
-    var rules   = new Array;
-    var scores  = new Array;
+    var rules   = [],
+        scores  = [];
 
     for (var rule in pagespeed) {
         rules.push(rule);
@@ -499,10 +495,9 @@ RunInfo.prototype.get = function() {
     // Retrieve data for Run Infor via XHR call
     var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.onreadystatechange = function()
-    {
+    xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            var json = eval('('+xmlhttp.responseText+')');
+            var json = JSON.parse(xmlhttp.responseText);
             
             // Summary
             $('#full-load-time').html(json.summary.full_time+' ms');
@@ -523,14 +518,14 @@ RunInfo.prototype.get = function() {
             $('#hosts').html(json.summary.hosts);
 
             // Page Speed Score - Gauge
-            RunInfo.score(json.summary.score);
+            window.RunInfo.score(json.summary.score);
 
             // Resources
-            RunInfo.resources('by-size','Resources by Size',json.weights,' kB');
-            RunInfo.resources('by-req','Resources by Count',json.requests,'');
+            window.RunInfo.resources('by-size','Resources by Size',json.weights,' kB');
+            window.RunInfo.resources('by-req','Resources by Count',json.requests,'');
 
             // Page Speed Details
-            RunInfo.pagespeed(json.pagespeed);
+            window.RunInfo.pagespeed(json.pagespeed);
 
             // HAR Viewer
             var iframe  = document.createElement('iframe');
@@ -544,9 +539,9 @@ RunInfo.prototype.get = function() {
             
             // New tab feature of HAR Viewer
             var newtab = document.getElementById('newtab');
-            newtab.onclick = function (){
+            newtab.onclick = function () {
                 window.open(url);
-            }
+            };
 
             // Hide Ajax spinner
             var spinner = document.getElementById('spinner');
@@ -564,18 +559,17 @@ RunInfo.prototype.get = function() {
     // Show Ajax spinner
     var spinner = document.getElementById('spinner');
     spinner.style.display = 'block';
-}
+};
 
 //Delete current run from set of test results
 RunInfo.prototype.del = function(button,mode,all) {
     //
-    var answer = confirm ('Are you sure?');
+    var answer = window.confirm('Are you sure?');
 
-    if (answer) {
+    if (answer === true) {
         var xmlhttp = new XMLHttpRequest();
 
-        xmlhttp.onreadystatechange = function()
-        {
+        xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 var response = xmlhttp.responseText;
                 window.location = response;
@@ -584,40 +578,40 @@ RunInfo.prototype.del = function(button,mode,all) {
 
         var ts_selector = document.getElementById('run_timestamp');
         var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
-        var URI         = 'deleterun?timestamp=' + timestamp
-                        + '&label='+ button.id
-                        + '&mode=' + mode
-                        + '&all=' + all;
+        var URI = 'deleterun?timestamp=' + timestamp;
+            URI += '&label=' + button.id;
+            URI += '&mode=' + mode;
+            URI += '&all=' + all;
 
         xmlhttp.open('GET', URI, true);
         xmlhttp.send();
     }
-}
+};
 
 // Add delay for async rendering
-RunInfo.prototype.changeVisibility = function (){
+RunInfo.prototype.changeVisibility = function () {
     var buttons = document.getElementsByTagName('button');
 
-    for(var i=0; i<buttons.length; i++){
+    for(var i = 0, len = buttons.length; i < len; i++){
         buttons[i].style.display = 'inline';
     }
 };
 
-RunInfo.prototype.timedStyleChange = function ()
-{
-    setTimeout("RunInfo.changeVisibility()",1000);
+RunInfo.prototype.timedStyleChange = function () {
+    setTimeout(window.RunInfo.changeVisibility(), 1000);
 };
 
-RunInfo.prototype.addSpinner = function(){
+RunInfo.prototype.addSpinner = function() {
     var opts = {
-            lines: 10,
+            lines:  10,
             length: 5,
-            width: 3,
+            width:  3,
             radius: 5,
-            color: '#498a2d',
-            speed: 0.8,
-            trail: 80
+            color:  '#498a2d',
+            speed:  0.8,
+            trail:  80
     };
+    
     var target = document.getElementById('spinner');
     var spinner = new Spinner(opts).spin(target);
-}
+};
