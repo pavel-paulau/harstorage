@@ -83,12 +83,12 @@
     .script("${h.url_for('/scripts/gauge.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        var timeline = new Timeline();
-        timeline.get("${c.url}","${c.label}","${c.mode}");
-
         run_info = new RunInfo();
         run_info.addSpinner();
         run_info.get();
         run_info.timedStyleChange();
+
+        var timeline = new Timeline(run_info);
+        timeline.get("${c.url}","${c.label}","${c.mode}");        
     })
 </script>

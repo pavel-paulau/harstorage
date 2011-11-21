@@ -3,7 +3,9 @@
 /*
  * Timeline chart
  */
-var Timeline = function() {};
+var Timeline = function(run_info) {
+    this.run_info = run_info;
+};
 
 // Get data for timeline
 Timeline.prototype.get = function(url, label, mode) {
@@ -25,6 +27,8 @@ Timeline.prototype.get = function(url, label, mode) {
 
 // Draw timeline
 Timeline.prototype.draw = function(points) {
+    var that = this;
+
     var splitResults = points.split(';');
 
     var tsArray     = splitResults[0].split('#'),
@@ -137,7 +141,7 @@ Timeline.prototype.draw = function(points) {
                 point: {
                     events: {
                         click: function() {
-                            run_info.get(this.category);
+                            that.run_info.get(this.category);
                         }
                     }
                 }
