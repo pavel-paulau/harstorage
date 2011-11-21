@@ -6,12 +6,11 @@
 var Timeline = function() {};
 
 // Get data for timeline
-Timeline.prototype.get = function(url,label,mode) {
+Timeline.prototype.get = function(url, label, mode) {
     // Retrieve data for timeline via XHR call
     var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.onreadystatechange=function()
-    {
+    xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             window.Timeline.draw(xmlhttp.responseText);
         }
