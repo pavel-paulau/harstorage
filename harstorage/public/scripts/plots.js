@@ -9,10 +9,11 @@ var Timeline = function() {};
 Timeline.prototype.get = function(url, label, mode) {
     // Retrieve data for timeline via XHR call
     var xmlhttp = new XMLHttpRequest();
+    var that = this;
 
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            window.Timeline.draw(xmlhttp.responseText);
+            that.draw(xmlhttp.responseText);
         }
     };
 
@@ -135,8 +136,8 @@ Timeline.prototype.draw = function(points) {
                 },
                 point: {
                     events: {
-                        click: function() {                            
-                            RunInfo.get(this.category);
+                        click: function() {
+                            run_info.get(this.category);
                         }
                     }
                 }
@@ -502,6 +503,8 @@ RunInfo.prototype.get = function(opt_ts) {
     // Retrieve data for Run Infor via XHR call
     var xmlhttp = new XMLHttpRequest();
 
+    var that = this;
+
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             var json = JSON.parse(xmlhttp.responseText);
@@ -525,14 +528,14 @@ RunInfo.prototype.get = function(opt_ts) {
             $('#hosts').html(json.summary.hosts);
 
             // Page Speed Score - Gauge
-            window.RunInfo.score(json.summary.score);
+            that.score(json.summary.score);
 
             // Resources
-            window.RunInfo.resources('by-size','Resources by Size',json.weights,' kB');
-            window.RunInfo.resources('by-req','Resources by Count',json.requests,'');
+            that.resources('by-size','Resources by Size',json.weights,' kB');
+            that.resources('by-req','Resources by Count',json.requests,'');
 
             // Page Speed Details
-            window.RunInfo.pagespeed(json.pagespeed);
+            that.pagespeed(json.pagespeed);
 
             // HAR Viewer
             var iframe  = document.createElement('iframe');
@@ -551,15 +554,14 @@ RunInfo.prototype.get = function(opt_ts) {
             };
 
             // Hide Ajax spinner
-            var spinner = document.getElementById('spinner');
-            spinner.style.display = 'none';
+            that.spinner.style.display = 'none';
         }
     };
 
     // Get timestamp from argument of function or from select box
     var selector    = document.getElementById('run_timestamp');
     var timestamp;
-    if (typeof(opt_ts) !== 'undefined') {
+    if ( typeof(opt_ts) !== 'undefined' ) {
         timestamp = opt_ts;
 
         // Update select box
@@ -579,8 +581,7 @@ RunInfo.prototype.get = function(opt_ts) {
     xmlhttp.send();
 
     // Show Ajax spinner
-    var spinner = document.getElementById('spinner');
-    spinner.style.display = 'block';
+    this.spinner.style.display = 'block';
 };
 
 //Delete current run from set of test results
@@ -620,7 +621,7 @@ RunInfo.prototype.changeVisibility = function () {
 };
 
 RunInfo.prototype.timedStyleChange = function () {
-    setTimeout(window.RunInfo.changeVisibility(), 1000);
+    setTimeout(this.changeVisibility(), 1000);
 };
 
 RunInfo.prototype.addSpinner = function() {
@@ -634,6 +635,6 @@ RunInfo.prototype.addSpinner = function() {
             trail:  80
     };
     
-    var target = document.getElementById('spinner');
-    var spinner = new Spinner(opts).spin(target);
+    this.spinner = document.getElementById('spinner');
+    new Spinner(opts).spin(this.spinner);
 };

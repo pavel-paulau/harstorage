@@ -9,7 +9,7 @@
         <div class="spinner" id="spinner"></div>
 
         <div class="form">
-            <form action="display" id="SuperposeForm" method="post" onsubmit="return false;">
+            <form action="display" id="superpose-form" method="post" onsubmit="return false;">
                 <fieldset>
                     <legend>Aggregate and Compare</legend>
 
@@ -18,7 +18,7 @@
                             <div class="title" id="step_1_head" >Set 1 &gt;</div>
                             <div class="text">Label:</div>
 
-                            <select name="step_1_label" id="step_1_label" class="slct-label" onchange="SuperposeForm.setTimestamps(this.name);">
+                            <select name="step_1_label" id="step_1_label" class="slct-label" onchange="superpose_form.setTimestamps(this.name);">
                                 % for label in c.labels:
                                 <option value="${label}">${label}</option>
                                 % endfor
@@ -34,12 +34,12 @@
                             <select name="step_1_end_ts" id="step_1_end_ts" class="slct-end" >
                             </select>
 
-                            <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" onclick="SuperposeForm.add(this);"/>
-                            <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="SuperposeForm.del(this);" style="display:none"/>
+                            <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" onclick="superpose_form.add(this);"/>
+                            <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" onclick="superpose_form.del(this);" style="display:none"/>
                         </div>
                     </div>
 
-                    <input type="submit" class="submit" value="View Result" onclick="return SuperposeForm.submit();"/>
+                    <input type="submit" class="submit" value="View Result" onclick="return superpose_form.submit();"/>
                 </fieldset>
             </form>
         </div>
@@ -51,8 +51,8 @@
     .script("${h.url_for('/scripts/spin.js')}").wait()
     .script("${h.url_for('/scripts/superpose.js')}").wait()
     .wait(function(){
-        SuperposeForm = new SuperposeForm();
-        SuperposeForm.addSpinner();
-        SuperposeForm.setTimestamps('step_1_label');        
+        superpose_form = new SuperposeForm();
+        superpose_form.addSpinner();
+        superpose_form.setTimestamps('step_1_label');
     })
 </script>

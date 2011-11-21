@@ -8,7 +8,7 @@
         <p class="title">Run Info</p>
 
         <div class="selector">
-            <select id="run_timestamp" class="chosen-select" onchange="RunInfo.get();">
+            <select id="run_timestamp" class="chosen-select" onchange="run_info.get();">
                 % for timestamp in c.timestamp:
                 <option value="${timestamp}"> ${timestamp}</option>
                 % endfor
@@ -63,9 +63,9 @@
 
             <div class="tabbertab" title="Manage Data">
                 <div id="manager">
-                    <button type="button" id="${c.label}" onclick="RunInfo.del(this,'${c.mode}',false);">Delete current test</button>
+                    <button type="button" id="${c.label}" onclick="run_info.del(this,'${c.mode}',false);">Delete current test</button>
                     
-                    <button type="button" id="${c.label}" onclick="RunInfo.del(this,'${c.mode}',true);">Delete all tests</button>
+                    <button type="button" id="${c.label}" onclick="run_info.del(this,'${c.mode}',true);">Delete all tests</button>
                 </div>
             </div>
         </div>
@@ -83,12 +83,12 @@
     .script("${h.url_for('/scripts/gauge.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        Timeline = new Timeline();
-        Timeline.get("${c.url}","${c.label}","${c.mode}");
+        var timeline = new Timeline();
+        timeline.get("${c.url}","${c.label}","${c.mode}");
 
-        RunInfo = new RunInfo();
-        RunInfo.addSpinner();
-        RunInfo.get();
-        RunInfo.timedStyleChange();        
+        run_info = new RunInfo();
+        run_info.addSpinner();
+        run_info.get();
+        run_info.timedStyleChange();
     })
 </script>

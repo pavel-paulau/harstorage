@@ -22,7 +22,9 @@ SuperposeForm.prototype.submit = function() {
             return false;
         }
     }
-    document.forms.SuperposeForm.onsubmit='return true';
+    
+    var form = document.getElementById("superpose-form");
+    form.onsubmit = 'return true';
 
     return true;
 };
@@ -109,7 +111,7 @@ SuperposeForm.prototype.add = function(button) {
     }
 
     // Update timestamp
-    SuperposeForm.setTimestamps(new_id + '_label');
+    this.setTimestamps(new_id + '_label');
 };
 
 // Delete selected step
@@ -139,6 +141,8 @@ SuperposeForm.prototype.del = function(button) {
 
 // Set timelines for selected label
 SuperposeForm.prototype.setTimestamps = function(id) {
+    var that = this;
+
     var xmlhttp = new XMLHttpRequest();
 
     xmlhttp.onreadystatechange = function() {
@@ -151,7 +155,7 @@ SuperposeForm.prototype.setTimestamps = function(id) {
 
         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
             // Hide Ajax spinner
-            spinner.style.display = 'none';
+            that.spinner.style.display = 'none';
 
             // Dates of tests
             var dates = xmlhttp.responseText.split(';');
@@ -185,8 +189,7 @@ SuperposeForm.prototype.setTimestamps = function(id) {
     xmlhttp.send();
 
     // Show Ajax spinner
-    var spinner = document.getElementById('spinner');
-    spinner.style.display = 'block';
+    this.spinner.style.display = 'block';
 };
 // Add Ajax spinner
 SuperposeForm.prototype.addSpinner = function() {
@@ -199,6 +202,7 @@ SuperposeForm.prototype.addSpinner = function() {
             speed: 0.8,
             trail: 80
         };
-    var target = document.getElementById('spinner');
-    var spinner = new Spinner(opts).spin(target);
+    //console.log(this.name);
+    this.spinner = document.getElementById('spinner');
+    new Spinner(opts).spin(this.spinner);
 };
