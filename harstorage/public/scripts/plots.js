@@ -637,11 +637,13 @@ RunInfo.prototype.del = function(id, mode, all) {
 
 // Add delay for async rendering
 RunInfo.prototype.changeVisibility = function () {
-    var del_btn     = document.getElementById('del-btn');
-    var del_all_btn = document.getElementById('del-all-btn');
+    var del_btn     = document.getElementById('del-btn'),
+        del_all_btn = document.getElementById('del-all-btn'),
+        newtab_btn  = document.getElementById('newtab');    
     
     del_btn.style.display       = 'inline';
     del_all_btn.style.display   = 'inline';
+    newtab_btn.style.display    = 'inline';
 };
 
 RunInfo.prototype.timedStyleChange = function () {
