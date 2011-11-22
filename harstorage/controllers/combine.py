@@ -15,7 +15,7 @@ class CombineController(BaseController):
             combo = combo + file.read()
             file.close()
 
-        # Custom HTTP Header
-        response.headerlist = [('Content-type', 'text/css')]
+        # Custom HTTP Headers
+        response.headerlist = [('Content-type', 'text/css'),('Last-Modified', 'Tue, 22 Nov 2011 12:00:00 GMT')]
 
         return combo
