@@ -8,6 +8,9 @@ function sortNumber(a, b) {
 var SuperposeForm = function() {
     var that = this;
 
+    // Initialize cache
+    this.cache = {};
+
     // Select box event handler
     var selector = document.getElementById('step_1_label');
     selector.onchange = function() {      
@@ -179,11 +182,17 @@ SuperposeForm.prototype.del = function(button) {
 
 // Set timelines for selected label
 SuperposeForm.prototype.setTimestamps = function(id) {
+    // Poiner
     var that = this;
 
-    var xmlhttp = new XMLHttpRequest();
+    // Dynamic data
+    this.dates = [];
 
-    xmlhttp.onreadystatechange = function() {
+    // Show Ajax spinner
+    this.spinner.style.display = 'block';
+
+    // Update timestamps
+    var set_data = function() {
         var i,
             len,
             ts;
@@ -191,43 +200,57 @@ SuperposeForm.prototype.setTimestamps = function(id) {
         // Calculate id
         id  = id.split('_')[0] + '_' + id.split('_')[1];
 
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            // Hide Ajax spinner
-            that.spinner.style.display = 'none';
+        // Hide Ajax spinner
+        that.spinner.style.display = 'none';
 
-            // Dates of tests
-            var dates = xmlhttp.responseText.split(';');
+        // Update cache
+        if ( typeof(that.cache[that.URI]) === 'undefined') {
+            that.dates = that.xhr.responseText.split(';');
+            that.cache[that.URI] = that.dates;
+        } else {
+            that.dates.reverse();
+        }
 
-            // Start timestamps
-            var select = document.getElementById(id + '_start_ts');
-            select.options.length = 0;
+        // Start timestamps
+        var select = document.getElementById(id + '_start_ts');
+        select.options.length = 0;
 
-            for(i = 0, len = dates.length; i < len; i += 1) {
-                ts = dates[i];
-                select.options[i] = new Option(ts, ts, false, false);
-            }
+        for(i = 0, len = that.dates.length; i < len; i += 1) {
+            ts = that.dates[i];
+            select.options[i] = new Option(ts, ts, false, false);
+        }
 
-            // End timestamps
-            select = document.getElementById(id + '_end_ts');
-            select.options.length = 0;
-            dates.reverse();
+        // End timestamps
+        select = document.getElementById(id + '_end_ts');
+        select.options.length = 0;
+        that.dates.reverse();
 
-            for(i = 0, len = dates.length; i < len; i += 1) {
-                ts = dates[i];
-                select.options[i] = new Option(ts, ts, false, false);
-            }
+        for(i = 0, len = that.dates.length; i < len; i += 1) {
+            ts = that.dates[i];
+            select.options[i] = new Option(ts, ts, false, false);
         }
     };
 
+    // Request data via XHR or read from cache
     var select = document.getElementById(id);
     var label = select.options[select.selectedIndex].text;
-    var URI = 'dates?label=' + label;
+    this.URI = 'dates?label=' + label;
 
-    xmlhttp.open('GET', URI, true);
-    xmlhttp.send();
+    this.xhr = new XMLHttpRequest();
 
-    // Show Ajax spinner
-    this.spinner.style.display = 'block';
+    this.xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            set_data();
+        }
+    };
+
+    if ( typeof(this.cache[this.URI]) === 'undefined' ) {
+        this.xhr.open('GET', this.URI, true);
+        this.xhr.send();
+    } else {
+        this.dates = this.cache[this.URI];
+        set_data();
+    }
 };
 // Add Ajax spinner
 SuperposeForm.prototype.addSpinner = function() {

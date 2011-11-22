@@ -9,24 +9,27 @@ var Timeline = function(run_info) {
 
 // Get data for timeline
 Timeline.prototype.get = function(url, label, mode) {
-    // Retrieve data for timeline via XHR call
-    var xmlhttp = new XMLHttpRequest();
+    // Pointer
     var that = this;
 
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            that.draw(xmlhttp.responseText);
+    // Retrieve data for timeline via XHR call
+    var xhr = new XMLHttpRequest();
+    
+    xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            that.draw(this.responseText);
         }
     };
 
     var URI = 'timeline?url=' + url + '&label=' + label + '&mode=' + mode;
 
-    xmlhttp.open('GET', URI, true);
-    xmlhttp.send();
+    xhr.open('GET', URI, true);
+    xhr.send();
 };
 
 // Draw timeline
 Timeline.prototype.draw = function(points) {
+    // Pointer
     var that = this;
 
     var splitResults = points.split(';');
@@ -322,20 +325,27 @@ Column.prototype.draw = function(points) {
  * Test results
  */
 var RunInfo = function(mode, label) {
+    // Pointer
     var that = this;
 
+    // Initialize cache
+    this.cache = {};
+
+    // Add event handler to selector box
     var run_timestamp = document.getElementById('run_timestamp');
 
     run_timestamp.onchange = function() {
         that.get();
     };
 
+    // Add event handler to delete button
     var del_btn = document.getElementById('del-btn');
 
     del_btn.onclick = function() {
         that.del(label, mode, false);
     };
 
+    // Add event handler to delete all button
     var del_all_btn = document.getElementById('del-all-btn');
 
     del_all_btn.onclick = function() {
@@ -524,88 +534,113 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
 
 //Get data for Run Info
 RunInfo.prototype.get = function(opt_ts) {
-    // Retrieve data for Run Infor via XHR call
-    var xmlhttp = new XMLHttpRequest();
-
+    // Pointer
     var that = this;
 
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            var json = JSON.parse(xmlhttp.responseText);
-            
-            // Summary
-            $('#full-load-time').html(json.summary.full_time+' ms');
-            $('#dns').html(json.summary.dns+' ms');
-            $('#transfer').html(json.summary.transfer+' ms');
-            $('#connecting').html(json.summary.connecting+' ms');
-            $('#server').html(json.summary.server+' ms');
-            $('#blocked').html(json.summary.blocked+' ms');
-            
-            $('#total-size').html(json.summary.total_size+' kB');
-            $('#text-size').html(json.summary.text_size+' kB');
-            $('#media-size').html(json.summary.media_size+' kB');
-            $('#cache-size').html(json.summary.cache_size+' kB');
+    // Dynamic data
+    this.json = [];
 
-            $('#requests').html(json.summary.requests);
-            $('#redirects').html(json.summary.redirects);
-            $('#bad-req').html(json.summary.bad_req);
-            $('#hosts').html(json.summary.hosts);
+    // Show Ajax spinner
+    this.spinner.style.display = 'block';
 
-            // Page Speed Score - Gauge
-            that.score(json.summary.score);
-
-            // Resources
-            that.resources('by-size','Resources by Size',json.weights,' kB');
-            that.resources('by-req','Resources by Count',json.requests,'');
-
-            // Page Speed Details
-            that.pagespeed(json.pagespeed);
-
-            // HAR Viewer
-            var iframe  = document.createElement('iframe');
-            var url     = '/results/harviewer?inputUrl=/results/download%3Fid%3D'+json.har+'&expand=true';
-            iframe.src          = url;
-            iframe.width        = '940';
-            iframe.height       = Math.max(Math.min(json.summary.requests*40+20,600),300).toString();
-            iframe.frameBorder  = '0';
-
-            $('#harviewer').html(iframe);
-            
-            // New tab feature of HAR Viewer
-            var newtab = document.getElementById('newtab');
-            newtab.onclick = function () {
-                window.open(url);
-            };
-
-            // Hide Ajax spinner
-            that.spinner.style.display = 'none';
+    // Update test results
+    var set_data = function() {
+        // Update cache
+        if ( typeof(that.cache[that.URI]) === 'undefined') {
+            that.json = JSON.parse(that.xhr.responseText);
+            that.cache[that.URI] = that.json;
         }
+
+        // Summary
+        $('#full-load-time').html   ( that.json.summary.full_time   + ' ms' );
+        $('#dns').html              ( that.json.summary.dns         + ' ms' );
+        $('#transfer').html         ( that.json.summary.transfer    + ' ms' );
+        $('#connecting').html       ( that.json.summary.connecting  + ' ms' );
+        $('#server').html           ( that.json.summary.server      + ' ms' );
+        $('#blocked').html          ( that.json.summary.blocked     + ' ms' );
+
+        $('#total-size').html       ( that.json.summary.total_size  + ' kB' );
+        $('#text-size').html        ( that.json.summary.text_size   + ' kB' );
+        $('#media-size').html       ( that.json.summary.media_size  + ' kB' );
+        $('#cache-size').html       ( that.json.summary.cache_size  + ' kB' );
+
+        $('#requests').html         ( that.json.summary.requests            );
+        $('#redirects').html        ( that.json.summary.redirects           );
+        $('#bad-req').html          ( that.json.summary.bad_req             );
+        $('#hosts').html            ( that.json.summary.hosts               );
+
+        // Page Speed Score - Gauge
+        that.score(that.json.summary.score);
+
+        // Resources
+        that.resources('by-size','Resources by Size', that.json.weights,  ' kB');
+        that.resources('by-req','Resources by Count', that.json.requests, '');
+
+        // Page Speed Details
+        that.pagespeed(that.json.pagespeed);
+
+        // HAR Viewer
+        var iframe  = document.createElement('iframe');
+        var url = '/results/harviewer?inputUrl=/results/download%3Fid%3D';
+            url += that.json.har;
+            url += '&expand=true';
+
+        var height = Math.max(Math.min(that.json.summary.requests*40+20, 600), 300).toString();
+
+        iframe.src          = url;
+        iframe.width        = '940';
+        iframe.height       = height;
+        iframe.frameBorder  = '0';
+
+        $('#harviewer').html(iframe);
+
+        // New tab feature of HAR Viewer
+        var newtab = document.getElementById('newtab');
+        newtab.onclick = function () {
+            window.open(url);
+        };
+
+        // Hide Ajax spinner
+        that.spinner.style.display = 'none';
     };
 
+    // Request data via XHR or read from cache
+    
     // Get timestamp from argument of function or from select box
     var selector    = document.getElementById('run_timestamp');
     var timestamp;
+
     if ( typeof(opt_ts) !== 'undefined' ) {
         timestamp = opt_ts;
 
         // Update select box
-        for(var i = selector.options.length; i -= 1; ) {
+        for(var i = 0, len = selector.options.length; i < len; i += 1 ) {
             if(selector.options[i].value === opt_ts) {
                 selector.selectedIndex = i;
                 $('#run_timestamp').trigger('liszt:updated');
-                break;
             }
         }
     } else {
         timestamp   = selector.options[selector.selectedIndex].text;
     }
-    var URI         = 'runinfo?timestamp=' + timestamp;
 
-    xmlhttp.open('GET', URI, true);
-    xmlhttp.send();
+    this.URI = 'runinfo?timestamp=' + timestamp;
 
-    // Show Ajax spinner
-    this.spinner.style.display = 'block';
+    this.xhr = new XMLHttpRequest();
+
+    this.xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            set_data();
+        }
+    };
+
+    if ( typeof(this.cache[this.URI]) === 'undefined' ) {
+        this.xhr.open('GET', this.URI, true);
+        this.xhr.send();
+    } else {
+        this.json = this.cache[this.URI];
+        set_data();
+    }
 };
 
 //Delete current run from set of test results
@@ -614,12 +649,11 @@ RunInfo.prototype.del = function(id, mode, all) {
     var answer = window.confirm('Are you sure?');
 
     if (answer === true) {
-        var xmlhttp = new XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
 
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                var response = xmlhttp.responseText;
-                window.location = response;
+        xhr.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                window.location = this.responseText;
             }
         };
 
@@ -630,8 +664,8 @@ RunInfo.prototype.del = function(id, mode, all) {
             URI += '&mode=' + mode;
             URI += '&all=' + all;
 
-        xmlhttp.open('GET', URI, true);
-        xmlhttp.send();
+        xhr.open('GET', URI, true);
+        xhr.send();
     }
 };
 
