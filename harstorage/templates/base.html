@@ -5,16 +5,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>${self.title()}</title>
 
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main.css')}" />
+    <link rel="stylesheet" type="text/css" href="/combine/styles?main.css&tabber.css&datatables/table_jui.css&datatables/ColReorder.css&datatables/TableTools_JUI.css" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/chosen/chosen.css')}" />
+    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
     <!--[if IE]>
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main-ie.css')}" />
-    <![endif]-->
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/tabber.css')}" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/chosen/chosen.css')}" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/table_jui.css')}" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/ColReorder.css')}" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/TableTools_JUI.css')}" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
+    <![endif]-->   
 
     <script type='text/javascript' src="${h.url_for('/scripts/LAB.min.js')}"></script>
 </head>
