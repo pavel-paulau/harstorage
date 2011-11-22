@@ -37,7 +37,7 @@ Timeline.prototype.draw = function(points) {
         reqArray    = splitResults[3].split('#'),
         scoreArray  = splitResults[4].split('#');
 
-    for (var index = 0, len = tsArray.length; index < len; index++) {
+    for(var index = 0, len = tsArray.length; index < len; index += 1) {
         timeArray[index]    =   parseFloat(timeArray[index], 10);
         sizeArray[index]    =   parseFloat(sizeArray[index], 10);
         reqArray[index]     =   parseInt(reqArray[index], 10);
@@ -185,7 +185,7 @@ Column.prototype.draw = function(points) {
         reqArray    = splitResults[3].split('#'),
         scoreArray  = splitResults[4].split('#');
 
-    for (var index = 0, len = tsArray.length; index < len; index++) {
+    for(var index = 0, len = tsArray.length; index < len; index += 1) {
         timeArray[index]    =   parseFloat(timeArray[index], 10);
         sizeArray[index]    =   parseFloat(sizeArray[index], 10);
         reqArray[index]     =   parseInt(reqArray[index], 10);
@@ -321,7 +321,27 @@ Column.prototype.draw = function(points) {
 /*
  * Test results
  */
-var RunInfo = function() {};
+var RunInfo = function(mode, label) {
+    var that = this;
+
+    var run_timestamp = document.getElementById('run_timestamp');
+
+    run_timestamp.onchange = function() {
+        that.get();
+    };
+
+    var del_btn = document.getElementById('del-btn');
+
+    del_btn.onclick = function() {
+        that.del(label, mode, false);
+    };
+
+    var del_all_btn = document.getElementById('del-all-btn');
+
+    del_all_btn.onclick = function() {
+        that.del(label, mode, true);
+    };
+};
 
 //Gauge chart
 RunInfo.prototype.score = function(score) {
@@ -358,7 +378,7 @@ RunInfo.prototype.resources = function (div,title,hash,units) {
     // Extract data
     var data  = [];
 
-    for (var key in hash) {
+    for(var key in hash) {
         data.push( [key, hash[key] ]);
     }
 
@@ -433,7 +453,7 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
     var rules   = [],
         scores  = [];
 
-    for (var rule in pagespeed) {
+    for(var rule in pagespeed) {
         rules.push(rule);
         scores.push(pagespeed[rule]);
     }
@@ -569,10 +589,10 @@ RunInfo.prototype.get = function(opt_ts) {
         timestamp = opt_ts;
 
         // Update select box
-        for(var i=0, len = selector.options.length; i < len; i++) {
+        for(var i = selector.options.length; i -= 1; ) {
             if(selector.options[i].value === opt_ts) {
                 selector.selectedIndex = i;
-                $("#run_timestamp").trigger("liszt:updated");
+                $('#run_timestamp').trigger('liszt:updated');
                 break;
             }
         }
@@ -589,7 +609,7 @@ RunInfo.prototype.get = function(opt_ts) {
 };
 
 //Delete current run from set of test results
-RunInfo.prototype.del = function(button,mode,all) {
+RunInfo.prototype.del = function(id, mode, all) {
     //
     var answer = window.confirm('Are you sure?');
 
@@ -606,7 +626,7 @@ RunInfo.prototype.del = function(button,mode,all) {
         var ts_selector = document.getElementById('run_timestamp');
         var timestamp   = ts_selector.options[ts_selector.selectedIndex].text;
         var URI = 'deleterun?timestamp=' + timestamp;
-            URI += '&label=' + button.id;
+            URI += '&label=' + id;
             URI += '&mode=' + mode;
             URI += '&all=' + all;
 
@@ -617,15 +637,15 @@ RunInfo.prototype.del = function(button,mode,all) {
 
 // Add delay for async rendering
 RunInfo.prototype.changeVisibility = function () {
-    var buttons = document.getElementsByTagName('button');
-
-    for(var i = 0, len = buttons.length; i < len; i++){
-        buttons[i].style.display = 'inline';
-    }
+    var del_btn     = document.getElementById('del-btn');
+    var del_all_btn = document.getElementById('del-all-btn');
+    
+    del_btn.style.display       = 'inline';
+    del_all_btn.style.display   = 'inline';
 };
 
 RunInfo.prototype.timedStyleChange = function () {
-    setTimeout(this.changeVisibility(), 1000);
+    setTimeout(this.changeVisibility, 1000);    
 };
 
 RunInfo.prototype.addSpinner = function() {
