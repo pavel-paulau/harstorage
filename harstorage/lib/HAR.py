@@ -35,7 +35,7 @@ class HAR():
             self.total_size = self.text_size = self.media_size = self.cached = 0
             self.full_load_time = self.dns = self.transfer = self.connecting = self.server = self.blocked = 0
             self.redirects = self.bad_req = 0
-            self.hosts = 0
+            self.hosts = dict()
 
         '''
         except:
@@ -77,8 +77,6 @@ class HAR():
         min = 9999999999
         max = 0
         
-        hosts = list()
-        
         for entry in self.har['log']['entries']:
             # Full load time
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
@@ -97,7 +95,9 @@ class HAR():
             self.blocked += entry['timings']['blocked']
             
             # Total size
-            self.total_size += entry['response']['bodySize']
+            size = entry['response']['bodySize']
+
+            self.total_size += size
             
             # Text and media sizes
             mime_type = entry['response']['content']['mimeType'].partition(';')[0]
@@ -109,9 +109,9 @@ class HAR():
                 or mime_type.count('html') \
                 or mime_type.count('xml') \
                 or mime_type.count('json'):
-                    self.text_size += entry['response']['bodySize']
+                    self.text_size += size
                 elif mime_type.count('flash') or mime_type.count('image'):
-                    self.media_size += entry['response']['bodySize']
+                    self.media_size += size
             
             # Cached size
             resp_headers = self.h2d(entry['response']['headers'])
@@ -122,7 +122,7 @@ class HAR():
                     date    = mktime( strptime(resp_headers['Date'],"%a, %d %b %Y %H:%M:%S GMT") )
                     expires = mktime( strptime(resp_headers['Expires'],"%a, %d %b %Y %H:%M:%S GMT") )
                     if expires > date:
-                        self.cached += entry['response']['bodySize']
+                        self.cached += size
             except:
                 pass
                     
@@ -135,8 +135,9 @@ class HAR():
             # List of hosts
             for header in entry['request']['headers']:
                 if header['name'] == 'Host':
-                    if header['value'] not in hosts:
-                        hosts.append( header['value'] )
+                    hostname = header['value']
+                    self.hosts[hostname] = [self.hosts.get(hostname, [0,0])[0] + 1,
+                                        self.hosts.get(hostname, [0,0])[1] + size/1024]
             
         # Full load time
         try:
@@ -153,9 +154,6 @@ class HAR():
         self.text_size  = self.b2k( self.text_size  )
         self.media_size = self.b2k( self.media_size )
         self.cached     = self.b2k( self.cached     )
-        
-        # Hosts count
-        self.hosts = len(hosts)
     
     def type_syn(self,string):
         if string.count('javascript'):

@@ -384,7 +384,7 @@ RunInfo.prototype.score = function(score) {
 };
 
 //Page Resources
-RunInfo.prototype.resources = function (div,title,hash,units) {
+RunInfo.prototype.resources = function (div, title, hash, units, width) {
     // Extract data
     var data  = [];
 
@@ -399,7 +399,7 @@ RunInfo.prototype.resources = function (div,title,hash,units) {
             plotBackgroundColor : null,
             plotBorderWidth     : null,
             plotShadow          : false,
-            width               : 450,
+            width               : width,
             height              : 300
         },
         credits: {
@@ -421,7 +421,7 @@ RunInfo.prototype.resources = function (div,title,hash,units) {
             },
             url         :'/chart/export',
             filename    : 'resources',
-            width       : 450            
+            width       : width
         },
         title: {
             text: title
@@ -573,8 +573,12 @@ RunInfo.prototype.get = function(opt_ts) {
         that.score(that.json.summary.score);
 
         // Resources
-        that.resources('by-size','Resources by Size', that.json.weights,  ' kB');
-        that.resources('by-req','Resources by Count', that.json.requests, '');
+        that.resources('by-size','Resources by Size', that.json.weights,  ' kB' , 450);
+        that.resources('by-req','Resources by Requests', that.json.requests, '' , 450);
+
+        // Domains
+        that.resources('domains-by-size','Domains by Size', that.json.d_weights,     ' kB' , 930);
+        that.resources('domains-by-req','Domains by Requests', that.json.d_requests, ''    , 930);
 
         // Page Speed Details
         that.pagespeed(that.json.pagespeed);

@@ -157,8 +157,16 @@ class ResultsController(BaseController):
                     'cache_size'    :har.cached,
                     'redirects'     :har.redirects,
                     'bad_req'       :har.bad_req,
-                    'hosts'         :har.hosts
-                    }
+                    'hosts'         :len(har.hosts)
+        }
+
+        # Domains
+        domains_req_ratio = dict()
+        domains_weight_ratio = dict()
+
+        for key,value in har.hosts.items():
+            domains_req_ratio[key] = value[0]
+            domains_weight_ratio[key] = value[1]
         
         # Page Speed Scores
         scores = dict()
@@ -178,6 +186,8 @@ class ResultsController(BaseController):
                            'pagespeed'  :scores,
                            'weights'    :har.weight_ratio(),
                            'requests'   :har.req_ratio(),
+                           'd_weights'  :domains_weight_ratio,
+                           'd_requests' :domains_req_ratio,
                            'har'        :har_id,
                             })
         

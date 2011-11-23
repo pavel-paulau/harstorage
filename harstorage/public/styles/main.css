@@ -263,7 +263,7 @@ body a:hover {
 .results .image {
     margin: 35px 0 0 190px;
 }
-.results #by-size,.results #by-req {
+.results #by-size, .results #by-req {
     width:450px;
     height:300px;
     float:left;
@@ -273,6 +273,11 @@ body a:hover {
 }
 .results #by-req {
     margin: 10px 0 10px 30px;
+}
+.results #domains-by-size, .results #domains-by-req {
+    width:930px;
+    height:300px;
+    margin: 10px 0;
 }
 .results #pagespeed {
     margin: 10px 0;

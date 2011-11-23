@@ -39,7 +39,7 @@
                     <div class="title-min">Requests:</div>             <div class="value" id="requests"></div>
                     <div class="title-min">Redirects:</div>            <div class="value" id="redirects"></div>
                     <div class="title-min">Bad Requests:</div>         <div class="value" id="bad-req"></div>
-                    <div class="title-min">Hosts:</div>                <div class="value" id="hosts"></div>
+                    <div class="title-min">Domains:</div>              <div class="value" id="hosts"></div>
 
                     <div><input type="image" src="${h.url_for('/images/help_button.png')}" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
                 </div>
@@ -48,6 +48,11 @@
             <div class="tabbertab" title="Resources">
                 <div id="by-size"></div>
                 <div id="by-req"></div>
+            </div>
+
+            <div class="tabbertab" title="Domains">
+                <div id="domains-by-size"></div>
+                <div id="domains-by-req"></div>
             </div>
 
             <div class="tabbertab" title="Page Speed Details">
