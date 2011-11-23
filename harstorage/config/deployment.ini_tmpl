@@ -19,7 +19,7 @@ use = egg:harstorage
 full_stack = true
 static_files = true
 temp_store = %(here)s/data
-bin_store  = %(here)s/harstorage/lib
+bin_store  = %(here)s
 ps_enabled = false
 
 cache_dir = %(here)s/data
