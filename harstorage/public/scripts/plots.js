@@ -394,7 +394,9 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
     var data  = [];
 
     for(var key in hash) {
-        data.push( [key, hash[key] ]);
+        if (hash.hasOwnProperty(key)) {
+            data.push( [key, hash[key] ]);
+        }
     }
 
     // Chart object
@@ -469,8 +471,10 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
         scores  = [];
 
     for(var rule in pagespeed) {
-        rules.push(rule);
-        scores.push(pagespeed[rule]);
+        if (pagespeed.hasOwnProperty(rule)) {
+            rules.push(rule);
+            scores.push(pagespeed[rule]);
+        }
     }
 
     // Chart height
