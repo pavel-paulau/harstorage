@@ -43,8 +43,8 @@
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
-        var column = new Column();
-        column.draw("${c.points}");
+        var columns = new HARSTORAGE.Columns();
+        columns.draw("${c.points}");
 
         $(document).ready(function() {
             $('#stats_table').dataTable({

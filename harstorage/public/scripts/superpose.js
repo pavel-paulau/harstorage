@@ -1,11 +1,14 @@
 "use strict";
 
-// Common function
-function sortNumber(a, b) {
-    return b - a;
-}
+/*
+ * Name space
+ */
+var HARSTORAGE = HARSTORAGE || {};
 
-var SuperposeForm = function() {
+/*
+ * Superpose Form
+ */
+HARSTORAGE.SuperposeForm = function() {
     var that = this;
 
     // Initialize cache
@@ -38,7 +41,7 @@ var SuperposeForm = function() {
 };
 
 // Form validation
-SuperposeForm.prototype.submit = function() {
+HARSTORAGE.SuperposeForm.prototype.submit = function() {
     var selectors = document.getElementsByTagName('select');
     
     for(var i = 0, len = selectors.length/3; i < len; i += 1) {
@@ -60,7 +63,7 @@ SuperposeForm.prototype.submit = function() {
 };
 
 // Add new step
-SuperposeForm.prototype.add = function(button) {
+HARSTORAGE.SuperposeForm.prototype.add = function(button) {
     var i,
         len,
         prev_button;
@@ -156,7 +159,7 @@ SuperposeForm.prototype.add = function(button) {
 };
 
 // Delete selected step
-SuperposeForm.prototype.del = function(button) {
+HARSTORAGE.SuperposeForm.prototype.del = function(button) {
     var prev_button;
     
     // Calculate id
@@ -181,7 +184,7 @@ SuperposeForm.prototype.del = function(button) {
 };
 
 // Set timelines for selected label
-SuperposeForm.prototype.setTimestamps = function(id) {
+HARSTORAGE.SuperposeForm.prototype.setTimestamps = function(id) {
     // Poiner
     var that = this;
 
@@ -253,7 +256,7 @@ SuperposeForm.prototype.setTimestamps = function(id) {
     }
 };
 // Add Ajax spinner
-SuperposeForm.prototype.addSpinner = function() {
+HARSTORAGE.SuperposeForm.prototype.addSpinner = function() {
     var opts = {
             lines: 10,
             length: 6,
@@ -263,7 +266,7 @@ SuperposeForm.prototype.addSpinner = function() {
             speed: 0.8,
             trail: 80
         };
-    //console.log(this.name);
+
     this.spinner = document.getElementById('spinner');
     new Spinner(opts).spin(this.spinner);
 };

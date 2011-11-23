@@ -51,7 +51,7 @@
     .script("${h.url_for('/scripts/spin.js')}").wait()
     .script("${h.url_for('/scripts/superpose.js')}").wait()
     .wait(function(){
-        var superpose_form = new SuperposeForm();
+        var superpose_form = new HARSTORAGE.SuperposeForm();
         superpose_form.addSpinner();
         superpose_form.setTimestamps('step_1_label');
     })

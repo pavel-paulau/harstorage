@@ -1,14 +1,19 @@
 "use strict";
 
 /*
+ * Name space
+ */
+var HARSTORAGE = HARSTORAGE || {};
+
+/*
  * Timeline chart
  */
-var Timeline = function(run_info) {
+HARSTORAGE.Timeline = function(run_info) {
     this.run_info = run_info;
 };
 
 // Get data for timeline
-Timeline.prototype.get = function(url, label, mode) {
+HARSTORAGE.Timeline.prototype.get = function(url, label, mode) {
     // Pointer
     var that = this;
 
@@ -28,7 +33,7 @@ Timeline.prototype.get = function(url, label, mode) {
 };
 
 // Draw timeline
-Timeline.prototype.draw = function(points) {
+HARSTORAGE.Timeline.prototype.draw = function(points) {
     // Pointer
     var that = this;
 
@@ -177,9 +182,9 @@ Timeline.prototype.draw = function(points) {
 /*
  * Column Chart
  */
-var Column = function() {};
+HARSTORAGE.Columns = function() {};
 
-Column.prototype.draw = function(points) {
+HARSTORAGE.Columns.prototype.draw = function(points) {
     var splitResults = points.split(';');
 
     var tsArray     = splitResults[0].split('#'),
@@ -324,7 +329,7 @@ Column.prototype.draw = function(points) {
 /*
  * Test results
  */
-var RunInfo = function(mode, label) {
+HARSTORAGE.RunInfo = function(mode, label) {
     // Pointer
     var that = this;
 
@@ -354,7 +359,7 @@ var RunInfo = function(mode, label) {
 };
 
 //Gauge chart
-RunInfo.prototype.score = function(score) {
+HARSTORAGE.RunInfo.prototype.score = function(score) {
     // Value for chart
     var data = new google.visualization.DataTable();
 
@@ -384,7 +389,7 @@ RunInfo.prototype.score = function(score) {
 };
 
 //Page Resources
-RunInfo.prototype.resources = function (div, title, hash, units, width) {
+HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, width) {
     // Extract data
     var data  = [];
 
@@ -458,7 +463,7 @@ RunInfo.prototype.resources = function (div, title, hash, units, width) {
 };
 
 //Page Speed details
-RunInfo.prototype.pagespeed = function (pagespeed) {
+HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
     // Spliting data for chart
     var rules   = [],
         scores  = [];
@@ -533,7 +538,7 @@ RunInfo.prototype.pagespeed = function (pagespeed) {
 };
 
 //Get data for Run Info
-RunInfo.prototype.get = function(opt_ts) {
+HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
     // Pointer
     var that = this;
 
@@ -600,6 +605,7 @@ RunInfo.prototype.get = function(opt_ts) {
 
         // New tab feature of HAR Viewer
         var newtab = document.getElementById('newtab');
+
         newtab.onclick = function () {
             window.open(url);
         };
@@ -628,7 +634,7 @@ RunInfo.prototype.get = function(opt_ts) {
         timestamp   = selector.options[selector.selectedIndex].text;
     }
 
-    this.URI = 'runinfo?timestamp=' + timestamp;
+    var URI = 'runinfo?timestamp=' + timestamp;
 
     this.xhr = new XMLHttpRequest();
 
@@ -638,17 +644,17 @@ RunInfo.prototype.get = function(opt_ts) {
         }
     };
 
-    if ( typeof(this.cache[this.URI]) === 'undefined' ) {
-        this.xhr.open('GET', this.URI, true);
+    if ( typeof(this.cache[URI]) === 'undefined' ) {
+        this.xhr.open('GET', URI, true);
         this.xhr.send();
     } else {
-        this.json = this.cache[this.URI];
+        this.json = this.cache[URI];
         set_data();
     }
 };
 
 //Delete current run from set of test results
-RunInfo.prototype.del = function(id, mode, all) {
+HARSTORAGE.RunInfo.prototype.del = function(id, mode, all) {
     //
     var answer = window.confirm('Are you sure?');
 
@@ -674,7 +680,7 @@ RunInfo.prototype.del = function(id, mode, all) {
 };
 
 // Add delay for async rendering
-RunInfo.prototype.changeVisibility = function () {
+HARSTORAGE.RunInfo.prototype.changeVisibility = function () {
     var del_btn     = document.getElementById('del-btn'),
         del_all_btn = document.getElementById('del-all-btn'),
         newtab_btn  = document.getElementById('newtab');    
@@ -684,11 +690,11 @@ RunInfo.prototype.changeVisibility = function () {
     newtab_btn.style.display    = 'inline';
 };
 
-RunInfo.prototype.timedStyleChange = function () {
+HARSTORAGE.RunInfo.prototype.timedStyleChange = function () {
     setTimeout(this.changeVisibility, 1000);    
 };
 
-RunInfo.prototype.addSpinner = function() {
+HARSTORAGE.RunInfo.prototype.addSpinner = function() {
     var opts = {
             lines:  10,
             length: 5,
