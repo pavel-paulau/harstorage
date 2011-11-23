@@ -87,22 +87,24 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
     var selectors = new_div.getElementsByTagName('select');
     
     for(i = selectors.length; i -- ; ) {
-        if (selectors.item(i).name === prev_id + '_label' ) {
+        switch (selectors.item(i).name) {
+        case prev_id + '_label':
             selectors.item(i).name  = new_id + '_label';
             selectors.item(i).id    = new_id + '_label';
             selectors.item(i).onchange = function() {
                 that.setTimestamps(this.name);
             };
-        }
-        
-        if (selectors.item(i).name === prev_id + '_start_ts' ) {
+            break;
+        case prev_id + '_start_ts':
             selectors.item(i).name  = new_id + '_start_ts';
             selectors.item(i).id    = new_id + '_start_ts';
-        }
-        
-        if (selectors.item(i).name === prev_id + '_end_ts' ) {
+            break;
+        case prev_id + '_end_ts':
             selectors.item(i).name  = new_id + '_end_ts';
             selectors.item(i).id    = new_id + '_end_ts';
+            break;
+        default:
+            break;
         }
     }
 
@@ -110,7 +112,8 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
     var inputs = new_div.getElementsByTagName('input');
 
     for(i = 0, len = inputs.length; i < len; i += 1) {
-        if (inputs.item(i).id === prev_id + '_add') {
+        switch (inputs.item(i).id) {
+        case prev_id + '_add':
             // Set new id
             inputs.item(i).id = new_id + '_add';
 
@@ -122,9 +125,8 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
             inputs.item(i).onclick = function() {
                 that.add(this);
             };
-        }
-        
-        if (inputs.item(i).id === prev_id + '_del') {
+            break;
+        case prev_id + '_del':
             // Set new id
             inputs.item(i).id = new_id + '_del';
 
@@ -139,6 +141,9 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
             inputs.item(i).onclick = function() {
                 that.del(this);
             };
+            break;
+        default:
+            break;
         }
     }
     // Update head
