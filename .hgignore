@@ -10,3 +10,5 @@ data
 harstorage/public/data
 # Builds
 dist
+# Binaries
+pagespeed_bin*
