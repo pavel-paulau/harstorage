@@ -638,7 +638,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         timestamp   = selector.options[selector.selectedIndex].text;
     }
 
-    var URI = 'runinfo?timestamp=' + timestamp;
+    this.URI = 'runinfo?timestamp=' + timestamp;
 
     this.xhr = new XMLHttpRequest();
 
@@ -648,11 +648,11 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         }
     };
 
-    if ( typeof(this.cache[URI]) === 'undefined' ) {
-        this.xhr.open('GET', URI, true);
+    if ( typeof(this.cache[this.URI]) === 'undefined' ) {
+        this.xhr.open('GET', this.URI, true);
         this.xhr.send();
     } else {
-        this.json = this.cache[URI];
+        this.json = this.cache[this.URI];
         set_data();
     }
 };
