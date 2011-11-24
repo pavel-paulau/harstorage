@@ -143,8 +143,7 @@ class ResultsController(BaseController):
         har.analyze()
 
         # Summary stats
-        summary = {'score'          :test_result['ps_scores']['Total Score'],
-                    'full_time'     :test_result['full_load_time'],
+        summary = { 'full_time'     :test_result['full_load_time'],
                     'total_size'    :test_result['total_size'],
                     'requests'      :test_result['requests'],
                     'dns'           :har.dns,
@@ -172,8 +171,7 @@ class ResultsController(BaseController):
         scores = dict()
         
         for rule,score in test_result['ps_scores'].items():
-            if rule != 'Total Score':
-                scores[rule] = score
+            scores[rule] = score
         
         # Data for HAR Viewer
         filename = os.path.join( config['app_conf']['temp_store'], har_id )

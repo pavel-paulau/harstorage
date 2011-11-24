@@ -52,7 +52,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         scoreArray[index]   =   parseInt(scoreArray[index], 10);
     }
 
-    var chart = new Highcharts.Chart({
+    new Highcharts.Chart({
         chart: {
             renderTo    : 'timeline',
             zoomType    : 'x'
@@ -200,7 +200,7 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         scoreArray[index]   =   parseInt(scoreArray[index], 10);
     }
 
-    var chart = new Highcharts.Chart({
+    new Highcharts.Chart({
         chart: {
             renderTo    : 'chart',
             defaultSeriesType: 'column'
@@ -358,36 +358,6 @@ HARSTORAGE.RunInfo = function(mode, label) {
     };
 };
 
-//Gauge chart
-HARSTORAGE.RunInfo.prototype.score = function(score) {
-    // Value for chart
-    var data = new google.visualization.DataTable();
-
-    data.addColumn('string');
-    data.addColumn('number');
-    data.addRows(1);
-    data.setValue(0, 0, 'PS Score');
-    data.setValue(0, 1, score);
-
-    // Chart options
-    var options = {
-        width       : 200,
-        height      : 200,
-        redFrom     : 0,
-        redTo       : 59,
-        yellowFrom  : 60,
-        yellowTo    : 79,
-        greenFrom   : 80,
-        greenTo     : 100,
-        minorTicks  : 10
-    };
-
-    // Chart object
-    var chart = new google.visualization.Gauge( document.getElementById('gauge') );
-    
-    chart.draw(data, options);
-};
-
 //Page Resources
 HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, width) {
     // Extract data
@@ -400,7 +370,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
     }
 
     // Chart object
-    var chart = new Highcharts.Chart({
+    new Highcharts.Chart({
         chart: {
             renderTo            : div,
             plotBackgroundColor : null,
@@ -467,11 +437,11 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
 //Page Speed details
 HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
     // Spliting data for chart
-    var rules   = [],
-        scores  = [];
+    var rules   = ['Total Score'],
+        scores  = [pagespeed['Total Score']];
 
     for(var rule in pagespeed) {
-        if (pagespeed.hasOwnProperty(rule)) {
+        if (pagespeed.hasOwnProperty(rule) && rule !== 'Total Score' ) {
             rules.push(rule);
             scores.push(pagespeed[rule]);
         }
@@ -481,7 +451,7 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
     var height = Math.max(75 + 20 * rules.length, 100);
 
     // Chart object
-    var chart = new Highcharts.Chart({
+    new Highcharts.Chart({
         chart: {
             renderTo            : 'pagespeed',
             defaultSeriesType   : 'bar',
@@ -508,7 +478,16 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
             title: {
                 text: null
             },
-            categories  : rules
+            categories  : rules,
+            labels: {
+                formatter: function() {
+                    if (this.value === 'Total Score') {
+                        return '<b>@' + this.value + '</b>';
+                    } else {
+                        return this.value;
+                    }
+                }
+            }
         },
         yAxis: {
             title: {
@@ -552,6 +531,37 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
     // Show Ajax spinner
     this.spinner.style.display = 'block';
 
+    // Formatter
+    this.formatter = function(value, units) {
+        // Default units
+        if ( typeof(units) === 'undefined') {
+            units = '';
+        }
+
+        // Formatter
+        switch ( typeof(value) ) {
+        case "number":
+            if (value >= 1000) {
+                var seconds = Math.floor(value/1000);
+                var milliseconds = value - seconds*1000;
+
+                if (milliseconds < 10) {
+                    milliseconds = "00" + milliseconds;
+                } else if (milliseconds < 100) {
+                    milliseconds = "0" + milliseconds;
+                }
+                
+                return seconds + ' ' +  milliseconds + ' ' + units;
+            } else {
+                return value + ' ' + units;
+            }
+        case "string":
+            return value;            
+        default:
+            return "n/a";
+        }
+    };
+
     // Update test results
     var set_data = function() {
         // Update cache
@@ -561,25 +571,23 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         }
 
         // Summary
-        $('#full-load-time').html   ( that.json.summary.full_time   + ' ms' );
-        $('#dns').html              ( that.json.summary.dns         + ' ms' );
-        $('#transfer').html         ( that.json.summary.transfer    + ' ms' );
-        $('#connecting').html       ( that.json.summary.connecting  + ' ms' );
-        $('#server').html           ( that.json.summary.server      + ' ms' );
-        $('#blocked').html          ( that.json.summary.blocked     + ' ms' );
+        $('#full-load-time').html   ( that.formatter(that.json.summary.full_time,   'ms') );
 
-        $('#total-size').html       ( that.json.summary.total_size  + ' kB' );
-        $('#text-size').html        ( that.json.summary.text_size   + ' kB' );
-        $('#media-size').html       ( that.json.summary.media_size  + ' kB' );
-        $('#cache-size').html       ( that.json.summary.cache_size  + ' kB' );
+        $('#dns').html              ( that.formatter(that.json.summary.dns,         'ms') );
+        $('#transfer').html         ( that.formatter(that.json.summary.transfer,    'ms') );
+        $('#connecting').html       ( that.formatter(that.json.summary.connecting,  'ms') );
+        $('#server').html           ( that.formatter(that.json.summary.server,      'ms') );
+        $('#blocked').html          ( that.formatter(that.json.summary.blocked,     'ms') );
 
-        $('#requests').html         ( that.json.summary.requests            );
-        $('#redirects').html        ( that.json.summary.redirects           );
-        $('#bad-req').html          ( that.json.summary.bad_req             );
-        $('#hosts').html            ( that.json.summary.hosts               );
+        $('#total-size').html       ( that.formatter(that.json.summary.total_size,  'kB') );
+        $('#text-size').html        ( that.formatter(that.json.summary.text_size,   'kB') );
+        $('#media-size').html       ( that.formatter(that.json.summary.media_size,  'kB') );
+        $('#cache-size').html       ( that.formatter(that.json.summary.cache_size,  'kB') );
 
-        // Page Speed Score - Gauge
-        that.score(that.json.summary.score);
+        $('#requests').html         ( that.formatter(that.json.summary.requests         ) );
+        $('#redirects').html        ( that.formatter(that.json.summary.redirects        ) );
+        $('#bad-req').html          ( that.formatter(that.json.summary.bad_req          ) );
+        $('#hosts').html            ( that.formatter(that.json.summary.hosts            ) );
 
         // Resources
         that.resources('by-size','Resources by Size', that.json.weights,  ' kB' , 450);

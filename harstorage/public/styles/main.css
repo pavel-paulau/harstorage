@@ -237,10 +237,10 @@ body a:hover {
     font-size: 93%;
 }
 .results .container-max {
-    width: 280px;
+    width: 270px;
 }
 .results .container-min {
-    width: 230px;
+    width: 220px;
 }
 .results .container-max .title-max,.results .container-min .title-min {
     text-align: right;
@@ -249,10 +249,10 @@ body a:hover {
     float: left;
 }
 .results .container-max .title-max {
-    width: 200px;
+    width: 190px;
 }
 .results .container-min .title-min {
-    width: 150px;
+    width: 140px;
 }
 .results .value {
     text-align: left;

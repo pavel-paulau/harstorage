@@ -18,28 +18,32 @@
         <div class="spinner" id="spinner"></div>
 
         <div class="tabber">
-            <div class="tabbertab" title="Summary">
-                <div id="gauge" ></div>
+            <div class="tabbertab" title="Summary">                
+                <div class="container-min">
+                    <div class="title-min">Full Load Time:</div>         <div class="value" id="full-load-time">n/a</div>
+                    <div class="title-min">onLoad Event:</div>         <div class="value" id="full-load-time">n/a</div>
+                    <div class="title-min">Start Render Time:</div>         <div class="value" id="full-load-time">n/a</div>
+                    <div class="title-min">Time to First Byte:</div>   <div class="value" id="full-load-time">n/a</div>
+                </div>
                 
                 <div class="container-max">
-                    <div class="title-max">Full Load Time:</div>       <div class="value" id="full-load-time"></div>
-                    <div class="title-max">Total DNS Time:</div>       <div class="value" id="dns"></div>
-                    <div class="title-max">Total Transfer Time:</div>  <div class="value" id="transfer"></div>
-                    <div class="title-max">Total Server Time:</div>    <div class="value" id="server"></div>
-                    <div class="title-max">AVG Connecting Time:</div>  <div class="value" id="connecting"></div>
-                    <div class="title-max">AVG Blocking Time:</div>    <div class="value" id="blocked"></div>
+                    <div class="title-max">Total DNS Time:</div>       <div class="value" id="dns">n/a</div>
+                    <div class="title-max">Total Transfer Time:</div>  <div class="value" id="transfer">n/a</div>
+                    <div class="title-max">Total Server Time:</div>    <div class="value" id="server">n/a</div>
+                    <div class="title-max">Avg. Connecting Time:</div>  <div class="value" id="connecting">n/a</div>
+                    <div class="title-max">Avg. Blocking Time:</div>    <div class="value" id="blocked">n/a</div>
                 </div>
                 <div class="container-min">
-                    <div class="title-min">Total Size:</div>           <div class="value" id="total-size"></div>
-                    <div class="title-min">Text Files:</div>           <div class="value" id="text-size"></div>
-                    <div class="title-min">Media Files:</div>          <div class="value" id="media-size"></div>
+                    <div class="title-min">Total Size:</div>           <div class="value" id="total-size">n/a</div>
+                    <div class="title-min">Text Files:</div>           <div class="value" id="text-size">n/a</div>
+                    <div class="title-min">Media Files:</div>          <div class="value" id="media-size">n/a</div>
                     <div class="title-min">Cache Size:</div>           <div class="value" id="cache-size"></div>
                 </div>
                 <div class="container-min">
-                    <div class="title-min">Requests:</div>             <div class="value" id="requests"></div>
-                    <div class="title-min">Redirects:</div>            <div class="value" id="redirects"></div>
-                    <div class="title-min">Bad Requests:</div>         <div class="value" id="bad-req"></div>
-                    <div class="title-min">Domains:</div>              <div class="value" id="hosts"></div>
+                    <div class="title-min">Requests:</div>             <div class="value" id="requests">n/a</div>
+                    <div class="title-min">Redirects:</div>            <div class="value" id="redirects">n/a</div>
+                    <div class="title-min">Bad Requests:</div>         <div class="value" id="bad-req">n/a</div>
+                    <div class="title-min">Domains:</div>              <div class="value" id="hosts">n/a</div>
 
                     <div><input type="image" src="${h.url_for('/images/help_button.png')}" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
                 </div>
@@ -84,7 +88,6 @@
     .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
     .script("${h.url_for('/scripts/spin.js')}").wait()
     .script("${h.url_for('/scripts/chosen.jquery.js')}")
-    .script("${h.url_for('/scripts/gauge.js')}").wait()
     .script("${h.url_for('/scripts/plots.js')}").wait()
     .wait(function(){
         var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}");
