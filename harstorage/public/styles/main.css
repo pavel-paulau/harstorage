@@ -230,28 +230,34 @@ body a:hover {
     width: 200px;
     height: 200px;
 }
-.results .container-max,.results .container-min {
+.results .container-max,.results .container-min,.results .container-umin {
     height: 210px;
     float: left;
     margin: 10px 0 0 0;
     font-size: 93%;
 }
 .results .container-max {
-    width: 270px;
+    width: 260px;
 }
 .results .container-min {
     width: 220px;
 }
-.results .container-max .title-max,.results .container-min .title-min {
+.results .container-umin {
+    width: 200px;
+}
+.results .title-max, .results .title-min, .results .title-umax {
     text-align: right;
     font-weight: bold;
     margin: 8px 0 8px 0;
     float: left;
 }
-.results .container-max .title-max {
-    width: 190px;
+.results .title-max {
+    width: 180px;
 }
-.results .container-min .title-min {
+.results .title-umax {
+    width: 160px;
+}
+.results .title-min {
     width: 140px;
 }
 .results .value {
@@ -260,8 +266,14 @@ body a:hover {
     width: 70px;
     float: left;
 }
+.results .value-min {
+    text-align: left;
+    margin: 8px 0 8px 10px;
+    width: 50px;
+    float: left;
+}
 .results .image {
-    margin: 35px 0 0 190px;
+    margin: 35px 0 0 170px;
 }
 .results #by-size, .results #by-req {
     width:450px;
