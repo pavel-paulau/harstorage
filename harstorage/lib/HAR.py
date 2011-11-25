@@ -61,6 +61,17 @@ class HAR():
         return hd
     
     def analyze(self):
+        # Fix Charles proxy format
+        try:
+            self.har['log']['pages']
+        except:
+            self.har['log']['pages'] = [{"startedDateTime":"1970-01-01T00:00:00.000+03:00",
+                                         "id":"Undefined",
+                                         "title":"Undefined",
+                                         "pageTimings": {}
+                                        }]
+
+        # Temporary variables
         min = 9999999999
         max = 0
         time_to_first_byte = 0
