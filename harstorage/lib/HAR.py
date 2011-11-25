@@ -72,17 +72,17 @@ class HAR():
                                         }]
 
         # Temporary variables
-        min = 9999999999
-        max = 0
+        min_ts = 9999999999
+        max_ts = 0
         time_to_first_byte = 0
         
         for entry in self.har['log']['entries']:
             # Detailed timgings
-            self.total_dns_time         += entry['timings']['dns']
-            self.total_transfer_time    += entry['timings']['receive'] + entry['timings']['send']
-            self.total_server_time      += entry['timings']['wait']
-            self.avg_connecting_time    += entry['timings']['connect']
-            self.avg_blocking_time      += entry['timings']['blocked']
+            self.total_dns_time         += max( entry['timings']['dns'],                                0)
+            self.total_transfer_time    += max( entry['timings']['receive'] + entry['timings']['send'], 0)
+            self.total_server_time      += max( entry['timings']['wait'],                               0)
+            self.avg_connecting_time    += max( entry['timings']['connect'],                            0)
+            self.avg_blocking_time      += max( entry['timings']['blocked'],                            0)
 
             # Full load time and time to first byte
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
@@ -90,11 +90,11 @@ class HAR():
             
             end_time =  start_time + entry['time']/1000.0
     
-            if start_time < min:
-                min = start_time
+            if start_time < min_ts:
+                min_ts = start_time
                 time_to_first_byte = self.avg_blocking_time + self.total_dns_time + self.avg_connecting_time + entry['timings']['send'] + self.total_server_time
-            if end_time > max:
-                max = end_time
+            if end_time > max_ts:
+                max_ts = end_time
 
             # Total size
             size = entry['response']['bodySize']
@@ -154,7 +154,7 @@ class HAR():
         try:
             self.full_load_time = self.har['log']['pages'][0]['pageTimings']['_myTime']
         except:
-            self.full_load_time = int( (max - min)*1000 )
+            self.full_load_time = int( (max_ts - min_ts)*1000 )
 
         # onLoad envent time
         try:
