@@ -571,23 +571,26 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         }
 
         // Summary
-        $('#full-load-time').html   ( that.formatter(that.json.summary.full_time,   'ms') );
+        $('#full-load-time').html       ( that.formatter(that.json.summary.full_load_time,      'ms') );
+        $('#onload-event').html         ( that.formatter(that.json.summary.onload_event,        'ms') );
+        $('#start-render-time').html    ( that.formatter(that.json.summary.start_render_time,   'ms') );
+        $('#time-to-first-byte').html   ( that.formatter(that.json.summary.time_to_first_byte,  'ms') );
 
-        $('#dns').html              ( that.formatter(that.json.summary.dns,         'ms') );
-        $('#transfer').html         ( that.formatter(that.json.summary.transfer,    'ms') );
-        $('#connecting').html       ( that.formatter(that.json.summary.connecting,  'ms') );
-        $('#server').html           ( that.formatter(that.json.summary.server,      'ms') );
-        $('#blocked').html          ( that.formatter(that.json.summary.blocked,     'ms') );
+        $('#total-dns-time').html       ( that.formatter(that.json.summary.total_dns_time,      'ms') );
+        $('#total-transfer-time').html  ( that.formatter(that.json.summary.total_transfer_time, 'ms') );
+        $('#total-server-time').html    ( that.formatter(that.json.summary.total_server_time,   'ms') );
+        $('#avg-connecting-time').html  ( that.formatter(that.json.summary.avg_connecting_time, 'ms') );
+        $('#avg-blocking-time').html    ( that.formatter(that.json.summary.avg_blocking_time,   'ms') );
 
-        $('#total-size').html       ( that.formatter(that.json.summary.total_size,  'kB') );
-        $('#text-size').html        ( that.formatter(that.json.summary.text_size,   'kB') );
-        $('#media-size').html       ( that.formatter(that.json.summary.media_size,  'kB') );
-        $('#cache-size').html       ( that.formatter(that.json.summary.cache_size,  'kB') );
+        $('#total-size').html           ( that.formatter(that.json.summary.total_size,          'kB') );
+        $('#text-size').html            ( that.formatter(that.json.summary.text_size,           'kB') );
+        $('#media-size').html           ( that.formatter(that.json.summary.media_size,          'kB') );
+        $('#cache-size').html           ( that.formatter(that.json.summary.cache_size,          'kB') );
 
-        $('#requests').html         ( that.formatter(that.json.summary.requests         ) );
-        $('#redirects').html        ( that.formatter(that.json.summary.redirects        ) );
-        $('#bad-req').html          ( that.formatter(that.json.summary.bad_req          ) );
-        $('#hosts').html            ( that.formatter(that.json.summary.hosts            ) );
+        $('#requests').html             ( that.formatter(that.json.summary.requests                 ) );
+        $('#redirects').html            ( that.formatter(that.json.summary.redirects                ) );
+        $('#bad-requests').html         ( that.formatter(that.json.summary.bad_requests             ) );
+        $('#domains').html              ( that.formatter(that.json.summary.domains                  ) );
 
         // Resources
         that.resources('by-size','Resources by Size', that.json.weights,  ' kB' , 450);

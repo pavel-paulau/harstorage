@@ -31,12 +31,25 @@ class HAR():
                 except Exception as error:
                     self.status = error            
         finally:
-            self.total_size = self.text_size = self.media_size = self.cached = 0.0
-            self.full_load_time = self.dns = self.transfer = self.connecting = self.server = self.blocked = 0.0
-            self.redirects = self.bad_req = 0
-            self.hosts = dict()
+            self.full_load_time         = 0
+
+            self.total_dns_time         = 0.0
+            self.total_transfer_time    = 0.0
+            self.total_server_time      = 0.0
+            self.avg_connecting_time    = 0.0
+            self.avg_blocking_time      = 0.0
+
+            self.total_size             = 0.0
+            self.text_size              = 0.0
+            self.media_size             = 0.0
+            self.cache_size             = 0.0
+
+            self.redirects              = 0
+            self.bad_requests           = 0
+            
+            self.domains = dict()
     
-    # Convert Bytes to Kilobytes
+    # Convert bytes to kilobytes
     def b2k(self, value):
         return int( round( value/1024.0 ) )
     
@@ -48,41 +61,30 @@ class HAR():
         return hd
     
     def analyze(self):
-        # Label
-        self.label = self.har['log']['pages'][0]['id']
-        
-        # URL
-        self.url = self.har['log']['entries'][0]['request']['url']
-        
-        # Browser
-        try:
-            self.browser = self.har['log']['browser']['name']
-        except:
-            self.browser = 'Udefined'
-        
-        # Requests
-        self.requests = len( self.har['log']['entries'] )
-        
         min = 9999999999
         max = 0
+        time_to_first_byte = 0
         
         for entry in self.har['log']['entries']:
-            # Full load time
+            # Detailed timgings
+            self.total_dns_time         += entry['timings']['dns']
+            self.total_transfer_time    += entry['timings']['receive'] + entry['timings']['send']
+            self.total_server_time      += entry['timings']['wait']
+            self.avg_connecting_time    += entry['timings']['connect']
+            self.avg_blocking_time      += entry['timings']['blocked']
+
+            # Full load time and time to first byte
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
             start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('+')[0] )
             
             end_time =  start_time + entry['time']/1000.0
     
-            if start_time < min: min = start_time
-            if end_time > max: max = end_time
-        
-            # Detailed timgings
-            self.dns += entry['timings']['dns']
-            self.transfer += entry['timings']['receive'] + entry['timings']['send']
-            self.server += entry['timings']['wait']
-            self.connecting += entry['timings']['connect']
-            self.blocked += entry['timings']['blocked']
-            
+            if start_time < min:
+                min = start_time
+                time_to_first_byte = self.avg_blocking_time + self.total_dns_time + self.avg_connecting_time + entry['timings']['send'] + self.total_server_time
+            if end_time > max:
+                max = end_time
+
             # Total size
             size = entry['response']['bodySize']
 
@@ -111,7 +113,7 @@ class HAR():
                     date    = mktime( strptime(resp_headers['Date'],"%a, %d %b %Y %H:%M:%S GMT") )
                     expires = mktime( strptime(resp_headers['Expires'],"%a, %d %b %Y %H:%M:%S GMT") )
                     if expires > date:
-                        self.cached += size
+                        self.cache_size += size
             except:
                 pass
                     
@@ -119,30 +121,54 @@ class HAR():
             if entry['response']['status'] >=300 and entry['response']['status'] < 400:
                 self.redirects += 1
             elif entry['response']['status']>=400:
-                self.bad_req += 1
+                self.bad_requests += 1
                 
             # List of hosts
             for header in entry['request']['headers']:
                 if header['name'] == 'Host':
                     hostname = header['value']
-                    self.hosts[hostname] = [self.hosts.get(hostname, [0,0])[0] + 1,
-                                        self.hosts.get(hostname, [0,0])[1] + self.b2k(size)]
-            
+                    self.domains[hostname] = [self.domains.get(hostname, [0,0])[0] + 1,
+                                              self.domains.get(hostname, [0,0])[1] + self.b2k(size)]
+
+        # Label
+        self.label = self.har['log']['pages'][0]['id']
+
+        # URL
+        self.url = self.har['log']['entries'][0]['request']['url']
+
+        # Requests
+        self.requests = len( self.har['log']['entries'] )
+
         # Full load time
         try:
             self.full_load_time = self.har['log']['pages'][0]['pageTimings']['_myTime']
         except:
             self.full_load_time = int( (max - min)*1000 )
 
+        # onLoad envent time
+        try:
+            self.onload_event = self.har['log']['pages'][0]['pageTimings']['onLoad']
+        except:
+            self.onload_event = 'n/a'
+
+        # Render Start
+        try:
+            self.start_render_time = self.har['log']['pages'][0]['pageTimings']['_renderStart']
+        except:
+            self.start_render_time = 'n/a'
+
+        # Time to first byte
+        self.time_to_first_byte = time_to_first_byte
+
         # Average values
-        self.connecting = round(self.connecting / self.requests, 1)
-        self.blocked    = round(self.blocked    / self.requests, 1)
+        self.avg_connecting_time = round(self.avg_connecting_time / self.requests, 1)
+        self.avg_blocking_time   = round(self.avg_blocking_time    / self.requests, 1)
         
         # From bytes to kilobytes
         self.total_size = self.b2k( self.total_size )
         self.text_size  = self.b2k( self.text_size  )
         self.media_size = self.b2k( self.media_size )
-        self.cached     = self.b2k( self.cached     )
+        self.cache_size = self.b2k( self.cache_size )
     
     def type_syn(self, string):
         if string.count('javascript'):

@@ -144,48 +144,51 @@ class ResultsController(BaseController):
         timestamp = request.GET['timestamp']
 
         # MongoDB query
-        test_result = mdb_handler.collection.find_one({"timestamp":timestamp})
+        test_results = mdb_handler.collection.find_one({"timestamp":timestamp})
         
         # HAR initialization
-        har     = HAR( test_result['har'] )
-        har_id  = str(test_result['_id'])
+        har     = HAR(test_results['har'])
+        har_id  = str(test_results['_id'])
         har.analyze()
 
         # Summary stats
-        summary = { 'full_time'     :test_result['full_load_time'],
-                    'total_size'    :test_result['total_size'],
-                    'requests'      :test_result['requests'],
-                    'dns'           :har.dns,
-                    'transfer'      :har.transfer,
-                    'connecting'    :har.connecting,
-                    'server'        :har.server,
-                    'blocked'       :har.blocked,
-                    'text_size'     :har.text_size,
-                    'media_size'    :har.media_size,
-                    'cache_size'    :har.cached,
-                    'redirects'     :har.redirects,
-                    'bad_req'       :har.bad_req,
-                    'hosts'         :len(har.hosts)
+        summary = { 'full_load_time'        :test_results['full_load_time'],
+                    'onload_event'          :har.onload_event,
+                    'start_render_time'     :har.start_render_time,
+                    'time_to_first_byte'    :har.time_to_first_byte,
+                    'total_dns_time'        :har.total_dns_time,
+                    'total_transfer_time'   :har.total_transfer_time,
+                    'total_server_time'     :har.total_server_time,
+                    'avg_connecting_time'   :har.avg_connecting_time,
+                    'avg_blocking_time'     :har.avg_blocking_time,
+                    'total_size'            :test_results['total_size'],
+                    'text_size'             :har.text_size,
+                    'media_size'            :har.media_size,
+                    'cache_size'            :har.cache_size,
+                    'requests'              :test_results['requests'],
+                    'redirects'             :har.redirects,
+                    'bad_requests'          :har.bad_requests,
+                    'domains'               :len(har.domains)
         }
 
         # Domains
         domains_req_ratio = dict()
         domains_weight_ratio = dict()
 
-        for key,value in har.hosts.items():
+        for key,value in har.domains.items():
             domains_req_ratio[key] = value[0]
             domains_weight_ratio[key] = value[1]
         
         # Page Speed Scores
         scores = dict()
         
-        for rule,score in test_result['ps_scores'].items():
+        for rule,score in test_results['ps_scores'].items():
             scores[rule] = score
         
         # Data for HAR Viewer
         filename = os.path.join( config['app_conf']['temp_store'], har_id )
         file = open(filename, 'w')
-        file.write( test_result['har'].encode('utf-8') )
+        file.write( test_results['har'].encode('utf-8') )
         file.close()
 
         # Final JSON
@@ -303,8 +306,7 @@ class ResultsController(BaseController):
                 "timestamp"     :strftime("%Y-%m-%d %H:%M:%S", localtime()),
                 "full_load_time":har.full_load_time,
                 "total_size"    :har.total_size,
-                "requests"      :har.requests,
-                "browser"       :har.browser,
+                "requests"      :har.requests,                
                 "ps_scores"     :scores,
                 "har"           :har.origin
             })
