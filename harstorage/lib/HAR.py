@@ -1,6 +1,5 @@
 import json
 from time import strptime, mktime
-from math import ceil
 from re import sub
 
 class HAR():
