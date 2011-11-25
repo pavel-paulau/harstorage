@@ -18,6 +18,7 @@ harstorage/config/middleware.py
 harstorage/config/routing.py
 harstorage/controllers/__init__.py
 harstorage/controllers/chart.py
+harstorage/controllers/combine.py
 harstorage/controllers/error.py
 harstorage/controllers/results.py
 harstorage/controllers/superposed.py
@@ -27,6 +28,7 @@ harstorage/lib/__init__.py
 harstorage/lib/app_globals.py
 harstorage/lib/base.py
 harstorage/lib/helpers.py
+harstorage/lib/hgapi.py
 harstorage/public/favicon.ico
 harstorage/public/data/.data
 harstorage/public/images/add_button.png
@@ -36,7 +38,7 @@ harstorage/public/images/remove_button.png
 harstorage/public/scripts/LAB.min.js
 harstorage/public/scripts/chosen.jquery.js
 harstorage/public/scripts/gauge.js
-harstorage/public/scripts/jquery-1.6.3.min.js
+harstorage/public/scripts/jquery-1.7.min.js
 harstorage/public/scripts/plots.js
 harstorage/public/scripts/spin.js
 harstorage/public/scripts/superpose.js
@@ -50,7 +52,7 @@ harstorage/public/scripts/harviewer/core/trace.js
 harstorage/public/scripts/harviewer/domplate/domplate.js
 harstorage/public/scripts/highcharts/highcharts.js
 harstorage/public/scripts/highcharts/modules/exporting.js
-harstorage/public/scripts/highcharts/themes/dark-green.js
+harstorage/public/scripts/highcharts/themes/dark-green-custom.js
 harstorage/public/styles/main-ie.css
 harstorage/public/styles/main.css
 harstorage/public/styles/tabber.css
@@ -95,5 +97,6 @@ harstorage/tests/__init__.py
 harstorage/tests/test_models.py
 harstorage/tests/functional/__init__.py
 harstorage/tests/functional/test_chart.py
+harstorage/tests/functional/test_combine.py
 harstorage/tests/functional/test_results.py
 harstorage/tests/functional/test_testflow.py
