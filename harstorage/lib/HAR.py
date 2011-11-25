@@ -161,8 +161,8 @@ class HAR():
         self.time_to_first_byte = time_to_first_byte
 
         # Average values
-        self.avg_connecting_time = round(self.avg_connecting_time / self.requests, 1)
-        self.avg_blocking_time   = round(self.avg_blocking_time    / self.requests, 1)
+        self.avg_connecting_time = round(self.avg_connecting_time / self.requests,  0)
+        self.avg_blocking_time   = round(self.avg_blocking_time    / self.requests, 0)
         
         # From bytes to kilobytes
         self.total_size = self.b2k( self.total_size )
