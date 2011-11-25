@@ -1,5 +1,6 @@
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoDB
+from harstorage.lib.hgapi import Repo
 
 import logging
 import json
@@ -18,6 +19,10 @@ log = logging.getLogger(__name__)
 
 class ResultsController(BaseController):
     def index(self):
+        # Revision for static content
+        repo = Repo(".")
+        c.rev = repo.hg_rev()
+
         # MongoDB handler
         mdb_handler = MongoDB()
         
@@ -59,6 +64,10 @@ class ResultsController(BaseController):
         return render('./home.html')
     
     def details(self):
+        # Revision for static content
+        repo = Repo(".")
+        c.rev = repo.hg_rev()
+
         # Try to fetch details for URL
         try:
             c.url = request.GET['url']

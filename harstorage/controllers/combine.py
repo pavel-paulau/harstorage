@@ -11,9 +11,10 @@ class CombineController(BaseController):
         combo = ''
 
         for key, value in request.GET.items():
-            file = open("harstorage/public/styles/" + key)
-            combo = combo + file.read()
-            file.close()
+            if key != 'ver':
+                file = open("harstorage/public/styles/" + key)
+                combo = combo + file.read()
+                file.close()
 
         # Custom HTTP Headers
         response.headerlist = [('Content-type', 'text/css'),('Last-Modified', 'Tue, 22 Nov 2011 12:00:00 GMT')]

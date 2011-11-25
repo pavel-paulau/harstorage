@@ -35,13 +35,13 @@
 <script type='text/javascript'>
     $LAB
     .script("${h.url_for('/scripts/jquery-1.6.3.min.js')}").wait()
-    .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js')}").wait()
-    .script("${h.url_for('/scripts/datatables/ColReorder.min.js')}")
-    .script("${h.url_for('/scripts/datatables/TableTools.min.js')}")
-    .script("${h.url_for('/scripts/highcharts/highcharts.js')}").wait()
-    .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}").wait()
-    .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
-    .script("${h.url_for('/scripts/plots.js')}").wait()
+    .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js?ver=1.8.2')}").wait()
+    .script("${h.url_for('/scripts/datatables/ColReorder.min.js?ver=1.0.4')}")
+    .script("${h.url_for('/scripts/datatables/TableTools.min.js?ver=1.0.4')}")
+    .script("${h.url_for('/scripts/highcharts/highcharts.js?ver=2.1.7')}").wait()
+    .script("${h.url_for('/scripts/highcharts/themes/dark-green-custom.js?ver=')}${c.rev}").wait()
+    .script("${h.url_for('/scripts/highcharts/modules/exporting.js?ver=2.1.7')}")
+    .script("${h.url_for('/scripts/plots.js?ver=')}${c.rev}").wait()
     .wait(function(){
         var columns = new HARSTORAGE.Columns();
         columns.draw("${c.points}");

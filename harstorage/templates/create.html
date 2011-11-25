@@ -48,8 +48,8 @@
 
 <script type='text/javascript'>
     $LAB
-    .script("${h.url_for('/scripts/spin.js')}").wait()
-    .script("${h.url_for('/scripts/superpose.js')}").wait()
+    .script("${h.url_for('/scripts/spin.js?ver=1.2.1')}").wait()
+    .script("${h.url_for('/scripts/superpose.js?ver=')}${c.rev}").wait()
     .wait(function(){
         var superpose_form = new HARSTORAGE.SuperposeForm();
         superpose_form.addSpinner();

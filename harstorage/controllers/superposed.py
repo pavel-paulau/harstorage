@@ -1,4 +1,5 @@
 from harstorage.lib.MongoHandler import MongoDB
+from harstorage.lib.hgapi import Repo
 
 import logging
 
@@ -10,6 +11,10 @@ log = logging.getLogger(__name__)
 
 class SuperposedController(BaseController):
     def create(self):
+        # Revision for static content
+        repo = Repo(".")
+        c.rev = repo.hg_rev()
+
         # MongoDB handler
         md_handler = MongoDB()
         
@@ -35,6 +40,10 @@ class SuperposedController(BaseController):
         return dates[:-1]
             
     def display(self):
+        # Revision for static content
+        repo = Repo(".")
+        c.rev = repo.hg_rev()
+
         # 5 Arrays for timeline chart
         lbl_points      = str()
         time_points     = str()

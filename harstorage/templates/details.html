@@ -79,16 +79,16 @@
         </div>
 </div>
 </center>
-<script type='text/javascript' src="${h.url_for('/scripts/tabber.js')}"></script>
+<script type='text/javascript' src="${h.url_for('/scripts/tabber.js?ver=1.9')}"></script>
 <script type='text/javascript'>
     $LAB
     .script("${h.url_for('/scripts/jquery-1.6.3.min.js')}").wait()    
-    .script("${h.url_for('/scripts/highcharts/highcharts.js')}").wait()
-    .script("${h.url_for('/scripts/highcharts/themes/dark-green.js')}").wait()
-    .script("${h.url_for('/scripts/highcharts/modules/exporting.js')}")
-    .script("${h.url_for('/scripts/spin.js')}").wait()
-    .script("${h.url_for('/scripts/chosen.jquery.js')}")
-    .script("${h.url_for('/scripts/plots.js')}").wait()
+    .script("${h.url_for('/scripts/highcharts/highcharts.js?ver=2.1.7')}").wait()
+    .script("${h.url_for('/scripts/highcharts/themes/dark-green-custom.js?ver=')}${c.rev}").wait()
+    .script("${h.url_for('/scripts/highcharts/modules/exporting.js?ver=2.1.7')}")
+    .script("${h.url_for('/scripts/spin.js?ver=1.2.1')}").wait()
+    .script("${h.url_for('/scripts/chosen.jquery.js?ver=0.9.5')}")
+    .script("${h.url_for('/scripts/plots.js?ver=')}${c.rev}").wait()
     .wait(function(){
         var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}");
         run_info.addSpinner();
