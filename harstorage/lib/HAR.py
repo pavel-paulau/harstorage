@@ -4,7 +4,7 @@ from math import ceil
 from re import sub
 
 class HAR():
-    def __init__(self,har):
+    def __init__(self, har):
         # Fix Fidler HAR format
         har = sub(
                 '"pages":null',
@@ -32,27 +32,17 @@ class HAR():
                 except Exception as error:
                     self.status = error            
         finally:
-            self.total_size = self.text_size = self.media_size = self.cached = 0
-            self.full_load_time = self.dns = self.transfer = self.connecting = self.server = self.blocked = 0
+            self.total_size = self.text_size = self.media_size = self.cached = 0.0
+            self.full_load_time = self.dns = self.transfer = self.connecting = self.server = self.blocked = 0.0
             self.redirects = self.bad_req = 0
             self.hosts = dict()
-
-        '''
-        except:
-                try:
-                    # Fix for unicode
-                    temp = sub("'","\"", sub("u'","\"", har) )
-                    self.har = json.loads( temp )
-                    self.origin = temp 
-                    self.status = 'Ok'
-        '''
     
     # Convert Bytes to Kilobytes
-    def b2k(self,value):
-        return int( ceil( value/1024 ) )
+    def b2k(self, value):
+        return int( round( value/1024.0 ) )
     
     # Convert headers list to headers dictionary
-    def h2d(self,headers):
+    def h2d(self, headers):
         hd = dict()
         for header in headers:
             hd[header['name']] = header['value']
@@ -82,7 +72,7 @@ class HAR():
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
             start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('+')[0] )
             
-            end_time =  start_time + entry['time']/1000
+            end_time =  start_time + entry['time']/1000.0
     
             if start_time < min: min = start_time
             if end_time > max: max = end_time
@@ -137,17 +127,17 @@ class HAR():
                 if header['name'] == 'Host':
                     hostname = header['value']
                     self.hosts[hostname] = [self.hosts.get(hostname, [0,0])[0] + 1,
-                                        self.hosts.get(hostname, [0,0])[1] + size/1024]
+                                        self.hosts.get(hostname, [0,0])[1] + self.b2k(size)]
             
         # Full load time
         try:
             self.full_load_time = self.har['log']['pages'][0]['pageTimings']['_myTime']
         except:
             self.full_load_time = int( (max - min)*1000 )
-        
+
         # Average values
-        self.connecting = self.connecting / self.requests
-        self.blocked    = self.blocked / self.requests
+        self.connecting = round(self.connecting / self.requests, 1)
+        self.blocked    = round(self.blocked    / self.requests, 1)
         
         # From bytes to kilobytes
         self.total_size = self.b2k( self.total_size )
@@ -155,7 +145,7 @@ class HAR():
         self.media_size = self.b2k( self.media_size )
         self.cached     = self.b2k( self.cached     )
     
-    def type_syn(self,string):
+    def type_syn(self, string):
         if string.count('javascript'):
             return 'javascript'
         elif string.count('flash'):
@@ -184,10 +174,7 @@ class HAR():
             if cmp(mime_type,''):
                 mime_type = self.type_syn(mime_type)
                 size = entry['response']['content']['size']
-                try:
-                    resources[mime_type] += size / 1024
-                except:
-                    resources[mime_type] = size / 1024
+                resources[mime_type] = resources.get(mime_type,0) + self.b2k(size)
         return resources
         
     def req_ratio(self):
@@ -196,8 +183,5 @@ class HAR():
             mime_type = entry['response']['content']['mimeType'].partition(';')[0]
             if cmp(mime_type,''):
                 mime_type = self.type_syn(mime_type)
-                try:
-                    resources[mime_type] += 1
-                except:
-                    resources[mime_type] = 1
+                resources[mime_type] = resources.get(mime_type,0) + 1
         return resources
