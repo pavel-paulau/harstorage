@@ -74,15 +74,20 @@ class HAR():
         # Temporary variables
         min_ts = 9999999999
         max_ts = 0
-        time_to_first_byte = 0
         
         for entry in self.har['log']['entries']:
             # Detailed timgings
-            self.total_dns_time         += max( entry['timings']['dns'],                                0)
-            self.total_transfer_time    += max( entry['timings']['receive'] + entry['timings']['send'], 0)
-            self.total_server_time      += max( entry['timings']['wait'],                               0)
-            self.avg_connecting_time    += max( entry['timings']['connect'],                            0)
-            self.avg_blocking_time      += max( entry['timings']['blocked'],                            0)
+            dns_time        = max( entry['timings']['dns'],                                0)
+            transder_time   = max( entry['timings']['receive'] + entry['timings']['send'], 0)
+            server_time     = max( entry['timings']['wait'],                               0)
+            connecting_time = max( entry['timings']['connect'],                            0)
+            blocking_time   = max( entry['timings']['blocked'],                            0)
+
+            self.total_dns_time         += dns_time
+            self.total_transfer_time    += transder_time
+            self.total_server_time      += server_time
+            self.avg_connecting_time    += connecting_time
+            self.avg_blocking_time      += blocking_time
 
             # Full load time and time to first byte
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
@@ -92,7 +97,12 @@ class HAR():
     
             if start_time < min_ts:
                 min_ts = start_time
-                time_to_first_byte = self.avg_blocking_time + self.total_dns_time + self.avg_connecting_time + entry['timings']['send'] + self.total_server_time
+                self.time_to_first_byte = blocking_time + \
+                                          dns_time + \
+                                          connecting_time + \
+                                          entry['timings']['send'] + \
+                                          server_time
+
             if end_time > max_ts:
                 max_ts = end_time
 
@@ -167,9 +177,6 @@ class HAR():
             self.start_render_time = self.har['log']['pages'][0]['pageTimings']['_renderStart']
         except:
             self.start_render_time = 'n/a'
-
-        # Time to first byte
-        self.time_to_first_byte = time_to_first_byte
 
         # Average values
         self.avg_connecting_time = round(self.avg_connecting_time / self.requests,  0)
