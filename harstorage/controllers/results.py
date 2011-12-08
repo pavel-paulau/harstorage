@@ -241,6 +241,10 @@ class ResultsController(BaseController):
             return ("/")
 
     def upload(self):
+        # Revision for static content
+        repo = Repo(".")
+        c.rev = repo.hg_rev()
+
         # HAR initialization
         try:
             har = HAR( request.POST['file'].value )
