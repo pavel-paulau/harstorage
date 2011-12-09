@@ -91,7 +91,10 @@ class HAR():
 
             # Full load time and time to first byte
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
-            start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('+')[0] )
+            try:
+                start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('+')[0] )
+            except:
+                start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('-')[0] )
             
             end_time =  start_time + entry['time']/1000.0
     
