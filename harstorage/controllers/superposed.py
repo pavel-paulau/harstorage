@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 class SuperposedController(BaseController):
     def create(self):
         # Revision for static content
-        repo = Repo(".")
+        repo = Repo('.')
         c.rev = repo.hg_rev()
 
         # MongoDB handler
@@ -20,7 +20,9 @@ class SuperposedController(BaseController):
         
         # List of labels
         c.labels    = list()
-        for label in md_handler.collection.distinct('label'):
+        labels = md_handler.collection.distinct('label')
+
+        for label in labels:
             c.labels.append(label)
         
         return render('./create.html')
@@ -34,15 +36,24 @@ class SuperposedController(BaseController):
         
         dates = str()
 
-        for document in md_handler.collection.find({'label':label}).sort("timestamp",1):
+        documents = md_handler.collection.find({
+            'label':label
+        })
+        
+        documents.sort('timestamp', 1)
+
+        for document in documents:
             dates += document['timestamp'] + ';'
             
         return dates[:-1]
             
     def display(self):
         # Revision for static content
-        repo = Repo(".")
+        repo = Repo('.')
         c.rev = repo.hg_rev()
+
+        # MongoDB handler
+        md_handler = MongoDB()
 
         # 5 Arrays for timeline chart
         lbl_points      = str()
@@ -57,59 +68,65 @@ class SuperposedController(BaseController):
         # Summary table canvas
         c.metrics_table = list()
         for index in range(6):
-            c.metrics_table.append(list())
+            c.metrics_table.append( list() )
         
-        # Iteration
+        # Aggregation
         for index in range( len(request.POST) /3 ):
             # Parameters
-            label       = request.POST[ 'step_'+str(index+1)+'_label' ]
-            start_ts    = request.POST[ 'step_'+str(index+1)+'_start_ts' ]
-            end_ts      = request.POST[ 'step_'+str(index+1)+'_end_ts' ]
+            label       = request.POST[ 'step_' + str(index+1) + '_label'    ]
+            start_ts    = request.POST[ 'step_' + str(index+1) + '_start_ts' ]
+            end_ts      = request.POST[ 'step_' + str(index+1) + '_end_ts'   ]
             
+            # Test results
+            documents = md_handler.collection.find({
+                'label'     : label,
+                'timestamp' : { '$gte':start_ts, '$lte':end_ts }
+            })
+
             # Average stats
-            time, size, req, score = self.get_avg( label,start_ts,end_ts )
+            time, size, req, score = self.average(documents)
             
             # Data for table
-            c.metrics_table[0].append( label    )
-            c.metrics_table[1].append( score    )
-            c.metrics_table[2].append( size     )
-            c.metrics_table[3].append( req      ) 
-            c.metrics_table[4].append( time     )
+            c.metrics_table[0].append( label )
+            c.metrics_table[1].append( score )
+            c.metrics_table[2].append( size  )
+            c.metrics_table[3].append( req   )
+            c.metrics_table[4].append( time  )
             
             c.rowcount += 1
 
-            lbl_points      += str(label)+"#"
-            time_points     += str(time)+"#"
-            size_points     += str(size)+"#"
-            req_points      += str(req)+"#"
-            score_points    += str(score)+"#"
+            lbl_points      += str(label) + '#'
+            time_points     += str(time)  + '#'
+            size_points     += str(size)  + '#'
+            req_points      += str(req)   + '#'
+            score_points    += str(score) + '#'
 
-        c.points = lbl_points[:-1]+";"\
-                    +time_points[:-1]+";"\
-                    +size_points[:-1]+";"\
-                    +req_points[:-1]+";"\
-                    +score_points[:-1]
+        c.points = lbl_points[:-1]  + ';' \
+                 + time_points[:-1] + ';' \
+                 + size_points[:-1] + ';' \
+                 + req_points[:-1]  + ';' \
+                 + score_points[:-1]
 
         return render('./display.html')
         
-    def get_avg(self,label,start_ts,end_ts):
-        # MongoDB handler
-        md_handler = MongoDB()
-        
+    def average(self, documents):
+        # Variables
         avg_size    = 0
         avg_time    = 0
         avg_req     = 0
         avg_score   = 0
-        count       = md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }).count()
 
-        for document in md_handler.collection.find({'label':label,"timestamp" : {"$gte" : start_ts, "$lte" : end_ts} }):
-            avg_size    += document["total_size"]
-            avg_time    += round(document["full_load_time"]/1000.0,1)
-            avg_req     += document["requests"]
+        # Averaging
+        for document in documents:
+            avg_time    += round(document['full_load_time']/1000.0, 1)
+            avg_size    += document['total_size']
+            avg_req     += document['requests']
             avg_score   += document['ps_scores']['Total Score']
-            
-        avg_size    = int( round( avg_size  / count, 0 ) )
+
+        count = documents.count()
+
         avg_time    = round( avg_time  / count, 1 )
+        avg_size    = int( round( avg_size  / count, 0 ) )        
         avg_req     = int( round( avg_req   / count, 0 ) )
         avg_score   = int( round( avg_score / count, 0 ) )
         
