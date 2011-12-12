@@ -8,7 +8,7 @@ class HAR():
         har = sub(
                 '"pages":null',
                 '"pages":[{\
-                    "startedDateTime":"1970-01-01T00:00:00.000+03:00",\
+                    "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
                     "id":"Undefined",\
                     "title":"Undefined",\
                     "pageTimings": {}\
@@ -25,12 +25,53 @@ class HAR():
                 self.status = 'Empty file'
             else:
                 try:
+                    # Fix HttpWatch encoding
                     self.har = json.loads(har.decode('latin-1').encode('utf-8'))
                     self.origin = har.decode('latin-1').encode('utf-8')
                     self.status = 'Successful'
                 except Exception as error:
-                    self.status = error            
+                    self.status = error
         finally:
+            # Fix Charles proxy format
+            try:
+                try:
+                    self.har['log']['pages']
+                except:
+                    self.har['log']['pages'] = [{
+                                                    "startedDateTime"   :"1970-01-01T00:00:00.000+00:00",
+                                                    "id"                :"Undefined",
+                                                    "title"             :"Undefined",
+                                                    "pageTimings"       :{}
+                                                }]
+            except:
+                None
+
+            # Fix timezone format for Page Speed
+            try:
+                # Entry level
+                for entry in self.har['log']['entries']:
+                    if entry['startedDateTime'].rfind('+') != -1:
+                        entry['startedDateTime'] = entry['startedDateTime'].replace('+','-')
+
+                    long_time, dot, seconds         = entry['startedDateTime'].partition('.')
+                    milliseconds, dash, timezone    = seconds.partition('-')
+
+                    entry['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+
+                # Page level
+                for page in self.har['log']['pages']:
+                    if page['startedDateTime'].rfind('+') != -1:
+                        page['startedDateTime'] = page['startedDateTime'].replace('+','-')
+
+                    long_time, dot, seconds         = page['startedDateTime'].partition('.')
+                    milliseconds, dash, timezone    = seconds.partition('-')
+
+                    page['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+
+            except Exception as error:
+                None
+
+            # Initial varaibles
             self.full_load_time         = 0
 
             self.total_dns_time         = 0.0
@@ -61,16 +102,6 @@ class HAR():
         return hd
     
     def analyze(self):
-        # Fix Charles proxy format
-        try:
-            self.har['log']['pages']
-        except:
-            self.har['log']['pages'] = [{"startedDateTime":"1970-01-01T00:00:00.000+03:00",
-                                         "id":"Undefined",
-                                         "title":"Undefined",
-                                         "pageTimings": {}
-                                        }]
-
         # Temporary variables
         min_ts = 9999999999
         max_ts = 0
@@ -92,9 +123,9 @@ class HAR():
             # Full load time and time to first byte
             start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
             try:
-                start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('+')[0] )
+                start_time += float( '0.' + entry['startedDateTime'].partition('.')[-1].partition('+')[0] )
             except:
-                start_time += float( '0.' + entry['startedDateTime'].partition('.')[2].partition('-')[0] )
+                start_time += float( '0.' + entry['startedDateTime'].partition('.')[-1].partition('-')[0] )
             
             end_time =  start_time + entry['time']/1000.0
     
@@ -109,8 +140,13 @@ class HAR():
             if end_time > max_ts:
                 max_ts = end_time
 
-            # Total size
-            size = entry['response']['bodySize']
+            # Total size of response
+            compressed_size = max(entry['response']['headersSize'], 0) + \
+                              max(entry['response']['headersSize'], 0)
+            if compressed_size == 0:
+                size = entry['response']['content']['size']
+            else:
+                size = compressed_size
 
             self.total_size += size
             
@@ -148,11 +184,9 @@ class HAR():
                 self.bad_requests += 1
                 
             # List of hosts
-            for header in entry['request']['headers']:
-                if header['name'] == 'Host':
-                    hostname = header['value']
-                    self.domains[hostname] = [self.domains.get(hostname, [0,0])[0] + 1,
-                                              self.domains.get(hostname, [0,0])[1] + self.b2k(size)]
+            hostname = entry['request']['url'].partition('//')[-1].partition('/')[0]
+            self.domains[hostname] = [self.domains.get(hostname, [0,0])[0] + 1,
+                                      self.domains.get(hostname, [0,0])[1] + self.b2k(size)]
 
         # Label
         self.label = self.har['log']['pages'][0]['id']
@@ -173,7 +207,10 @@ class HAR():
         try:
             self.onload_event = self.har['log']['pages'][0]['pageTimings']['onLoad']
         except:
-            self.onload_event = 'n/a'
+            try:
+                self.onload_event = self.har['log']['pages'][0]['pageTimings'][0]['onLoad'] # dynaTrace bug                
+            except:                
+                self.onload_event = 'n/a'
 
         # Render Start
         try:

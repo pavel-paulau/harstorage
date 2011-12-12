@@ -259,13 +259,6 @@ class ResultsController(BaseController):
             # MongoDB handler
             mdb_handler = MongoDB()
             
-            # Fix time format
-            for entry in har.har['log']['entries']:
-                entry['startedDateTime'] = entry['startedDateTime'].replace('+0000','+00:00')
-
-            for page in har.har['log']['pages']:
-                page['startedDateTime'] = page['startedDateTime'].replace('+0000','+00:00')
-            
             if config['app_conf']['ps_enabled'] == 'true':
                 #Store HAR for Page Speed
                 filename = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() )
