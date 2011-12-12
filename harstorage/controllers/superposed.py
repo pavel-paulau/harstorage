@@ -44,9 +44,9 @@ class SuperposedController(BaseController):
 
         for document in documents:
             dates += document['timestamp'] + ';'
-            
+
         return dates[:-1]
-            
+
     def display(self):
         # Revision for static content
         repo = Repo('.')
@@ -64,19 +64,19 @@ class SuperposedController(BaseController):
 
         # Initial row count
         c.rowcount = 0
-        
+
         # Summary table canvas
         c.metrics_table = list()
         for index in range(6):
             c.metrics_table.append( list() )
-        
+
         # Aggregation
         for index in range( len(request.POST) /3 ):
             # Parameters
             label       = request.POST[ 'step_' + str(index+1) + '_label'    ]
             start_ts    = request.POST[ 'step_' + str(index+1) + '_start_ts' ]
             end_ts      = request.POST[ 'step_' + str(index+1) + '_end_ts'   ]
-            
+
             # Test results
             documents = md_handler.collection.find({
                 'label'     : label,
@@ -85,14 +85,14 @@ class SuperposedController(BaseController):
 
             # Average stats
             time, size, req, score = self.average(documents)
-            
+
             # Data for table
             c.metrics_table[0].append( label )
             c.metrics_table[1].append( score )
             c.metrics_table[2].append( size  )
             c.metrics_table[3].append( req   )
             c.metrics_table[4].append( time  )
-            
+
             c.rowcount += 1
 
             lbl_points      += str(label) + '#'
@@ -108,7 +108,7 @@ class SuperposedController(BaseController):
                  + score_points[:-1]
 
         return render('./display.html')
-        
+
     def average(self, documents):
         # Variables
         avg_size    = 0
@@ -126,8 +126,8 @@ class SuperposedController(BaseController):
         count = documents.count()
 
         avg_time    = round( avg_time  / count, 1 )
-        avg_size    = int( round( avg_size  / count, 0 ) )        
+        avg_size    = int( round( avg_size  / count, 0 ) )
         avg_req     = int( round( avg_req   / count, 0 ) )
         avg_score   = int( round( avg_score / count, 0 ) )
-        
+
         return avg_time, avg_size, avg_req, avg_score
