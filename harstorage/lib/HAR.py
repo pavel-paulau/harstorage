@@ -1,95 +1,109 @@
-import json
+from json import loads
 from time import strptime, mktime
 from re import sub
 
 class HAR():
     def __init__(self, har):
-        # Fix Fidler HAR format
-        har = sub(
-                '"pages":null',
-                '"pages":[{\
-                    "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
-                    "id":"Undefined",\
-                    "title":"Undefined",\
-                    "pageTimings": {}\
-                }]',
-                har)
-
-        # Parsing
-        try:
-            self.har = json.loads(har)
-            self.origin = har
-            self.status = 'Successful'
-        except ValueError as error:
-            if len(har) == 0:
-                self.status = 'Empty file'
-            else:
-                try:
-                    # Fix HttpWatch encoding
-                    self.har = json.loads(har.decode('latin-1').encode('utf-8'))
-                    self.origin = har.decode('latin-1').encode('utf-8')
-                    self.status = 'Successful'
-                except Exception as error:
-                    self.status = error
-        finally:
-            # Fix Charles proxy format
+        # Check file size
+        if len(har) == 0:
+            self.status = 'Empty file'
+        else:
             try:
-                try:
-                    self.har['log']['pages']
-                except:
-                    self.har['log']['pages'] = [{
-                                                    "startedDateTime"   :"1970-01-01T00:00:00.000+00:00",
-                                                    "id"                :"Undefined",
-                                                    "title"             :"Undefined",
-                                                    "pageTimings"       :{}
-                                                }]
-            except:
-                None
+                # Fix Fidler, HttpWatch and Charles Proxy issues
+                if har.rfind('"name" : "HttpWatch') > 0:
+                    har = self.workaround_httpwatch(har)
+                elif har.rfind('"name":"Fiddler"') > 0:
+                    har = self.workaround_fiddler(har)
+                elif har.rfind('"name":"Charles Proxy"') > 0:
+                    har = self.workaround_charles(har)
 
-            # Fix timezone format for Page Speed
-            try:
-                # Entry level
-                for entry in self.har['log']['entries']:
-                    if entry['startedDateTime'].rfind('+') != -1:
-                        entry['startedDateTime'] = entry['startedDateTime'].replace('+','-')
+                # Deserialize HAR file            
+                self.har = loads(har)
+                self.origin = har
 
-                    long_time, dot, seconds         = entry['startedDateTime'].partition('.')
-                    milliseconds, dash, timezone    = seconds.partition('-')
+                # Fix Page Speed issues with timezones
+                self.workaround_pagespeed()
 
-                    entry['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+                # Initial varaibles
+                self.full_load_time         = 0
 
-                # Page level
-                for page in self.har['log']['pages']:
-                    if page['startedDateTime'].rfind('+') != -1:
-                        page['startedDateTime'] = page['startedDateTime'].replace('+','-')
+                self.total_dns_time         = 0.0
+                self.total_transfer_time    = 0.0
+                self.total_server_time      = 0.0
+                self.avg_connecting_time    = 0.0
+                self.avg_blocking_time      = 0.0
 
-                    long_time, dot, seconds         = page['startedDateTime'].partition('.')
-                    milliseconds, dash, timezone    = seconds.partition('-')
+                self.total_size             = 0.0
+                self.text_size              = 0.0
+                self.media_size             = 0.0
+                self.cache_size             = 0.0
 
-                    page['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+                self.redirects              = 0
+                self.bad_requests           = 0
 
+                self.domains = dict()
+
+                # Parsing status
+                self.status = 'Successful'
+                
             except Exception as error:
-                None
-
-            # Initial varaibles
-            self.full_load_time         = 0
-
-            self.total_dns_time         = 0.0
-            self.total_transfer_time    = 0.0
-            self.total_server_time      = 0.0
-            self.avg_connecting_time    = 0.0
-            self.avg_blocking_time      = 0.0
-
-            self.total_size             = 0.0
-            self.text_size              = 0.0
-            self.media_size             = 0.0
-            self.cache_size             = 0.0
-
-            self.redirects              = 0
-            self.bad_requests           = 0
-            
-            self.domains = dict()
+                self.status = error
     
+    # HttpWatch workaround
+    def workaround_httpwatch(self, har):
+        return har.decode('latin-1').encode('utf-8')
+
+    # Fiddler workaround
+    def workaround_fiddler(self, har):
+        har = har.partition('{')[1] + har.partition('{')[-1]
+
+        return sub(
+                    '"pages":null',
+                    '"pages":[{\
+                        "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
+                        "id":"Undefined",\
+                        "title":"Undefined",\
+                        "pageTimings": {}\
+                    }]',
+                    har
+        )
+
+    # Charles workaround
+    def workaround_charles(self, har):
+        return sub(
+                    '"log":{',
+                    '"log":{\
+                        "pages":[{\
+                            "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
+                            "id":"Undefined",\
+                            "title":"Undefined",\
+                            "pageTimings": {}\
+                        }],',
+                    har
+        )
+
+    # Page Speed workaround
+    def workaround_pagespeed(self):
+        # Entry level
+        for entry in self.har['log']['entries']:
+            if entry['startedDateTime'].rfind('+') != -1:
+                entry['startedDateTime'] = entry['startedDateTime'].replace('+','-')
+
+            long_time, dot, seconds         = entry['startedDateTime'].partition('.')
+            milliseconds, dash, timezone    = seconds.partition('-')
+
+            entry['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+
+        # Page level
+        for page in self.har['log']['pages']:
+            if page['startedDateTime'].rfind('+') != -1:
+                page['startedDateTime'] = page['startedDateTime'].replace('+','-')
+
+            long_time, dot, seconds         = page['startedDateTime'].partition('.')
+            milliseconds, dash, timezone    = seconds.partition('-')
+
+            page['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+
     # Convert bytes to kilobytes
     def b2k(self, value):
         return int( round( value/1024.0 ) )
