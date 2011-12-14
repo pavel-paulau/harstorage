@@ -21,6 +21,7 @@ static_files = true
 temp_store = %(here)s/data
 bin_store  = %(here)s
 ps_enabled = false
+static_version = 0.5.2
 
 cache_dir = %(here)s/data
 beaker.session.key = harstorage
