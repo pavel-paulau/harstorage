@@ -1,9 +1,9 @@
 from harstorage.lib.MongoHandler import MongoDB
-from harstorage.lib.hgapi import Repo
 
 import logging
 
 from pylons import request, tmpl_context as c
+from pylons import config
 
 from harstorage.lib.base import BaseController, render
 
@@ -11,9 +11,8 @@ log = logging.getLogger(__name__)
 
 class SuperposedController(BaseController):
     def create(self):
-        # Revision for static content
-        repo = Repo('.')
-        c.rev = repo.hg_rev()
+        # Version for static content
+        c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         md_handler = MongoDB()
@@ -48,9 +47,8 @@ class SuperposedController(BaseController):
         return dates[:-1]
 
     def display(self):
-        # Revision for static content
-        repo = Repo('.')
-        c.rev = repo.hg_rev()
+        # Version for static content
+        c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         md_handler = MongoDB()
