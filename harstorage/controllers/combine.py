@@ -1,6 +1,8 @@
 import logging
 
 from pylons import request, response
+from pylons import config
+
 from harstorage.lib.base import BaseController
 
 log = logging.getLogger(__name__)
@@ -12,7 +14,8 @@ class CombineController(BaseController):
 
         for key, value in request.GET.items():
             if key != 'ver':
-                file = open("harstorage/public/styles/" + key)
+                base = config['pylons.paths']['static_files']			
+                file = open(base + "/styles/" + key)
                 combo = combo + file.read()
                 file.close()
 
