@@ -155,8 +155,7 @@ class HAR():
                 max_ts = end_time
 
             # Total size of response
-            compressed_size = max(entry['response']['headersSize'], 0) + \
-                              max(entry['response']['bodySize'], 0)
+            compressed_size = max(entry['response']['bodySize'], 0)
             if compressed_size == 0:
                 size = entry['response']['content']['size']
             else:
