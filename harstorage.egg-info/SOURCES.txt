@@ -28,7 +28,6 @@ harstorage/lib/__init__.py
 harstorage/lib/app_globals.py
 harstorage/lib/base.py
 harstorage/lib/helpers.py
-harstorage/lib/hgapi.py
 harstorage/public/favicon.ico
 harstorage/public/data/.data
 harstorage/public/images/add_button.png
