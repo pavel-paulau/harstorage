@@ -15,14 +15,16 @@ body a:hover {
 }
 .header .right {
     text-align: right;
+    font-family: "Gill Sans", Verdana;
     font-size: 77%;
     margin: 6px 0 0 0;
 }
 .header .left {
     float: left;
     text-align: left;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
-    font-size: 174%;
+    font-size: 174%;    
 }
 .header .hr,.footer .hr {
     height: 1px;
@@ -34,7 +36,7 @@ body a:hover {
 .header #preferences {
     position: absolute;
     width: 250px;
-    height: 163px;
+    height: 168px;
     top: 60px;
     right: 7px;
     padding: 8px;
@@ -48,32 +50,39 @@ body a:hover {
     display: none;
 }
 .header #close {
-    position:absolute;
-    top:8px;
-    right:5px;
-    z-index:110;
+    position: absolute;
+    top: 7px;
+    right: 5px;
+    z-index: 110;
+    font-family: "Gill Sans", Verdana;
     font-weight: bold;
     font-size: 85%;
     text-decoration: none;
 }
 .header #close a {
     text-decoration: none;
+    font-family: "Gill Sans", Verdana;
+    font-size: 85%;
 }
-.header #preferences .radio {
+.header .radio {
+    vertical-align: -3px;
     margin: 0 0 10px 0;
 }
 .header #preferences strong {
+    font-family: "Gill Sans", Verdana;
     font-weight: bold;
-    font-size: 85%;
+    font-size: 77%;
 }
 .header #preferences .theme-name {
-    font-size: 85%;
+    font-family: "Gill Sans", Verdana;
+    font-size: 77%;
 }
 .header #preferences button {
     width: 100px;
     padding: 4px 0;
     margin: 0px 75px 0px 75px;
     color: #000;
+    font-family: arial;
     font-size: 77%;
     background: #d7e7cf;
     border: 1px solid #498a2d;
@@ -93,6 +102,7 @@ body a:hover {
 }
 .uploader legend {
     color: #fff;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-size: 93%;
     background: #498a2d;
     border: 1px solid #498a2d;
@@ -118,6 +128,7 @@ body a:hover {
     padding: 4px 0;
     margin: 20px 0 20px 20px;
     color: #000;
+    font-family: arial;
     font-size: 77%;
     background: #d7e7cf;
     border: 1px solid #498a2d;
@@ -131,6 +142,7 @@ body a:hover {
     width: 960px;
 }
 .summary .title {
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     font-size: 108%;
     margin: 0 0 12px 0;
@@ -144,6 +156,7 @@ body a:hover {
     padding: 4px 0;
     margin: 20px 0;
     color: #000;
+    font-family: arial;
     font-size: 77%;
     background: #d7e7cf;
     border: 1px solid #498a2d;
@@ -161,6 +174,7 @@ body a:hover {
     height: 400px;
 }
 .sp-display .title {
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     font-size: 108%;
     margin: 12px 0;
@@ -175,6 +189,7 @@ body a:hover {
 }
 .sp-create legend {
     color: #fff;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-size: 93%;
     background: #498a2d;
     border: 1px solid #498a2d;
@@ -226,6 +241,7 @@ body a:hover {
 }
 .sp-create .title,.sp-create .text {
     float: left;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-size: 93%;
 }
 .sp-create .text {
@@ -233,6 +249,7 @@ body a:hover {
 }
 .sp-create .title {
     width: 60px;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     margin: 4px 0 0 10px;
 }
@@ -245,6 +262,7 @@ body a:hover {
     padding: 4px 0;
     margin: 30px 0 20px 0;
     color: #000;
+    font-family: arial;
     font-size: 77%;
     background: #d7e7cf;
     border: 1px solid #498a2d;
@@ -262,6 +280,7 @@ body a:hover {
     height: 400px;
 }
 .results .title {
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     font-size: 108%;
     margin: 12px 0 0 0;
@@ -286,6 +305,7 @@ body a:hover {
     height: 210px;
     float: left;
     margin: 10px 0 0 0;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-size: 93%;
 }
 .results .container-max {
@@ -299,6 +319,7 @@ body a:hover {
 }
 .results .title-max, .results .title-min, .results .title-umax {
     text-align: right;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     margin: 8px 0 8px 0;
     float: left;
@@ -358,6 +379,7 @@ body a:hover {
     padding: 4px 0;
     margin: 0 10px;    
     color: #000;
+    font-family: arial;
     font-size: 77%;
     background: #d7e7cf;
     border: 1px solid #498a2d;
@@ -375,6 +397,7 @@ body a:hover {
     padding: 4px 0;
     margin: 5px 0px 10px 0px;
     color: #000;
+    font-family: arial;
     font-size: 77%;
     background: #d7e7cf;
     border: 1px solid #498a2d;
