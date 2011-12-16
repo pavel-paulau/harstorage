@@ -293,6 +293,7 @@ Highcharts.light_green = {
                 tickWidth: 1,
 		labels: {
 			style: {
+                                color: '#498a2d',
 				font: '11px "Trebuchet MS", Verdana, sans-serif'
 			}
 		},
