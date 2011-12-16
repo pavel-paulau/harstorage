@@ -658,14 +658,16 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
             url += that.json.har;
             url += '&expand=true';
 
-        var height = Math.max(Math.min(that.json.summary.requests*40+20, 600), 300).toString();
-
-        iframe.src          = url;
-        iframe.width        = '940';
-        iframe.height       = height;
-        iframe.frameBorder  = '0';
+        iframe.setAttribute('src', url);
+        iframe.setAttribute('width', '940');
+        iframe.setAttribute('id', 'harviewer-iframe');
+        iframe.setAttribute('frameBorder', '0');
+        iframe.setAttribute('frameBorder', '0');
+        iframe.setAttribute('scrolling', 'no');
 
         $('#harviewer').html(iframe);
+
+        window.setInterval("HARSTORAGE.autoHeight()", 100);
 
         // New tab feature of HAR Viewer
         var newtab = document.getElementById('newtab');
@@ -771,4 +773,12 @@ HARSTORAGE.RunInfo.prototype.addSpinner = function() {
     
     this.spinner = document.getElementById('spinner');
     new Spinner(opts).spin(this.spinner);
+};
+
+/*
+ * Auto Height module
+ */
+HARSTORAGE.autoHeight = function() {
+    var iframe = document.getElementById('harviewer-iframe');
+    iframe.height = iframe.contentDocument.body.offsetHeight;
 };
