@@ -10,16 +10,37 @@
     <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
     <!--[if IE]>
         <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main-ie.css?ver=')}${c.rev}" />
-    <![endif]-->   
+    <![endif]-->
 
     <script type='text/javascript' src="${h.url_for('/scripts/LAB.min.js?ver=2.0.3')}"></script>
+    <script type='text/javascript' src="${h.url_for('/scripts/preferences.js?ver=')}${c.rev}"></script>
 </head>
 <body>
     <div class="header">
         <div class="left"><a href="/">HAR Storage</a></div>
-        <div class="right"><a href="http://code.google.com/p/harstorage/">Project Homepage</a></div>
-        <div class="right"><a href="https://groups.google.com/group/harstorage/?hl=en">Discussion Group</a></div>
+        <div class="right"><a href="http://code.google.com/p/harstorage/">Project Page</a></div>
+        <div class="right"><a href="javascript:HARSTORAGE.view_preferences()">Preferences</a></div>
         <div class="hr"></div>
+
+        <div id="preferences">
+                <strong>Chart Theme</strong>
+
+                <div class="hr"></div>
+                
+                <form id="theme-list" action="none">
+                    <input class="radio" type="radio" name="theme" value="light" />       <span class="theme-name">Light<br /></span>
+                    <input class="radio" type="radio" name="theme" value="light-green" /> <span class="theme-name">Light Green<br /></span>
+                    <input class="radio" type="radio" checked="true" name="theme" value="dark-green" />  <span class="theme-name">Dark Green</span>
+                </form>
+
+                <div class="hr"></div>
+
+                <button type="button" onclick="javascript:HARSTORAGE.update_preferences();">Apply</button>
+
+                <div id="close">
+                    <a href="javascript:HARSTORAGE.view_preferences()">&#9747;</a>
+                </div>                
+        </div>
     </div>
     ${next.body()}
     <div class="footer">

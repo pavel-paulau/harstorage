@@ -69,11 +69,11 @@ class SuperposedController(BaseController):
             c.metrics_table.append( list() )
 
         # Aggregation
-        for index in range( len(request.POST) /3 ):
+        for index in range( len(request.GET) /3 ):
             # Parameters
-            label       = request.POST[ 'step_' + str(index+1) + '_label'    ]
-            start_ts    = request.POST[ 'step_' + str(index+1) + '_start_ts' ]
-            end_ts      = request.POST[ 'step_' + str(index+1) + '_end_ts'   ]
+            label       = request.GET[ 'step_' + str(index+1) + '_label'    ]
+            start_ts    = request.GET[ 'step_' + str(index+1) + '_start_ts' ]
+            end_ts      = request.GET[ 'step_' + str(index+1) + '_end_ts'   ]
 
             # Test results
             documents = md_handler.collection.find({

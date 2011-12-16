@@ -39,8 +39,8 @@
     .script("${h.url_for('/scripts/datatables/ColReorder.min.js?ver=1.0.4')}")
     .script("${h.url_for('/scripts/datatables/TableTools.min.js?ver=1.0.4')}")
     .script("${h.url_for('/scripts/highcharts/highcharts.js?ver=2.1.9')}").wait()
-    .script("${h.url_for('/scripts/highcharts/themes/dark-green-custom.js?ver=')}${c.rev}").wait()
-    .script("${h.url_for('/scripts/highcharts/modules/exporting.js?ver=2.1.9')}")
+    .script("${h.url_for('/scripts/highcharts/themes.js?ver=')}${c.rev}").wait()
+    .script("${h.url_for('/scripts/highcharts/exporting.js?ver=2.1.9')}")
     .script("${h.url_for('/scripts/plots.js?ver=')}${c.rev}").wait()
     .wait(function(){
         var columns = new HARSTORAGE.Columns();

@@ -51,7 +51,35 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         reqArray[index]     =   parseInt(reqArray[index], 10);
         scoreArray[index]   =   parseInt(scoreArray[index], 10);
     }
+    
+    // Colors for Y Axis labels
+    var theme = HARSTORAGE.read_cookie('chartTheme');
 
+    var colors = [];
+
+    if (theme === 'dark-green' || !theme) {
+        colors = [
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#EEAAEE'
+        ];
+    } else {
+        colors = [
+            '#89A54E',
+            '#DF5353',
+            '#DB843D',
+            '#3D96AE',
+            '#4572A7',
+            '#80699B',
+            '#92A8CD',
+            '#A47D7C'
+        ];
+    }
+    
     new Highcharts.Chart({
         chart: {
             renderTo    : 'timeline',
@@ -89,7 +117,9 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         yAxis: [{ // yAxis #1
             title: {
                 text    : 'Full Load Time',
-                style   : {color: '#DDDF0D'}
+                style   : {
+                    color   : colors[0]
+                }
             },
             min         : 0,
             labels: {
@@ -100,14 +130,18 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         }, { // yAxis #2
             title: {
                 text    : 'Total Requests',
-                style   : {color: '#55BF3B'}
+                style   : {
+                    color   : colors[1]
+                }
             },
             min         : 0,
             opposite    : true
         }, { // yAxis #3
             title: {
                 text    : 'Total Size (kB)',
-                style   : {color: '#DF5353'}
+                style   : {
+                    color   : colors[2]
+                }
             },
             min         : 0,
             opposite    : true,
@@ -119,7 +153,9 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         }, { // yAxis #4
             title: {
                 text    : 'Page Speed Score',
-                style   : {color: '#7798BF'}
+                style   : {
+                    color   : colors[3]
+                }
             },
             min         : 0            
         }],
@@ -200,10 +236,37 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         scoreArray[index]   =   parseInt(scoreArray[index], 10);
     }
 
+    // Colors for Y Axis labels
+    var theme = HARSTORAGE.read_cookie('chartTheme');
+
+    var colors = [];
+
+    if (theme === 'dark-green' || !theme) {
+        colors = [
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#EEAAEE'
+        ];
+    } else {
+        colors = [
+            '#89A54E',
+            '#DF5353',
+            '#DB843D',
+            '#3D96AE',
+            '#4572A7',
+            '#80699B',
+            '#92A8CD',
+            '#A47D7C'
+        ];
+    }
+
     new Highcharts.Chart({
         chart: {
-            renderTo    : 'chart',
-            defaultSeriesType: 'column'
+            renderTo    : 'chart'
         },
         credits: {
             enabled: false
@@ -237,7 +300,9 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         yAxis: [{ // yAxis #1
             title: {
                 text    : 'Full Load Time',
-                style   : {color: '#DDDF0D'}
+                style   : {
+                    color   : colors[0]
+                }
             },
             min         : 0,
             labels: {
@@ -248,14 +313,18 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         }, { // yAxis #2
             title: {
                 text    : 'Total Requests',
-                style   : {color: '#55BF3B'}
+                style   : {
+                    color   : colors[1]
+                }
             },
             min         : 0,
             opposite    : true
         }, { // yAxis #3
             title: {
                 text    : 'Total Size (kB)',
-                style   : {color: '#DF5353'}
+                style   : {
+                    color   : colors[2]
+                }
             },
             min         : 0,
             opposite    : true,
@@ -267,10 +336,11 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         }, { // yAxis #4
             title: {
                 text    : 'Page Speed Score',
-                style   : {color: '#7798BF'}
+                style   : {
+                    color   : colors[3]
+                }
             },
-            min         : 0,
-            endOnTick   : false
+            min         : 0
         }],
         tooltip: {
             formatter: function() {
@@ -294,36 +364,30 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
                         this.yAxis.axisTitle.show();
                     }
                 }
-            },
-            column: {
-                pointPadding: 0.1,
-                borderWidth: 0,
-                dataLabels: {
-                    enabled: true,
-                    color: 'white',
-                    align: 'left',
-                    y: -5
-                }
             }
         },
         series: [{
             name    : 'Full Load Time',
+            type    : 'column',
             yAxis   : 0,
             data    : timeArray
         }, {
-            name    : 'Total Requests',            
+            name    : 'Total Requests',
+            type    : 'column',
             yAxis   : 1,
             data    : reqArray
         }, {
-            name    : 'Total Size',            
+            name    : 'Total Size',
+            type    : 'column',
             yAxis   : 2,
             data    : sizeArray
         }, {
-            name    : 'Page Speed Score',            
+            name    : 'Page Speed Score',
+            type    : 'column',
             yAxis   : 3,
             data    : scoreArray
         }]
-    });    
+    });
 };
 
 /*
@@ -408,21 +472,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
                 return '<b>'+ this.point.name +'</b>: '+ this.y + units;
             }
         },
-        plotOptions: {
-            pie: {
-                allowPointSelect    : true,
-                cursor              : 'pointer',
-                size                : '65%',
-                dataLabels: {
-                    enabled         : true,
-                    color           : '#FFF',
-                    distance        : 25,
-                    connectorColor  : '#FFF',
-                    formatter: function() {
-                        return this.point.name;
-                    }
-                }
-            },
+        plotOptions: {            
             series: {
                 showInLegend: true
             }
@@ -496,7 +546,6 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
             min         : 0,
             max         : 105,
             endOnTick   : false
-
         },
         tooltip: {
             formatter: function() {
