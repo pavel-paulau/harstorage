@@ -8,7 +8,7 @@ var HARSTORAGE = HARSTORAGE || {};
 /*
  * Dark green theme for Highcharts
  */
-Highcharts.dark_green = {
+Highcharts.darkGreen = {
 	colors: [
             '#DDDF0D',
             '#55BF3B',
@@ -131,7 +131,6 @@ Highcharts.dark_green = {
 /*
  * Light theme for Highcharts
  */
-
 Highcharts.light = {
         colors: [
             '#89A54E',
@@ -242,8 +241,7 @@ Highcharts.light = {
 /*
  * Light green theme for Highcharts
  */
-
-Highcharts.light_green = {
+Highcharts.lightGreen = {
         colors: [
             '#89A54E',            
             '#DF5353',
@@ -357,6 +355,9 @@ Highcharts.light_green = {
 	}
 };
 
+/*
+ * Theme setup
+ */
 HARSTORAGE.setTheme = function() {
     // Read preference from Cookie
     var theme = HARSTORAGE.read_cookie('chartTheme');
@@ -367,13 +368,13 @@ HARSTORAGE.setTheme = function() {
             Highcharts.setOptions(Highcharts.light);
             break;
         case "light-green":
-            Highcharts.setOptions(Highcharts.light_green);
+            Highcharts.setOptions(Highcharts.lightGreen);
             break;
         default:
-            Highcharts.setOptions(Highcharts.dark_green);            
+            Highcharts.setOptions(Highcharts.darkGreen);
         }
     } else {
-        Highcharts.setOptions(Highcharts.dark_green);        
+        Highcharts.setOptions(Highcharts.darkGreen);
     }
 };
 
