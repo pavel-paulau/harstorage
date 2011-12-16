@@ -393,7 +393,7 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
 /*
  * Test results
  */
-HARSTORAGE.RunInfo = function(mode, label) {
+HARSTORAGE.RunInfo = function(mode, label, query) {
     // Pointer
     var that = this;
 
@@ -420,6 +420,16 @@ HARSTORAGE.RunInfo = function(mode, label) {
     del_all_btn.onclick = function() {
         that.del(label, mode, true);
     };
+
+    // Add event handler to aggregation button
+    var agg_btn = document.getElementById('agg-btn');
+
+    if (query !== 'None') {
+        agg_btn.style.display = 'inline';
+        agg_btn.onclick = function() {
+            location.href = query.replace(/amp;/g,'');
+        };
+    }
 };
 
 //Page Resources
@@ -749,7 +759,7 @@ HARSTORAGE.RunInfo.prototype.del = function(id, mode, all) {
 HARSTORAGE.RunInfo.prototype.changeVisibility = function () {
     var del_btn     = document.getElementById('del-btn'),
         del_all_btn = document.getElementById('del-all-btn'),
-        newtab_btn  = document.getElementById('newtab');    
+        newtab_btn  = document.getElementById('newtab');
     
     del_btn.style.display       = 'inline';
     del_all_btn.style.display   = 'inline';
@@ -781,4 +791,41 @@ HARSTORAGE.RunInfo.prototype.addSpinner = function() {
 HARSTORAGE.autoHeight = function() {
     var iframe = document.getElementById('harviewer-iframe');
     iframe.height = iframe.contentDocument.body.offsetHeight;
+};
+
+/*
+ * Aggregated Statistics
+ */
+HARSTORAGE.AggregatedStatistics = function() {
+    // Determine metric type from Query string
+    var metric,
+        href;
+
+    if (location.href.indexOf('metric') === -1) {
+        href = location.href + '&metric=';
+        metric = 'Average';
+    } else {
+        href = location.href.split('metric')[0] + 'metric=';
+        metric = location.href.split('metric')[1].split('=')[1];
+
+        if (metric === '90th%20Percentile') {
+            metric = '90th Percentile';
+        }
+    }
+
+    // Update selector box active option
+    var selector = document.getElementById('metrics');
+
+    for(var i = 0, len = selector.options.length; i < len; i += 1 ) {
+        if(selector.options[i].value === metric) {
+            selector.selectedIndex = i;
+            $('#metrics').trigger('liszt:updated');
+            break;
+        }
+    }
+
+    // Add event handler to selector box
+    selector.onchange = function() {
+        location.href = href + this.value;
+    };
 };

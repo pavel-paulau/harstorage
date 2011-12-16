@@ -1,11 +1,21 @@
 <%inherit file="/base.html"/>
-<%def name="title()">Superposed Tests</%def>
+<%def name="title()">Superposed Tests | ${c.metric}</%def>
 
 <center>
     <div class="sp-display">
         <div id="chart"></div>
     
-        <p class="title">Average Stats</p>
+        <p class="title">Aggregated Statistics</p>
+
+        <div class="selector">
+            <select id="metrics" class="chosen-select">
+                <option value="Average">Average</option>
+                <option value="Median">Median</option>
+                <option value="90th Percentile">90th Percentile</option>
+                <option value="Minimum">Minimum</option>
+                <option value="Maximum">Maximum</option>s
+            </select>
+        </div>
     
         <table class="display" id="stats_table">
             <thead>
@@ -41,10 +51,13 @@
     .script("${h.url_for('/scripts/highcharts/highcharts.js?ver=2.1.9')}").wait()
     .script("${h.url_for('/scripts/highcharts/themes.js?ver=')}${c.rev}").wait()
     .script("${h.url_for('/scripts/highcharts/exporting.js?ver=2.1.9')}")
+    .script("${h.url_for('/scripts/chosen.jquery.js?ver=0.9.5')}")
     .script("${h.url_for('/scripts/plots.js?ver=')}${c.rev}").wait()
     .wait(function(){
         var columns = new HARSTORAGE.Columns();
         columns.draw("${c.points}");
+
+        HARSTORAGE.AggregatedStatistics();
 
         $(document).ready(function() {
             $('#stats_table').dataTable({

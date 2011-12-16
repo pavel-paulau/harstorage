@@ -91,9 +91,14 @@ class ResultsController(BaseController):
         if label is not None:
             for result in mdb_handler.collection.find({"label":label}).sort("timestamp",-1):
                 c.timestamp.append(result["timestamp"])
+            c.query  = "/superposed/display?"
+            c.query += "step_1_label=" + label
+            c.query += "&step_1_start_ts=" + min(c.timestamp)
+            c.query += "&step_1_end_ts=" + max(c.timestamp)
         else:
             for result in mdb_handler.collection.find({"url":url}).sort("timestamp",-1):
                 c.timestamp.append(result["timestamp"])
+            c.query = 'None'
 
     def timeline(self):
         # Options

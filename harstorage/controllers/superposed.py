@@ -1,5 +1,7 @@
 from harstorage.lib.MongoHandler import MongoDB
 
+import math
+
 import logging
 
 from pylons import request, tmpl_context as c
@@ -81,8 +83,32 @@ class SuperposedController(BaseController):
                 'timestamp' : { '$gte':start_ts, '$lte':end_ts }
             })
 
-            # Average stats
-            time, size, req, score = self.average(documents)
+            results = {
+                        'full_load_time': [],
+                        'total_size'    : [],
+                        'requests'      : [],
+                        'score'         : []
+            }
+
+            for document in documents:
+                results['full_load_time'].append(document['full_load_time'])
+                results['total_size'].append(document['total_size'])
+                results['requests'].append(document['requests'])
+                results['score'].append(document['ps_scores']['Total Score'])
+
+            # Aggregated stats
+            c.metric = request.GET.get('metric', 'Average')
+
+            if c.metric == 'Average':
+                time, size, req, score = self.average(results)
+            elif c.metric == 'Minimum':
+                time, size, req, score = self.minimum(results)
+            elif c.metric == 'Maximum':
+                time, size, req, score = self.maximum(results)
+            elif c.metric == '90th Percentile':
+                time, size, req, score = self.percentile(results, 0.9)
+            elif c.metric == 'Median':
+                time, size, req, score = self.percentile(results, 0.5)
 
             # Data for table
             c.metrics_table[0].append( label )
@@ -107,25 +133,86 @@ class SuperposedController(BaseController):
 
         return render('./display.html')
 
-    def average(self, documents):
-        # Variables
-        avg_size    = 0
-        avg_time    = 0
-        avg_req     = 0
-        avg_score   = 0
+    def average(self, results):
+        '''
+        @parameter results - a dictionary with test results
+
+        @return - the average value for each subset of results
+        '''
+
+        # Number or results
+        num = len( results['full_load_time'] )
+
+        # Sum
+        avg_time    = sum(results['full_load_time'])
+        avg_size    = sum(results['total_size']    )
+        avg_req     = sum(results['requests']      )
+        avg_score   = sum(results['score']         )
 
         # Averaging
-        for document in documents:
-            avg_time    += round(document['full_load_time']/1000.0, 1)
-            avg_size    += document['total_size']
-            avg_req     += document['requests']
-            avg_score   += document['ps_scores']['Total Score']
-
-        count = documents.count()
-
-        avg_time    = round( avg_time  / count, 1 )
-        avg_size    = int( round( avg_size  / count, 0 ) )
-        avg_req     = int( round( avg_req   / count, 0 ) )
-        avg_score   = int( round( avg_score / count, 0 ) )
+        avg_time    = round( avg_time  / num / 1000.0, 1 )
+        avg_size    = int( round( avg_size  / num, 0 ) )
+        avg_req     = int( round( avg_req   / num, 0 ) )
+        avg_score   = int( round( avg_score / num, 0 ) )
 
         return avg_time, avg_size, avg_req, avg_score
+
+    def minimum(self, results):
+        '''
+        @parameter results - a dictionary with test results
+
+        @return - the minimum value for each subset of results
+        '''
+
+        min_time    = round( min(results['full_load_time']) / 1000.0, 1 )
+        min_size    = min(results['total_size']    )
+        min_req     = min(results['requests']      )
+        min_score   = min(results['score']         )
+
+        return min_time, min_size, min_req, min_score
+
+    def maximum(self, results):
+        """
+        @parameter results - a dictionary with test results
+
+        @return - the maximum value for each subset of results
+        """
+
+        max_time    = round( max(results['full_load_time']) / 1000.0, 1 )
+        max_size    = max(results['total_size']    )
+        max_req     = max(results['requests']      )
+        max_score   = max(results['score']         )
+
+        return max_time, max_size, max_req, max_score
+
+    def percentile(self, results, percent, key=lambda x:x):
+        """
+        @parameter results - a dictionary with test results
+        @parameter percent - a float value from 0.0 to 1.0
+        @parameter key - optional key function to compute value from each element of N.
+
+        @return - the percentile for each subset of results
+        """
+
+        k = (len(results['full_load_time']) - 1) * percent
+        f = math.floor(k)
+        c = math.ceil(k)
+
+        for label, data in results.items():
+            data = sorted(data)
+
+            if f == c:
+                percentile = key(data[int(k)])
+            else:
+                percentile = key(data[int(f)]) * (c-k) + key(data[int(c)]) * (k-f)
+
+            if label == 'full_load_time':
+                percentile_time = round( percentile / 1000.0, 1 )
+            elif label == 'total_size':
+                percentile_size = int( round( percentile,   0 ) )
+            elif label == 'requests':
+                percentile_req = int( round( percentile,    0 ) )
+            else:
+                percentile_score = int( round( percentile,  0 ) )
+
+        return percentile_time, percentile_size, percentile_req, percentile_score

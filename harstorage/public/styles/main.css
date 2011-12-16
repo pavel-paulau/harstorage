@@ -177,8 +177,17 @@ body a:hover {
     font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     font-size: 108%;
-    margin: 12px 0;
+    margin: 12px 0 18px 0;
+    float: left;
     text-align: left;
+}
+.sp-display select {
+    width: 145px;
+    display: none;
+}
+.sp-display .selector {
+    text-align: right;
+    margin: 12px 0 18px 0;
 }
 .sp-create fieldset {
     width: 960px;    
@@ -289,6 +298,7 @@ body a:hover {
 }
 .results select {
     width: 200px;
+    display: none;
 }
 .results .selector {
     text-align: right;

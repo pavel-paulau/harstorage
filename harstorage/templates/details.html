@@ -72,8 +72,9 @@
 
             <div class="tabbertab" title="Manage Data">
                 <div id="manager">
-                    <button id="del-btn">Delete current test</button>
-                    <button id="del-all-btn">Delete all tests</button>
+                    <button id="agg-btn">Aggregate Tests</button>
+                    <button id="del-btn">Delete Current Test</button>
+                    <button id="del-all-btn">Delete All Tests</button>
                 </div>
             </div>
         </div>
@@ -90,12 +91,12 @@
     .script("${h.url_for('/scripts/chosen.jquery.js?ver=0.9.5')}")
     .script("${h.url_for('/scripts/plots.js?ver=')}${c.rev}").wait()
     .wait(function(){
-        var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}");
+        var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}");
         run_info.addSpinner();
         run_info.get();
         run_info.timedStyleChange();
         
         var timeline = new HARSTORAGE.Timeline(run_info);
-        timeline.get("${c.url}","${c.label}","${c.mode}");
+        timeline.get("${c.url}", "${c.label}", "${c.mode}");
     })
 </script>
