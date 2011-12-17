@@ -1,6 +1,6 @@
-from json import loads
-from time import strptime, mktime
-from re import sub
+import json
+import time
+import re
 
 class HAR():
     def __init__(self, har):
@@ -18,7 +18,7 @@ class HAR():
                     har = self.workaround_charles(har)
 
                 # Deserialize HAR file            
-                self.har = loads(har)
+                self.har = json.loads(har)
                 self.origin = har
 
                 # Fix Page Speed issues with timezones
@@ -57,7 +57,7 @@ class HAR():
     def workaround_fiddler(self, har):
         har = har.partition('{')[1] + har.partition('{')[-1]
 
-        return sub(
+        return re.sub(
                     '"pages":null',
                     '"pages":[{\
                         "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
@@ -70,7 +70,7 @@ class HAR():
 
     # Charles workaround
     def workaround_charles(self, har):
-        return sub(
+        return re.sub(
                     '"log":{',
                     '"log":{\
                         "pages":[{\
@@ -135,7 +135,7 @@ class HAR():
             self.avg_blocking_time      += blocking_time
 
             # Full load time and time to first byte
-            start_time = mktime( strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
+            start_time = time.mktime( time.strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
             try:
                 start_time += float( '0.' + entry['startedDateTime'].partition('.')[-1].partition('+')[0] )
             except:
@@ -183,8 +183,8 @@ class HAR():
             try:
                 if not resp_headers['Cache-Control'].count('no-cache') \
                 and not resp_headers['Cache-Control'].count('max-age=0'):                
-                    date    = mktime( strptime(resp_headers['Date'],"%a, %d %b %Y %H:%M:%S GMT") )
-                    expires = mktime( strptime(resp_headers['Expires'],"%a, %d %b %Y %H:%M:%S GMT") )
+                    date    = time.mktime( time.strptime(resp_headers['Date'],"%a, %d %b %Y %H:%M:%S GMT") )
+                    expires = time.mktime( time.strptime(resp_headers['Expires'],"%a, %d %b %Y %H:%M:%S GMT") )
                     if expires > date:
                         self.cache_size += size
             except:

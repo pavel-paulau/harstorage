@@ -1,8 +1,8 @@
-from pymongo import Connection
+import pymongo
 
 class MongoDB():
     def __init__(self,host='localhost',port=27017):
-        connection = Connection(host, port)
+        connection = pymongo.Connection(host, port)
         db = connection['harstorage']        
         self.collection = db['results']
         
