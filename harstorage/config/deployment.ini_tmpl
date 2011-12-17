@@ -23,6 +23,9 @@ bin_store  = %(here)s
 ps_enabled = false
 static_version = 0.5.2
 
+mongo_host = localhost
+mongo_port = 27017
+
 cache_dir = %(here)s/data
 beaker.session.key = harstorage
 beaker.session.secret = ${app_instance_secret}
