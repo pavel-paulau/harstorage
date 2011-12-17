@@ -21,11 +21,13 @@ class ResultsController(BaseController):
     Core controller of repository
     """
 
+    def __before__(self):
+        """Define version of static content"""
+
+        c.rev = config['app_conf']['static_version']
+
     def index(self):
         """Home page with the latest test results"""
-
-        # Version for static content
-        c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         mdb_handler = MongoDB()
@@ -68,9 +70,6 @@ class ResultsController(BaseController):
     
     def details(self):
         """Page with test results"""
-
-        # Version for static content
-        c.rev = config['app_conf']['static_version']
 
         # Try to fetch data for selecetor box
         try:
@@ -268,9 +267,6 @@ class ResultsController(BaseController):
 
     def upload(self):
         """Controller for uploads of new test results"""
-
-        # Version for static content
-        c.rev = config['app_conf']['static_version']
 
         # HAR initialization
         try:

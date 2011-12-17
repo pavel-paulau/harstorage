@@ -16,11 +16,13 @@ class SuperposedController(BaseController):
 
     """
 
+    def __before__(self):
+        """Define version of static content"""
+
+        c.rev = config['app_conf']['static_version']
+
     def create(self):
         """Render form with list of labels and timestamps"""
-
-        # Version for static content
-        c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         md_handler = MongoDB()
@@ -57,9 +59,6 @@ class SuperposedController(BaseController):
 
     def display(self):
         """Render page with column chart and data table"""
-
-        # Version for static content
-        c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         md_handler = MongoDB()
