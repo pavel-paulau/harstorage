@@ -1,5 +1,4 @@
 import logging
-
 import os
 import cairo
 import rsvg
@@ -8,6 +7,7 @@ import Image
 
 from pylons import request, response
 from pylons import config
+
 from harstorage.lib.base import BaseController
 
 log = logging.getLogger(__name__)

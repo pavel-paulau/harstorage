@@ -1,13 +1,11 @@
-from harstorage.lib.MongoHandler import MongoDB
-
-import math
-
 import logging
+import math
 
 from pylons import request, tmpl_context as c
 from pylons import config
 
 from harstorage.lib.base import BaseController, render
+from harstorage.lib.MongoHandler import MongoDB
 
 log = logging.getLogger(__name__)
 

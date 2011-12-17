@@ -1,18 +1,17 @@
-from harstorage.lib.HAR import HAR
-from harstorage.lib.MongoHandler import MongoDB
-
 import logging
 import json
 import os
 import hashlib
-from mimetypes import guess_type
-from time import strftime, localtime
+import mimetypes
+import time
 
 from pylons import request, response, tmpl_context as c
 from pylons import config
 from pylons.controllers.util import redirect
 
 from harstorage.lib.base import BaseController, render
+from harstorage.lib.HAR import HAR
+from harstorage.lib.MongoHandler import MongoDB
 
 log = logging.getLogger(__name__)
 
@@ -301,7 +300,7 @@ class ResultsController(BaseController):
             mdb_handler.collection.insert({
                 "label"         :har.label,
                 "url"           :har.url,
-                "timestamp"     :strftime("%Y-%m-%d %H:%M:%S", localtime()),
+                "timestamp"     :time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                 "full_load_time":har.full_load_time,
                 "total_size"    :har.total_size,
                 "requests"      :har.requests,                
@@ -330,5 +329,5 @@ class ResultsController(BaseController):
 
         data = "onInputData(" + data + ");"
 
-        response.content_type = guess_type(filename)[0] or 'text/plain'
+        response.content_type = mimetypes.guess_type(filename)[0] or 'text/plain'
         return data
