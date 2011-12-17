@@ -119,9 +119,9 @@ class HAR():
         """Extract data from HAR container"""
 
         # Temporary variables
-        min_ts = 9999999999
+        min_ts = 10 ** 14
         max_ts = 0
-        
+
         # Parse each entry of page
         for entry in self.har['log']['entries']:
             # Detailed timgings

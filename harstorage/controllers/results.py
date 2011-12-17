@@ -210,9 +210,8 @@ class ResultsController(BaseController):
         
         # Data for HAR Viewer
         filename = os.path.join( config['app_conf']['temp_store'], har_id )
-        file = open(filename, 'w')
-        file.write( test_results['har'].encode('utf-8') )
-        file.close()
+        with open(filename, 'w') as file:
+            file.write( test_results['har'].encode('utf-8') )
 
         # Final JSON
         return json.dumps({'summary'    :summary,
@@ -293,9 +292,8 @@ class ResultsController(BaseController):
                 pagespeed_bin = os.path.join( config['app_conf']['bin_store'], "pagespeed_bin")
                 outfile = filename + ".out"
                 
-                file = open(filename,'w')
-                file.write(json.dumps(har.har))
-                file.close()
+                with open(filename,'w') as file:
+                    file.write(json.dumps(har.har))
                 
                 # Run pagespeed_bin
                 os.system(pagespeed_bin + \
@@ -307,9 +305,8 @@ class ResultsController(BaseController):
                 
                 # Output report (JSON)
                 filename = outfile
-                file = open(filename,'r')
-                output = json.loads(file.read())
-                file.close()
+                with open(filename,'r') as file:
+                    output = json.loads(file.read())
 
                 # Page Speed scores
                 scores = dict()
@@ -355,9 +352,8 @@ class ResultsController(BaseController):
 
         # Read HAR file from disk
         filename = os.path.join(config['app_conf']['temp_store'], id)
-        file = open(filename, 'r')
-        data = file.read()
-        file.close()
+        with open(filename, 'r') as file:
+            data = file.read()
 
         # JSON to JSON-P
         data = "onInputData(" + data + ");"

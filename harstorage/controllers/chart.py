@@ -68,9 +68,8 @@ class ChartController(BaseController):
     def render_svg(self, svg, filename):
         """Create SVG file"""
         
-        svg_file = open(filename, 'w')
-        svg_file.write(svg)
-        svg_file.close()
+        with open(filename, 'w') as svg_file:
+            svg_file.write(svg)
         
     def render_png(self, svg, filename, width, height):
         """Create PNG file"""
@@ -85,11 +84,8 @@ class ChartController(BaseController):
     def stream_image(self, image_name):
         """Stream image by chunks"""
 
-        image_file = open(image_name, 'rb')
-
-        chunk = image_file.read(1024)
-        while chunk:
-            yield chunk
+        with open(image_name, 'rb') as image_file:
             chunk = image_file.read(1024)
-
-        image_file.close()
+            while chunk:
+                yield chunk
+                chunk = image_file.read(1024)

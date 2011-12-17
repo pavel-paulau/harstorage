@@ -22,12 +22,11 @@ class CombineController(BaseController):
         for key in request.GET.keys():
             if key != 'ver':
                 base = config['pylons.paths']['static_files']
-                file = open(base + "/styles/" + key)
-                try:
-                    combo += file.read()
-                except:
-                    combo  = file.read()
-                file.close()
+                with open(base + "/styles/" + key) as file:
+                    try:
+                        combo += file.read()
+                    except:
+                        combo  = file.read()
 
         # Additional HTTP headers
         response.headerlist = [
