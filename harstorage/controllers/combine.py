@@ -8,18 +8,31 @@ from harstorage.lib.base import BaseController
 log = logging.getLogger(__name__)
 
 class CombineController(BaseController):
-    def styles(self):
-        # Read list of stylesheets and combine them
-        combo = ''
 
-        for key, value in request.GET.items():
+    """
+    Combine multiple static text resources (CSS, JavaScript)
+    into single file
+
+    """
+
+    def styles(self):
+        """Read list of stylesheets and combine them"""
+
+        # Concatenation
+        for key in request.GET.keys():
             if key != 'ver':
-                base = config['pylons.paths']['static_files']			
+                base = config['pylons.paths']['static_files']
                 file = open(base + "/styles/" + key)
-                combo = combo + file.read()
+                try:
+                    combo += file.read()
+                except:
+                    combo  = file.read()
                 file.close()
 
-        # Custom HTTP Headers
-        response.headerlist = [('Content-type', 'text/css'),('Last-Modified', 'Tue, 22 Nov 2011 12:00:00 GMT')]
+        # Additional HTTP headers
+        response.headerlist = [
+            ('Content-type', 'text/css'),
+            ('Last-Modified', 'Fri, 16 Dec 2011 12:00:00 GMT')
+        ]
 
         return combo

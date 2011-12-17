@@ -3,7 +3,6 @@ import os
 import cairo
 import rsvg
 import hashlib
-import Image
 
 from pylons import request, response
 from pylons import config
@@ -13,14 +12,21 @@ from harstorage.lib.base import BaseController
 log = logging.getLogger(__name__)
 
 class ChartController(BaseController):
+
+    """
+    Export charts in SVG and PNG format
+    """
+
     def export(self):
-        # Parameters
+        """Main export controller"""
+
+        # Parameters from POST request
         type        = request.POST['type']
         svg         = request.POST['svg']
         filename    = request.POST['filename']
         width       = int( request.POST['width'] )
 
-        # Sizes
+        # Image size
         if width == 960:
             height = 400
         elif width == 450 or width == 930:
@@ -28,53 +34,62 @@ class ChartController(BaseController):
 
         # Converting
         if type == 'image/png':
-            # Filename
-            ext         = '.png'
-            img_name    = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() + ext )
+            # Image extension
+            ext = '.png'
+
+            # Image name
+            image_name = os.path.join(
+                    config['app_conf']['temp_store'],
+                    hashlib.md5().hexdigest() + ext
+            )
             
             # Create PNG file
-            self.render_png(svg,img_name,width,height)
+            self.render_png(svg, image_name, width, height)
         elif type == 'image/svg+xml':
-            # Filename
-            ext         = '.svg'
-            img_name    = os.path.join( config['app_conf']['temp_store'], hashlib.md5().hexdigest() + ext )
+            # Image extension
+            ext = '.svg'
+
+            # Image name
+            image_name = os.path.join(
+                config['app_conf']['temp_store'],
+                hashlib.md5().hexdigest() + ext
+            )
             
             # Create SVG file
-            self.render_svg(svg,img_name)
+            self.render_svg(svg, image_name)
         
         # Response headers
         response.headers['Content-Disposition'] = "attachment; filename=" + filename + ext
         response.headers['Content-type']        = type
         
-        # Response content        
-        img_file = open(img_name,'rb')
-
-        def stream_img():
-            chunk = img_file.read(1024)
-            while chunk:
-                yield chunk
-                chunk = img_file.read(1024)
-            img_file.close()
-            
-        return stream_img()
+        # Return chuncked response
+        return self.stream_image(image_name)
         
-    def render_svg(self,svg,filename):
-        # Render SVG
-        svg_file = open( filename,'w')
-        svg_file.write( svg )
+    def render_svg(self, svg, filename):
+        """Create SVG file"""
+        
+        svg_file = open(filename, 'w')
+        svg_file.write(svg)
         svg_file.close()
         
-    def render_png(self,svg,filename,width,height):
-        # Create PNG image
+    def render_png(self, svg, filename, width, height):
+        """Create PNG file"""
+
         img = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         ctx = cairo.Context(img)
 
         rsvg.Handle(None, svg).render_cairo(ctx)
 
         img.write_to_png(filename)
-        
-    def resize(self,filename,width, height):
-        # Resize image
-        im1 = Image.open(filename)
-        image = im1.resize((width, height), Image.ANTIALIAS)
-        image.save(filename)
+
+    def stream_image(self, image_name):
+        """Stream image by chunks"""
+
+        image_file = open(image_name, 'rb')
+
+        chunk = image_file.read(1024)
+        while chunk:
+            yield chunk
+            chunk = image_file.read(1024)
+
+        image_file.close()

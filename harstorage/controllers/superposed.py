@@ -10,7 +10,15 @@ from harstorage.lib.MongoHandler import MongoDB
 log = logging.getLogger(__name__)
 
 class SuperposedController(BaseController):
+
+    """
+    Interface for aggregation and comparison of test results
+
+    """
+
     def create(self):
+        """Render form with list of labels and timestamps"""
+
         # Version for static content
         c.rev = config['app_conf']['static_version']
 
@@ -19,63 +27,67 @@ class SuperposedController(BaseController):
         
         # List of labels
         c.labels    = list()
-        labels = md_handler.collection.distinct('label')
-
-        for label in labels:
+        
+        for label in md_handler.collection.distinct('label'):
             c.labels.append(label)
         
         return render('./create.html')
     
     def dates(self):
-        # Label
+        """Return a list of timestamps for selected label"""
+
+        # Read label from GET request
         label = request.GET['label']
 
         # MongoDB handler
         md_handler = MongoDB()
-        
-        dates = str()
 
+        # Read data from database
         documents = md_handler.collection.find({
             'label':label
-        })
+        }).sort('timestamp', 1)
         
-        documents.sort('timestamp', 1)
-
         for document in documents:
-            dates += document['timestamp'] + ';'
+            try:
+                dates = dates + document['timestamp'] + ';'
+            except:
+                dates = document['timestamp'] + ';'
 
         return dates[:-1]
 
     def display(self):
+        """Render page with column chart and data table"""
+
         # Version for static content
         c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         md_handler = MongoDB()
 
-        # 5 Arrays for timeline chart
+        # 5 Arrays for columns chart
         lbl_points      = str()
         time_points     = str()
         size_points     = str()
         req_points      = str()
         score_points    = str()
 
-        # Initial row count
-        c.rowcount = 0
+        # Number of records
+        c.rowcount = len(request.GET) /3
 
-        # Summary table canvas
+        # Data table
         c.metrics_table = list()
+
         for index in range(6):
             c.metrics_table.append( list() )
 
         # Aggregation
-        for index in range( len(request.GET) /3 ):
-            # Parameters
+        for index in range( c.rowcount ):
+            # Parameters from GET request
             label       = request.GET[ 'step_' + str(index+1) + '_label'    ]
             start_ts    = request.GET[ 'step_' + str(index+1) + '_start_ts' ]
             end_ts      = request.GET[ 'step_' + str(index+1) + '_end_ts'   ]
 
-            # Test results
+            # Test results from database
             documents = md_handler.collection.find({
                 'label'     : label,
                 'timestamp' : { '$gte':start_ts, '$lte':end_ts }
@@ -94,7 +106,7 @@ class SuperposedController(BaseController):
                 results['requests'].append(document['requests'])
                 results['score'].append(document['ps_scores']['Total Score'])
 
-            # Aggregated stats
+            # Aggregated statistics
             c.metric = request.GET.get('metric', 'Average')
 
             if c.metric == 'Average':
@@ -115,14 +127,14 @@ class SuperposedController(BaseController):
             c.metrics_table[3].append( req   )
             c.metrics_table[4].append( time  )
 
-            c.rowcount += 1
-
+            # Data for column chart in custom format (hash separated)
             lbl_points      += str(label) + '#'
             time_points     += str(time)  + '#'
             size_points     += str(size)  + '#'
             req_points      += str(req)   + '#'
             score_points    += str(score) + '#'
 
+        # Final data for column chart
         c.points = lbl_points[:-1]  + ';' \
                  + time_points[:-1] + ';' \
                  + size_points[:-1] + ';' \
@@ -132,11 +144,11 @@ class SuperposedController(BaseController):
         return render('./display.html')
 
     def average(self, results):
-        '''
+        """
         @parameter results - a dictionary with test results
 
         @return - the average value for each subset of results
-        '''
+        """
 
         # Number or results
         num = len( results['full_load_time'] )
@@ -156,11 +168,11 @@ class SuperposedController(BaseController):
         return avg_time, avg_size, avg_req, avg_score
 
     def minimum(self, results):
-        '''
+        """
         @parameter results - a dictionary with test results
 
         @return - the minimum value for each subset of results
-        '''
+        """
 
         min_time    = round( min(results['full_load_time']) / 1000.0, 1 )
         min_size    = min(results['total_size']    )

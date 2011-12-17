@@ -3,7 +3,14 @@ import time
 import re
 
 class HAR():
+
+    """
+    HAR Parser
+    """
+
     def __init__(self, har):
+        """Deserialize HAR file and initialize variables"""
+
         # Check file size
         if len(har) == 0:
             self.status = 'Empty file'
@@ -49,12 +56,14 @@ class HAR():
             except Exception as error:
                 self.status = error
     
-    # HttpWatch workaround
     def workaround_httpwatch(self, har):
+        """HttpWatch workaround"""
+
         return har.decode('latin-1').encode('utf-8')
 
-    # Fiddler workaround
     def workaround_fiddler(self, har):
+        """Fiddler workaround"""
+
         har = har.partition('{')[1] + har.partition('{')[-1]
 
         return re.sub(
@@ -68,8 +77,9 @@ class HAR():
                     har
         )
 
-    # Charles workaround
     def workaround_charles(self, har):
+        """Charles Proxy workaround"""
+
         return re.sub(
                     '"log":{',
                     '"log":{\
@@ -82,8 +92,9 @@ class HAR():
                     har
         )
 
-    # Page Speed workaround
     def workaround_pagespeed(self):
+        """Page Speed workaround"""
+
         # Entry level
         for entry in self.har['log']['entries']:
             if entry['startedDateTime'].rfind('+') != -1:
@@ -104,22 +115,14 @@ class HAR():
 
             page['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
 
-    # Convert bytes to kilobytes
-    def b2k(self, value):
-        return int( round( value/1024.0 ) )
-    
-    # Convert headers list to headers dictionary
-    def h2d(self, headers):
-        hd = dict()
-        for header in headers:
-            hd[header['name']] = header['value']
-        return hd
-    
     def analyze(self):
+        """Extract data from HAR container"""
+
         # Temporary variables
         min_ts = 9999999999
         max_ts = 0
         
+        # Parse each entry of page
         for entry in self.har['log']['entries']:
             # Detailed timgings
             dns_time        = max( entry['timings']['dns'],                                0)
@@ -135,7 +138,13 @@ class HAR():
             self.avg_blocking_time      += blocking_time
 
             # Full load time and time to first byte
-            start_time = time.mktime( time.strptime(entry['startedDateTime'].partition('.')[0], "%Y-%m-%dT%H:%M:%S") )
+            start_time = time.mktime(
+                time.strptime(
+                    entry['startedDateTime'].partition('.')[0],
+                    "%Y-%m-%dT%H:%M:%S"
+                )
+            )
+            
             try:
                 start_time += float( '0.' + entry['startedDateTime'].partition('.')[-1].partition('+')[0] )
             except:
@@ -154,7 +163,7 @@ class HAR():
             if end_time > max_ts:
                 max_ts = end_time
 
-            # Total size of response
+            # Size of response body
             compressed_size = max(entry['response']['bodySize'], 0)
             if compressed_size == 0:
                 size = entry['response']['content']['size']
@@ -163,7 +172,8 @@ class HAR():
 
             self.total_size += size
             
-            # Text and media sizes
+            # Size of text (JavaScript, CSS, HTML, XML, JSON, plain text)
+            # and media (images, flash) files
             mime_type = entry['response']['content']['mimeType'].partition(';')[0]
             if cmp(mime_type,''):
                 mime_type = self.type_syn(mime_type)
@@ -182,24 +192,39 @@ class HAR():
             
             try:
                 if not resp_headers['Cache-Control'].count('no-cache') \
-                and not resp_headers['Cache-Control'].count('max-age=0'):                
-                    date    = time.mktime( time.strptime(resp_headers['Date'],"%a, %d %b %Y %H:%M:%S GMT") )
-                    expires = time.mktime( time.strptime(resp_headers['Expires'],"%a, %d %b %Y %H:%M:%S GMT") )
+                and not resp_headers['Cache-Control'].count('max-age=0'):
+                    date = time.mktime(
+                        time.strptime(
+                            resp_headers['Date'],
+                            "%a, %d %b %Y %H:%M:%S GMT"
+                        )
+                    )
+
+                    expires = time.mktime(
+                        time.strptime(
+                            resp_headers['Expires'],
+                            "%a, %d %b %Y %H:%M:%S GMT"
+                        )
+                    )
+
                     if expires > date:
                         self.cache_size += size
             except:
                 pass
                     
             # Redirects and bad requests
-            if entry['response']['status'] >=300 and entry['response']['status'] < 400:
+            if entry['response']['status'] >= 300 and entry['response']['status'] < 400:
                 self.redirects += 1
-            elif entry['response']['status']>=400:
+            elif entry['response']['status'] >= 400:
                 self.bad_requests += 1
                 
             # List of hosts
             hostname = entry['request']['url'].partition('//')[-1].partition('/')[0]
-            self.domains[hostname] = [self.domains.get(hostname, [0,0])[0] + 1,
-                                      self.domains.get(hostname, [0,0])[1] + self.b2k(size)]
+
+            self.domains[hostname] = [
+                self.domains.get(hostname, [0,0])[0] + 1,
+                self.domains.get(hostname, [0,0])[1] + self.b2k(size)
+            ]
 
         # Label
         self.label = self.har['log']['pages'][0]['id']
@@ -240,8 +265,58 @@ class HAR():
         self.text_size  = self.b2k( self.text_size  )
         self.media_size = self.b2k( self.media_size )
         self.cache_size = self.b2k( self.cache_size )
-    
+       
+    def weight_ratio(self):
+        """Breakdown by size of page objects"""
+
+        resources = dict()        
+        for entry in self.har['log']['entries']:
+            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
+            if cmp(mime_type,''):
+                mime_type = self.type_syn(mime_type)
+                size = entry['response']['content']['size']
+                resources[mime_type] = resources.get(mime_type, 0) + self.b2k(size)
+        return resources
+        
+    def req_ratio(self):
+        """Breakdown by number of page objects"""
+        
+        resources = dict()
+        for entry in self.har['log']['entries']:
+            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
+            if cmp(mime_type, ''):
+                mime_type = self.type_syn(mime_type)
+                resources[mime_type] = resources.get(mime_type, 0) + 1
+        return resources
+
+    def b2k(self, value):
+        """
+        @parameter vaule - size in bytes
+
+        @return - size in kilobytes
+        """
+
+        return int( round( value/1024.0 ) )
+
+    def h2d(self, headers):
+        """
+        @parameter headers - list of headers
+
+        @return - dictionary of headers
+        """
+
+        hd = dict()
+        for header in headers:
+            hd[header['name']] = header['value']
+        return hd
+
     def type_syn(self, string):
+        """
+        @parameter string - MIME type
+
+        @return - normilized MIME type
+        """
+
         if string.count('javascript'):
             return 'javascript'
         elif string.count('flash'):
@@ -262,22 +337,3 @@ class HAR():
             return 'json'
         else:
             return 'other'
-       
-    def weight_ratio(self):
-        resources = dict()        
-        for entry in self.har['log']['entries']:
-            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
-            if cmp(mime_type,''):
-                mime_type = self.type_syn(mime_type)
-                size = entry['response']['content']['size']
-                resources[mime_type] = resources.get(mime_type,0) + self.b2k(size)
-        return resources
-        
-    def req_ratio(self):
-        resources = dict()        
-        for entry in self.har['log']['entries']:
-            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
-            if cmp(mime_type,''):
-                mime_type = self.type_syn(mime_type)
-                resources[mime_type] = resources.get(mime_type,0) + 1
-        return resources

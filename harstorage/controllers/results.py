@@ -16,22 +16,27 @@ from harstorage.lib.MongoHandler import MongoDB
 log = logging.getLogger(__name__)
 
 class ResultsController(BaseController):
+
+    """
+    Core controller of repository
+    """
+
     def index(self):
+        """Home page with the latest test results"""
+
         # Version for static content
         c.rev = config['app_conf']['static_version']
 
         # MongoDB handler
         mdb_handler = MongoDB()
         
-        # Initial row count
-        c.rowcount = 0
-        
-        # Result table canvas
+        # Data table
         c.metrics_table = list()
         for i in range(7):
             c.metrics_table.append(list())
         
-        # Result aggregation based on unique label and latest timestamp
+        # Read aggregated data from database
+        # Aggregation is based on unique labels and latest timestamps
         latest_results = mdb_handler.collection.group(
             key=['label'],
             condition=None,
@@ -43,8 +48,11 @@ class ResultsController(BaseController):
                     }                                       \
                 }"
         )
+
+        # Numner of records
+        c.rowcount = len(latest_results)
         
-        # Populate result table with latest results
+        # Populate data table with the latest test results
         for set in latest_results:
             result = mdb_handler.collection.find_one({'label':set['label'],'timestamp':set['timestamp']})
             
@@ -55,41 +63,49 @@ class ResultsController(BaseController):
             c.metrics_table[4].append( result["requests"]                       )
             c.metrics_table[5].append( round(result["full_load_time"]/1000.0,1) )
             c.metrics_table[6].append( result["timestamp"]                      )
-            
-            c.rowcount += 1
-        
+
         return render('./home.html')
     
     def details(self):
+        """Page with test results"""
+
         # Version for static content
         c.rev = config['app_conf']['static_version']
 
-        # Try to fetch details for URL
+        # Try to fetch data for selecetor box
         try:
             c.url = request.GET['url']
-            self.selectors(None,c.url)
+            self.selectors(None, c.url)
             c.mode  = 'url'
             c.label = c.url
-        # Use Label instead of URL
+        # Use label parameter instead of URL parameter
         except:
             c.label = request.GET['label']
-            self.selectors(c.label,None)
+            self.selectors(c.label, None)
             c.mode  = 'label'
             c.url   = c.label
  
         return render('./details.html')
     
-    def selectors(self,label,url):
+    def selectors(self, label, url):
+        """
+        Create context data - a list of timestamps.
+        Additionally generate URL for aggregation of test results
+
+        @parameter label - label of set with test results
+        @parameter url   - URL of set with test results
+        """
+
         # MongoDB handler
         mdb_handler = MongoDB()
         
-        # Timestamps for selector
+        # Read data for selector box from database
         c.timestamp     = list()
 
-        # Querying data for timeline
         if label is not None:
             for result in mdb_handler.collection.find({"label":label}).sort("timestamp",-1):
                 c.timestamp.append(result["timestamp"])
+
             c.query  = "/superposed/display?"
             c.query += "step_1_label=" + label
             c.query += "&step_1_start_ts=" + min(c.timestamp)
@@ -97,10 +113,13 @@ class ResultsController(BaseController):
         else:
             for result in mdb_handler.collection.find({"url":url}).sort("timestamp",-1):
                 c.timestamp.append(result["timestamp"])
+
             c.query = 'None'
 
     def timeline(self):
-        # Options
+        """Generate data for timeline chart"""
+
+        # Parameters from GET request
         url     = request.GET['url']
         label   = request.GET['label']
         mode    = request.GET['mode']
@@ -115,21 +134,22 @@ class ResultsController(BaseController):
         req_points      = str()
         score_points    = str()
         
-        # Querying data for timeline
+        # Read data for timeline from database in custom format
+        # (hash separated)
         if mode == 'label':
             for result in mdb_handler.collection.find({"label":label}).sort("timestamp",1):
-                ts_points       += str(result["timestamp"])+"#"
-                time_points     += str(round(result["full_load_time"]/1000.0,1))+"#"
-                size_points     += str(result["total_size"])+"#"
-                req_points      += str(result["requests"])+"#"
-                score_points    += str(result['ps_scores']['Total Score'])+"#"
+                ts_points       += str(result["timestamp"]) + "#"
+                time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
+                size_points     += str(result["total_size"]) + "#"
+                req_points      += str(result["requests"]) + "#"
+                score_points    += str(result['ps_scores']['Total Score']) + "#"
         else:
             for result in mdb_handler.collection.find({"url":url}).sort("timestamp",1):
-                ts_points       += str(result["timestamp"])+"#"
-                time_points     += str(round(result["full_load_time"]/1000.0,1))+"#"
-                size_points     += str(result["total_size"])+"#"
-                req_points      += str(result["requests"])+"#"
-                score_points    += str(result['ps_scores']['Total Score'])+"#"
+                ts_points       += str(result["timestamp"]) + "#"
+                time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
+                size_points     += str(result["total_size"]) + "#"
+                req_points      += str(result["requests"]) + "#"
+                score_points    += str(result['ps_scores']['Total Score']) + "#"
 
         return ts_points[:-1]+";"\
                 +time_points[:-1]+";"\
@@ -138,16 +158,18 @@ class ResultsController(BaseController):
                 +score_points[:-1]
 
     def runinfo(self):
+        """Generate detailed data for each test run"""
+
         # MongoDB handler
         mdb_handler = MongoDB()
         
-        # Timestamp from request
+        # Parameters from GET request
         timestamp = request.GET['timestamp']
 
         # MongoDB query
         test_results = mdb_handler.collection.find_one({"timestamp":timestamp})
         
-        # HAR initialization
+        # HAR parsing
         har     = HAR(test_results['har'])
         har_id  = str(test_results['_id'])
         har.analyze()
@@ -203,16 +225,20 @@ class ResultsController(BaseController):
                             })
         
     def harviewer(self):
-        # HAR Viewer customization
+        """HAR Viewer iframe"""
+
+        # HAR Viewer customization via cookie
         response.set_cookie('phaseInterval', '-1')
 
         return render('./harviewer.html')
     
     def deleterun(self):
+        """Controller for deletion of tests"""
+
         # MongoDB handler
         mdb_handler = MongoDB()
         
-        # Request parameters
+        # Parameters from GET request
         label       = request.GET['label']
         timestamp   = request.GET['timestamp']
         mode        = request.GET['mode']
@@ -237,11 +263,13 @@ class ResultsController(BaseController):
             count = mdb_handler.collection.find({"url":label}).count()
 
         if count:
-            return ("details?",mode,'=',label)
+            return ("details?" + mode + '=' + label)
         else:
             return ("/")
 
     def upload(self):
+        """Controller for uploads of new test results"""
+
         # Version for static content
         c.rev = config['app_conf']['static_version']
 
@@ -251,7 +279,7 @@ class ResultsController(BaseController):
         except:
             har = HAR( request.POST['file'] )
         
-        # Check for initialization status
+        # Analysis of uploaded data
         if har.status == 'Successful':
             # Parsing imported HAR file
             har.analyze()
@@ -314,20 +342,27 @@ class ResultsController(BaseController):
                 redirect('/results/details?label=' + har.label) # redirect to details
         else:
             try:
-                if request.headers['automated'] == 'true': return har.status # Return exception
+                if request.headers['automated'] == 'true': return har.status # return exception
             except KeyError:
                 c.error = har.status
-                return render('./upload.html') # Display error page
+                return render('./upload.html') # display error page
 
     def download(self):
+        """Return serialized HAR file"""
+
+        # Parameters from GET request
         id = request.GET['id']
 
-        filename = os.path.join( config['app_conf']['temp_store'], id )
+        # Read HAR file from disk
+        filename = os.path.join(config['app_conf']['temp_store'], id)
         file = open(filename, 'r')
         data = file.read()
         file.close()
 
+        # JSON to JSON-P
         data = "onInputData(" + data + ");"
 
+        # Add content type header
         response.content_type = mimetypes.guess_type(filename)[0] or 'text/plain'
+
         return data
