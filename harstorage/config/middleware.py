@@ -1,4 +1,3 @@
-"""Pylons middleware initialization"""
 from beaker.middleware import SessionMiddleware
 from paste.cascade import Cascade
 from paste.registry import RegistryManager
@@ -64,4 +63,5 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         static_app = StaticURLParser(config['pylons.paths']['static_files'])
         app = Cascade([static_app, app])
     app.config = config
+
     return app
