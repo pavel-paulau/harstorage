@@ -6,6 +6,7 @@ import hashlib
 
 from pylons import request, response
 from pylons import config
+from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController
 
@@ -17,6 +18,7 @@ class ChartController(BaseController):
     Export charts in SVG and PNG format
     """
 
+    @restrict('POST')
     def export(self):
         """Main export controller"""
 

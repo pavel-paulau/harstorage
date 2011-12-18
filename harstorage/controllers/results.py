@@ -8,6 +8,7 @@ import time
 from pylons import request, response, tmpl_context as c
 from pylons import config
 from pylons.controllers.util import redirect
+from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.HAR import HAR
@@ -26,6 +27,7 @@ class ResultsController(BaseController):
 
         c.rev = config['app_conf']['static_version']
 
+    @restrict('GET')
     def index(self):
         """Home page with the latest test results"""
 
@@ -68,6 +70,7 @@ class ResultsController(BaseController):
 
         return render('./home.html')
     
+    @restrict('GET')
     def details(self):
         """Page with test results"""
 
@@ -115,6 +118,7 @@ class ResultsController(BaseController):
 
             c.query = 'None'
 
+    @restrict('GET')
     def timeline(self):
         """Generate data for timeline chart"""
 
@@ -156,6 +160,7 @@ class ResultsController(BaseController):
                 +req_points[:-1]+";"\
                 +score_points[:-1]
 
+    @restrict('GET')
     def runinfo(self):
         """Generate detailed data for each test run"""
 
@@ -222,6 +227,7 @@ class ResultsController(BaseController):
                            'har'        :har_id,
                             })
         
+    @restrict('GET')
     def harviewer(self):
         """HAR Viewer iframe"""
 
@@ -230,6 +236,7 @@ class ResultsController(BaseController):
 
         return render('./harviewer.html')
     
+    @restrict('GET')
     def deleterun(self):
         """Controller for deletion of tests"""
 
@@ -265,6 +272,7 @@ class ResultsController(BaseController):
         else:
             return ("/")
 
+    @restrict('POST')
     def upload(self):
         """Controller for uploads of new test results"""
 
@@ -340,6 +348,7 @@ class ResultsController(BaseController):
                 c.error = har.status
                 return render('./upload.html') # display error page
 
+    @restrict('GET')
     def download(self):
         """Return serialized HAR file"""
 

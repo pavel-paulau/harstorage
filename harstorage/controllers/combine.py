@@ -2,6 +2,7 @@ import logging
 
 from pylons import request, response
 from pylons import config
+from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController
 
@@ -15,6 +16,7 @@ class CombineController(BaseController):
 
     """
 
+    @restrict('GET')
     def styles(self):
         """Read list of stylesheets and combine them"""
 

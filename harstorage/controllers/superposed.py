@@ -6,6 +6,7 @@ from pylons import config
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
+from pylons.decorators.rest import restrict
 
 log = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class SuperposedController(BaseController):
 
         c.rev = config['app_conf']['static_version']
 
+    @restrict('GET')
     def create(self):
         """Render form with list of labels and timestamps"""
 
@@ -35,6 +37,7 @@ class SuperposedController(BaseController):
         
         return render('./create.html')
     
+    @restrict('GET')
     def dates(self):
         """Return a list of timestamps for selected label"""
 
@@ -57,6 +60,7 @@ class SuperposedController(BaseController):
 
         return dates[:-1]
 
+    @restrict('GET')
     def display(self):
         """Render page with column chart and data table"""
 
