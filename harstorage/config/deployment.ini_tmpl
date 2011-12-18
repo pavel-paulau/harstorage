@@ -4,10 +4,7 @@
 # The %(here)s variable will be replaced with the parent directory of this file
 #
 [DEFAULT]
-debug = true
-email_to = you@yourdomain.com
-smtp_server = localhost
-error_email_from = paste@localhost
+debug = false
 
 [server:main]
 use = egg:Paste#http
@@ -29,18 +26,8 @@ mongo_port = 27017
 cache_dir = %(here)s/data
 beaker.session.key = harstorage
 beaker.session.secret = ${app_instance_secret}
+
 app_instance_uuid = ${app_instance_uuid}
-
-# If you'd like to fine-tune the individual locations of the cache data dirs
-# for the Cache data, or the Session saves, un-comment the desired settings
-# here:
-#beaker.cache.data_dir = %(here)s/data/cache
-#beaker.session.data_dir = %(here)s/data/sessions
-
-# WARNING: *THE LINE BELOW MUST BE UNCOMMENTED ON A PRODUCTION ENVIRONMENT*
-# Debug mode will enable the interactive debugging tool, allowing ANYONE to
-# execute malicious code after an exception is raised.
-set debug = false
 
 # Logging configuration
 [loggers]
