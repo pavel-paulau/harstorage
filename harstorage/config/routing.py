@@ -8,7 +8,7 @@ def make_map(config):
     map.minimization = False
     map.explicit = True
 
-    # The ErrorController route (handles 404/500 error pages)
+    # The ErrorController route (handles 4xx/5xx error pages)
     map.connect('/error/{action}', controller='error')
 
     # Home page
@@ -16,5 +16,5 @@ def make_map(config):
 
     # Common routing to controllers
     map.connect('/{controller}/{action}')
-    
+
     return map
