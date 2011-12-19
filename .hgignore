@@ -5,10 +5,10 @@ syntax: regexp
 # MySQL WorkBench backup files
 \.bak
 # Pylons temporary files
-data
-# Temp har files
-harstorage/public/data
+^data/
 # Builds
 dist
 # Binaries
 pagespeed_bin*
+# Page Speed debug file
+debug.log
