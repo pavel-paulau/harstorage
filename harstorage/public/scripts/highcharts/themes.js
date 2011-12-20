@@ -22,8 +22,8 @@ Highcharts.darkGreen = {
 		backgroundColor: {
 			linearGradient: [0, 0, 0, 500],
 			stops: [
-				[0, 'rgb(73, 138, 45)'],
-				[1, 'rgb(0, 0, 0)']
+				[0, '#498A2D'],
+				[1, '#000000']
 			]
 		},
 		borderWidth: 0,
@@ -33,7 +33,7 @@ Highcharts.darkGreen = {
 	},
 	title: {
 		style: {
-			color       : '#ffffff',
+			color       : '#FFFFFF',
                         fontWeight  : 'bold',
                         font        : 'bold 16px "Trebuchet MS", Verdana, sans-serif'
 		}
@@ -93,9 +93,9 @@ Highcharts.darkGreen = {
                     size                : '65%',
                     dataLabels: {
                         enabled         : true,
-                        color           : '#FFF',
+                        color           : '#FFFFFF',
                         distance        : 25,
-                        connectorColor  : '#FFF',                        
+                        connectorColor  : '#FFFFFF',
                         formatter: function() {
                             return this.point.name;
                         }
@@ -133,10 +133,10 @@ Highcharts.darkGreen = {
  */
 Highcharts.light = {
         colors: [
-            '#89A54E',
-            '#DF5353',
-            '#DB843D',
-            '#3D96AE',
+            '#669933',
+            '#CC3333',
+            '#FF9933',
+            '#996633',
             '#4572A7',
             '#80699B',
             '#92A8CD',
@@ -144,37 +144,37 @@ Highcharts.light = {
         ],
 	chart: {
 		borderWidth: 1,
-		borderColor: '#498a2d',
+		borderColor: '#498A2D',
                 plotBorderWidth: 1,
-                plotBorderColor: '#498a2d'
+                plotBorderColor: '#498A2D'
 	},
 	title: {
 		style: {
-			color: '#498a2d',
+			color: '#498A2D',
                         fontWeight  : 'bold',
 			font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
 		}
 	},
 	xAxis: {
 		gridLineWidth: 1,
-		lineColor: '#498a2d',
-		tickColor: '#498a2d',
+		lineColor: '#498A2D',
+		tickColor: '#498A2D',
                 lineWidth: 0,
 		labels: {
 			style: {
-				color: '#498a2d',
+				color: '#498A2D',
 				font: '11px "Trebuchet MS", Verdana, sans-serif'
 			}
 		}
 	},
 	yAxis: {
                 gridLineWidth: 1,
-		lineColor: '#498a2d',
-		tickColor: '#498a2d',
+		lineColor: '#498A2D',
+		tickColor: '#498A2D',
                 tickWidth: 1,
 		labels: {
 			style: {
-				color: '#498a2d',
+				color: '#498A2D',
 				font: '11px "Trebuchet MS", Verdana, sans-serif'
 			}
 		},
@@ -202,8 +202,8 @@ Highcharts.light = {
                     dataLabels: {
                         enabled         : true,
                         distance        : 25,
-                        connectorColor  : '#498a2d',
-                        color           : '#498a2d',
+                        connectorColor  : '#498A2D',
+                        color           : '#498A2D',
                         formatter: function() {
                             return this.point.name;
                         }
@@ -215,7 +215,7 @@ Highcharts.light = {
                     borderColor: 'white',
                     dataLabels: {
                         enabled: true,
-                        color: '#498a2d',
+                        color: '#498A2D',
                         align: 'left',
                         y: -5
                     }
@@ -224,7 +224,7 @@ Highcharts.light = {
         legend: {
 		itemStyle: {
 			font: '9pt "Trebuchet MS", Verdana, sans-serif',
-			color: '#498a2d'
+			color: '#498A2D'
 
 		},
 		itemHoverStyle: {
@@ -234,7 +234,7 @@ Highcharts.light = {
 			color: 'gray'
 		},
                 borderWidth: 1,
-		borderColor: '#498a2d'
+		borderColor: '#498A2D'
 	}
 };
 
@@ -243,10 +243,10 @@ Highcharts.light = {
  */
 Highcharts.lightGreen = {
         colors: [
-            '#89A54E',            
-            '#DF5353',
-            '#DB843D',
-            '#3D96AE',
+            '#669933',
+            '#CC3333',
+            '#FF9933',
+            '#996633',
             '#4572A7',
             '#80699B',
             '#92A8CD',
@@ -256,42 +256,42 @@ Highcharts.lightGreen = {
 		backgroundColor: {
 			linearGradient: [0, 0, 0, 500],
 			stops: [
-				[0, '#f2fbed'],
-				[1, '#c0d0b8']
+				[0, '#F2FBED'],
+				[1, '#99CC66']
 			]
 		},
 		borderWidth: 1,
-		borderColor: '#498a2d',
+		borderColor: '#498A2D',
 		plotBackgroundColor: 'rgba(255, 255, 255, .9)',
 		plotBorderWidth: 0
 	},
 	title: {
 		style: {
-			color: '#498a2d',
+			color: '#498A2D',
                         fontWeight  : 'bold',
 			font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
 		}
 	},
 	xAxis: {
 		gridLineWidth: 1,
-		lineColor: '#498a2d',
-		tickColor: '#498a2d',
+		lineColor: '#498A2D',
+		tickColor: '#498A2D',
                 lineWidth: 0,
 		labels: {
 			style: {
-				color: '#498a2d',
+				color: '#498A2D',
 				font: '11px "Trebuchet MS", Verdana, sans-serif'
 			}
 		}
 	},
 	yAxis: {
                 gridLineWidth: 1,
-		lineColor: '#498a2d',
-		tickColor: '#498a2d',
+		lineColor: '#498A2D',
+		tickColor: '#498A2D',
                 tickWidth: 1,
 		labels: {
 			style: {
-                                color: '#498a2d',
+                                color: '#498A2D',
 				font: '11px "Trebuchet MS", Verdana, sans-serif'
 			}
 		},
@@ -319,8 +319,8 @@ Highcharts.lightGreen = {
                     dataLabels: {
                         enabled         : true,                        
                         distance        : 25,
-                        connectorColor  : '#498a2d',
-                        color           : '#498a2d',
+                        connectorColor  : '#498A2D',
+                        color           : '#498A2D',
                         formatter: function() {
                             return this.point.name;
                         }
@@ -332,7 +332,7 @@ Highcharts.lightGreen = {
                     borderColor: 'white',
                     dataLabels: {
                         enabled: true,
-                        color: '#498a2d',
+                        color: '#498A2D',
                         align: 'left',
                         y: -5
                     }
@@ -341,7 +341,7 @@ Highcharts.lightGreen = {
 	legend: {
 		itemStyle: {
 			font: '9pt "Trebuchet MS", Verdana, sans-serif',
-			color: '#498a2d'
+			color: '#498A2D'
 
 		},
 		itemHoverStyle: {
@@ -351,7 +351,7 @@ Highcharts.lightGreen = {
 			color: 'gray'
 		},
                 borderWidth: 1,
-		borderColor: '#498a2d'                
+		borderColor: '#498A2D'
 	}
 };
 

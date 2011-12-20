@@ -69,10 +69,10 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         ];
     } else {
         colors = [
-            '#89A54E',
-            '#DF5353',
-            '#DB843D',
-            '#3D96AE',
+            '#669933',
+            '#CC3333',
+            '#FF9933',
+            '#996633',
             '#4572A7',
             '#80699B',
             '#92A8CD',
@@ -253,10 +253,10 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         ];
     } else {
         colors = [
-            '#89A54E',
-            '#DF5353',
-            '#DB843D',
-            '#3D96AE',
+            '#669933',
+            '#CC3333',
+            '#FF9933',
+            '#996633',
             '#4572A7',
             '#80699B',
             '#92A8CD',
