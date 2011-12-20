@@ -82,7 +82,7 @@ class SuperposedController(BaseController):
         # Data table
         c.metrics_table = list()
 
-        for index in range(6):
+        for index in range(5):
             c.metrics_table.append( list() )
 
         # Aggregation
