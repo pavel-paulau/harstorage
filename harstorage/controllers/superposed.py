@@ -48,9 +48,11 @@ class SuperposedController(BaseController):
         md_handler = MongoDB()
 
         # Read data from database
-        documents = md_handler.collection.find({
-            'label':label
-        }).sort('timestamp', 1)
+        documents = md_handler.collection.find(
+            {'label' : label},
+            fields  = ['timestamp'],
+            sort    = [('timestamp', 1)]
+        )
         
         for document in documents:
             try:
@@ -91,10 +93,12 @@ class SuperposedController(BaseController):
             end_ts      = request.GET[ 'step_' + str(index+1) + '_end_ts'   ]
 
             # Test results from database
-            documents = md_handler.collection.find({
-                'label'     : label,
-                'timestamp' : { '$gte':start_ts, '$lte':end_ts }
-            })
+            documents = md_handler.collection.find(
+                {'label'     : label,
+                 'timestamp' : { '$gte':start_ts, '$lte':end_ts }
+                },
+                fields = ['full_load_time', 'total_size', 'requests', 'ps_scores']
+            )
 
             results = {
                         'full_load_time': [],
