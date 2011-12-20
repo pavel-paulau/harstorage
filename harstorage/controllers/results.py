@@ -42,10 +42,10 @@ class ResultsController(BaseController):
         # Read aggregated data from database
         # Aggregation is based on unique labels and latest timestamps
         latest_results = mdb_handler.collection.group(
-            key=['label'],
-            condition=None,
-            initial={"timestamp":'1970-01-01 01:00:00'},
-            reduce="\
+            key = ['label', 'url'],
+            condition = None,
+            initial = {"timestamp":'1970-01-01 01:00:00'},
+            reduce = "\
                 function(doc, prev) {                       \
                     if ( doc.timestamp > prev.timestamp ) { \
                         prev.timestamp = doc.timestamp;     \
@@ -55,10 +55,12 @@ class ResultsController(BaseController):
 
         # Numner of records
         c.rowcount = len(latest_results)
-        
+
         # Populate data table with the latest test results
-        for set in latest_results:
-            result = mdb_handler.collection.find_one({'label':set['label'],'timestamp':set['timestamp']})
+        for group in latest_results:
+            result = mdb_handler.collection.find_one(
+                {'label' : group['label'], 'timestamp' : group['timestamp']}
+            )
             
             c.metrics_table[0].append( result['label']                          )
             c.metrics_table[1].append( result['url']                            )
@@ -69,7 +71,7 @@ class ResultsController(BaseController):
             c.metrics_table[6].append( result["timestamp"]                      )
 
         return render('./home.html')
-    
+
     @restrict('GET')
     def details(self):
         """Page with test results"""
@@ -105,7 +107,12 @@ class ResultsController(BaseController):
         c.timestamp     = list()
 
         if label is not None:
-            for result in mdb_handler.collection.find({"label":label}).sort("timestamp",-1):
+            results = mdb_handler.collection.find(
+                {"label" : label},
+                fields = ["timestamp"],
+                sort   = [("timestamp", -1)]
+            )
+            for result in results:
                 c.timestamp.append(result["timestamp"])
 
             c.query  = "/superposed/display?"
@@ -113,7 +120,12 @@ class ResultsController(BaseController):
             c.query += "&step_1_start_ts=" + min(c.timestamp)
             c.query += "&step_1_end_ts=" + max(c.timestamp)
         else:
-            for result in mdb_handler.collection.find({"url":url}).sort("timestamp",-1):
+            results = mdb_handler.collection.find(
+                {"url" : url},
+                fields = ["timestamp"],
+                sort   = [("timestamp", -1)]
+            )
+            for result in results:
                 c.timestamp.append(result["timestamp"])
 
             c.query = 'None'
@@ -140,25 +152,35 @@ class ResultsController(BaseController):
         # Read data for timeline from database in custom format
         # (hash separated)
         if mode == 'label':
-            for result in mdb_handler.collection.find({"label":label}).sort("timestamp",1):
+            results = mdb_handler.collection.find(
+                {"label" : label},
+                fields = ["timestamp", "full_load_time", "total_size", "requests", "ps_scores"],
+                sort   = [("timestamp", 1)]
+            )
+            for result in results:
                 ts_points       += str(result["timestamp"]) + "#"
                 time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
                 size_points     += str(result["total_size"]) + "#"
                 req_points      += str(result["requests"]) + "#"
-                score_points    += str(result['ps_scores']['Total Score']) + "#"
+                score_points    += str(result["ps_scores"]["Total Score"]) + "#"
         else:
-            for result in mdb_handler.collection.find({"url":url}).sort("timestamp",1):
+            results = mdb_handler.collection.find(
+                {"url" : url},
+                fields = ["timestamp", "full_load_time", "total_size", "requests", "ps_scores"],
+                sort   = [("timestamp", 1)]
+            )
+            for result in results:
                 ts_points       += str(result["timestamp"]) + "#"
                 time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
                 size_points     += str(result["total_size"]) + "#"
                 req_points      += str(result["requests"]) + "#"
-                score_points    += str(result['ps_scores']['Total Score']) + "#"
+                score_points    += str(result["ps_scores"]["Total Score"]) + "#"
 
-        return ts_points[:-1]+";"\
-                +time_points[:-1]+";"\
-                +size_points[:-1]+";"\
-                +req_points[:-1]+";"\
-                +score_points[:-1]
+        return ts_points[:-1]   + ";" \
+             + time_points[:-1] + ";" \
+             + size_points[:-1] + ";" \
+             + req_points[:-1]  + ";" \
+             + score_points[:-1]
 
     @restrict('GET')
     def runinfo(self):
@@ -171,7 +193,9 @@ class ResultsController(BaseController):
         timestamp = request.GET['timestamp']
 
         # MongoDB query
-        test_results = mdb_handler.collection.find_one({"timestamp":timestamp})
+        test_results = mdb_handler.collection.find_one(
+            {"timestamp":timestamp}
+        )
         
         # HAR parsing
         har     = HAR(test_results['har'])
@@ -179,23 +203,23 @@ class ResultsController(BaseController):
         har.analyze()
 
         # Summary stats
-        summary = { 'full_load_time'        :test_results['full_load_time'],
-                    'onload_event'          :har.onload_event,
-                    'start_render_time'     :har.start_render_time,
-                    'time_to_first_byte'    :har.time_to_first_byte,
-                    'total_dns_time'        :har.total_dns_time,
-                    'total_transfer_time'   :har.total_transfer_time,
-                    'total_server_time'     :har.total_server_time,
-                    'avg_connecting_time'   :har.avg_connecting_time,
-                    'avg_blocking_time'     :har.avg_blocking_time,
-                    'total_size'            :test_results['total_size'],
-                    'text_size'             :har.text_size,
-                    'media_size'            :har.media_size,
-                    'cache_size'            :har.cache_size,
-                    'requests'              :test_results['requests'],
-                    'redirects'             :har.redirects,
-                    'bad_requests'          :har.bad_requests,
-                    'domains'               :len(har.domains)
+        summary = { 'full_load_time'        : test_results['full_load_time'],
+                    'onload_event'          : har.onload_event,
+                    'start_render_time'     : har.start_render_time,
+                    'time_to_first_byte'    : har.time_to_first_byte,
+                    'total_dns_time'        : har.total_dns_time,
+                    'total_transfer_time'   : har.total_transfer_time,
+                    'total_server_time'     : har.total_server_time,
+                    'avg_connecting_time'   : har.avg_connecting_time,
+                    'avg_blocking_time'     : har.avg_blocking_time,
+                    'total_size'            : test_results['total_size'],
+                    'text_size'             : har.text_size,
+                    'media_size'            : har.media_size,
+                    'cache_size'            : har.cache_size,
+                    'requests'              : test_results['requests'],
+                    'redirects'             : har.redirects,
+                    'bad_requests'          : har.bad_requests,
+                    'domains'               : len(har.domains)
         }
 
         # Domains
@@ -218,15 +242,15 @@ class ResultsController(BaseController):
             file.write( test_results['har'].encode('utf-8') )
 
         # Final JSON
-        return json.dumps({'summary'    :summary,
-                           'pagespeed'  :scores,
-                           'weights'    :har.weight_ratio(),
-                           'requests'   :har.req_ratio(),
-                           'd_weights'  :domains_weight_ratio,
-                           'd_requests' :domains_req_ratio,
-                           'har'        :har_id,
-                            })
-        
+        return json.dumps({'summary'    : summary,
+                           'pagespeed'  : scores,
+                           'weights'    : har.weight_ratio(),
+                           'requests'   : har.req_ratio(),
+                           'd_weights'  : domains_weight_ratio,
+                           'd_requests' : domains_req_ratio,
+                           'har'        : har_id,
+        })
+
     @restrict('GET')
     def harviewer(self):
         """HAR Viewer iframe"""
@@ -258,13 +282,13 @@ class ResultsController(BaseController):
             if all:
                 mdb_handler.collection.remove({"label":label})
             else:
-                mdb_handler.collection.remove({"label":label,"timestamp":timestamp})
+                mdb_handler.collection.remove({"label":label, "timestamp":timestamp})
             count = mdb_handler.collection.find({"label":label}).count()
         else:
             if all:
                 mdb_handler.collection.remove({"url":label})
             else:
-                mdb_handler.collection.remove({"url":label,"timestamp":timestamp})
+                mdb_handler.collection.remove({"url":label, "timestamp":timestamp})
             count = mdb_handler.collection.find({"url":label}).count()
 
         if count:
@@ -327,14 +351,14 @@ class ResultsController(BaseController):
             
             # Add document to collection
             mdb_handler.collection.insert({
-                "label"         :har.label,
-                "url"           :har.url,
-                "timestamp"     :time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                "full_load_time":har.full_load_time,
-                "total_size"    :har.total_size,
-                "requests"      :har.requests,                
-                "ps_scores"     :scores,
-                "har"           :har.origin
+                "label"          : har.label,
+                "url"            : har.url,
+                "timestamp"      : time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                "full_load_time" : har.full_load_time,
+                "total_size"     : har.total_size,
+                "requests"       : har.requests,
+                "ps_scores"      : scores,
+                "har"            : har.origin
             })
 
             try:
