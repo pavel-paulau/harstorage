@@ -46,7 +46,7 @@ class ChartController(BaseController):
             )
             
             # Create PNG file
-            self.render_png(svg, image_name, width, height)
+            self._render_png(svg, image_name, width, height)
         elif type == 'image/svg+xml':
             # Image extension
             ext = '.svg'
@@ -58,22 +58,22 @@ class ChartController(BaseController):
             )
             
             # Create SVG file
-            self.render_svg(svg, image_name)
+            self._render_svg(svg, image_name)
         
         # Response headers
         response.headers['Content-Disposition'] = "attachment; filename=" + filename + ext
         response.headers['Content-type']        = type
         
         # Return chuncked response
-        return self.stream_image(image_name)
+        return self._stream_image(image_name)
         
-    def render_svg(self, svg, filename):
+    def _render_svg(self, svg, filename):
         """Create SVG file"""
         
         with open(filename, 'w') as svg_file:
             svg_file.write(svg)
         
-    def render_png(self, svg, filename, width, height):
+    def _render_png(self, svg, filename, width, height):
         """Create PNG file"""
 
         img = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
@@ -83,7 +83,7 @@ class ChartController(BaseController):
 
         img.write_to_png(filename)
 
-    def stream_image(self, image_name):
+    def _stream_image(self, image_name):
         """Stream image by chunks"""
 
         with open(image_name, 'rb') as image_file:

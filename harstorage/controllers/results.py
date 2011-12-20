@@ -79,19 +79,19 @@ class ResultsController(BaseController):
         # Try to fetch data for selecetor box
         try:
             c.url = request.GET['url']
-            self.selectors(None, c.url)
+            self._selectors(None, c.url)
             c.mode  = 'url'
             c.label = c.url
         # Use label parameter instead of URL parameter
         except:
             c.label = request.GET['label']
-            self.selectors(c.label, None)
+            self._selectors(c.label, None)
             c.mode  = 'label'
             c.url   = c.label
  
         return render('./details.html')
     
-    def selectors(self, label, url):
+    def _selectors(self, label, url):
         """
         Create context data - a list of timestamps.
         Additionally generate URL for aggregation of test results

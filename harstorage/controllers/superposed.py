@@ -113,15 +113,15 @@ class SuperposedController(BaseController):
             c.metric = request.GET.get('metric', 'Average')
 
             if c.metric == 'Average':
-                time, size, req, score = self.average(results)
+                time, size, req, score = self._average(results)
             elif c.metric == 'Minimum':
-                time, size, req, score = self.minimum(results)
+                time, size, req, score = self._minimum(results)
             elif c.metric == 'Maximum':
-                time, size, req, score = self.maximum(results)
+                time, size, req, score = self._maximum(results)
             elif c.metric == '90th Percentile':
-                time, size, req, score = self.percentile(results, 0.9)
+                time, size, req, score = self._percentile(results, 0.9)
             elif c.metric == 'Median':
-                time, size, req, score = self.percentile(results, 0.5)
+                time, size, req, score = self._percentile(results, 0.5)
 
             # Data for table
             c.metrics_table[0].append( label )
@@ -146,7 +146,7 @@ class SuperposedController(BaseController):
 
         return render('./display.html')
 
-    def average(self, results):
+    def _average(self, results):
         """
         @parameter results - a dictionary with test results
 
@@ -170,7 +170,7 @@ class SuperposedController(BaseController):
 
         return avg_time, avg_size, avg_req, avg_score
 
-    def minimum(self, results):
+    def _minimum(self, results):
         """
         @parameter results - a dictionary with test results
 
@@ -184,7 +184,7 @@ class SuperposedController(BaseController):
 
         return min_time, min_size, min_req, min_score
 
-    def maximum(self, results):
+    def _maximum(self, results):
         """
         @parameter results - a dictionary with test results
 
@@ -198,7 +198,7 @@ class SuperposedController(BaseController):
 
         return max_time, max_size, max_req, max_score
 
-    def percentile(self, results, percent, key=lambda x:x):
+    def _percentile(self, results, percent, key=lambda x:x):
         """
         @parameter results - a dictionary with test results
         @parameter percent - a float value from 0.0 to 1.0
