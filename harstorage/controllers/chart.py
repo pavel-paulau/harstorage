@@ -76,12 +76,12 @@ class ChartController(BaseController):
     def _render_png(self, svg, filename, width, height):
         """Create PNG file"""
 
-        img = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-        ctx = cairo.Context(img)
+        image = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        ctx = cairo.Context(image)
 
         rsvg.Handle(None, svg).render_cairo(ctx)
 
-        img.write_to_png(filename)
+        image.write_to_png(filename)
 
     def _stream_image(self, image_name):
         """Stream image by chunks"""
