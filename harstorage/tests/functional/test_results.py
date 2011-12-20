@@ -63,12 +63,12 @@ class TestResultsController(TestController):
         # Response header
         assert 'results/details?label=validfile' in response.location
 
+        time.sleep(1)
+
         # Check data in database before
         after = collection.find({"label":'validfile'}).count()
 
         assert after - before == 1
-
-        time.sleep(1)
 
     def test_04_upload_valid_file_auto(self):
         """Upload valid file in automated mode"""
@@ -92,6 +92,8 @@ class TestResultsController(TestController):
 
         # Response header
         assert response.body == 'Successful'
+
+        time.sleep(1)
 
         # Check data in database before
         after = collection.find({"label":'validfile'}).count()

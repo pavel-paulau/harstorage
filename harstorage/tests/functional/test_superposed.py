@@ -1,4 +1,5 @@
 import pymongo
+import time
 
 from harstorage.tests import *
 
@@ -19,6 +20,8 @@ class TestTestflowController(TestController):
                 params = {'file' : file.read()},
                 status = 302
             )
+
+        time.sleep(1)
 
     def test_02_create(self):
         """Valid GET request for create form"""
