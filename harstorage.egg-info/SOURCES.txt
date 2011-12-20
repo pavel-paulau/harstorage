@@ -1,5 +1,4 @@
 MANIFEST.in
-README.txt
 setup.cfg
 setup.py
 harstorage/__init__.py
@@ -29,7 +28,6 @@ harstorage/lib/app_globals.py
 harstorage/lib/base.py
 harstorage/lib/helpers.py
 harstorage/public/favicon.ico
-harstorage/public/data/.data
 harstorage/public/images/add_button.png
 harstorage/public/images/help_button.png
 harstorage/public/images/pylons.png
@@ -39,6 +37,7 @@ harstorage/public/scripts/chosen.jquery.js
 harstorage/public/scripts/gauge.js
 harstorage/public/scripts/jquery-1.7.min.js
 harstorage/public/scripts/plots.js
+harstorage/public/scripts/preferences.js
 harstorage/public/scripts/spin.js
 harstorage/public/scripts/superpose.js
 harstorage/public/scripts/tabber.js
@@ -49,9 +48,9 @@ harstorage/public/scripts/harviewer/harPreview.js
 harstorage/public/scripts/harviewer/require.js
 harstorage/public/scripts/harviewer/core/trace.js
 harstorage/public/scripts/harviewer/domplate/domplate.js
+harstorage/public/scripts/highcharts/exporting.js
 harstorage/public/scripts/highcharts/highcharts.js
-harstorage/public/scripts/highcharts/modules/exporting.js
-harstorage/public/scripts/highcharts/themes/dark-green-custom.js
+harstorage/public/scripts/highcharts/themes.js
 harstorage/public/styles/main-ie.css
 harstorage/public/styles/main.css
 harstorage/public/styles/tabber.css
@@ -89,6 +88,7 @@ harstorage/templates/base.html
 harstorage/templates/create.html
 harstorage/templates/details.html
 harstorage/templates/display.html
+harstorage/templates/error.html
 harstorage/templates/harviewer.html
 harstorage/templates/home.html
 harstorage/templates/upload.html
@@ -98,4 +98,4 @@ harstorage/tests/functional/__init__.py
 harstorage/tests/functional/test_chart.py
 harstorage/tests/functional/test_combine.py
 harstorage/tests/functional/test_results.py
-harstorage/tests/functional/test_testflow.py
+harstorage/tests/functional/test_superposed.py
