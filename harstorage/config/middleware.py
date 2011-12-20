@@ -28,12 +28,12 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         # Handle Python exceptions
         app = ErrorHandler(app, global_conf, **config['pylons.errorware'])
 
-        # Display error documents for 400, 403, 404 status codes (and
+        # Display error documents for 400, 403, 404, 405 status codes (and
         # 500, 503 when debug is disabled)
         if asbool(config['debug']):
             app = StatusCodeRedirect(app)
         else:
-            app = StatusCodeRedirect(app, [400, 403, 404, 500, 503])
+            app = StatusCodeRedirect(app, [400, 403, 404, 405, 500, 503])
 
     # Establish the Registry for this application
     app = RegistryManager(app)
