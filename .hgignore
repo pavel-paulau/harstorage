@@ -6,8 +6,6 @@ syntax: regexp
 \.bak
 # Pylons temporary files
 ^data/
-# Builds
-dist
 # Binaries
 pagespeed_bin*
 # Page Speed debug file
