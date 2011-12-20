@@ -121,7 +121,13 @@ class TestResultsController(TestController):
             status = 405
         )
 
-        assert 'The method POST is not allowed for this resource.' in response.body
+        # Response body
+        assert '405 Method Not Allowed' in response.body
+
+        # Template context
+        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+
+        assert response.tmpl_context.message == '405 Method Not Allowed'
 
     def test_07_index_404(self):
         """Error document"""
@@ -139,8 +145,6 @@ class TestResultsController(TestController):
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
 
         assert response.tmpl_context.message == '404 Not Found'
-
-    
 
     def test_08_details_label(self):
         """Test results - label"""
