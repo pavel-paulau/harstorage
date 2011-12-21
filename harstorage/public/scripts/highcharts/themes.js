@@ -135,7 +135,7 @@ Highcharts.light = {
         colors: [
             '#669933',
             '#CC3333',
-            '#FF9933',
+            '#FF9944',
             '#996633',
             '#4572A7',
             '#80699B',
@@ -245,7 +245,7 @@ Highcharts.lightGreen = {
         colors: [
             '#669933',
             '#CC3333',
-            '#FF9933',
+            '#FF9944',
             '#996633',
             '#4572A7',
             '#80699B',
@@ -256,7 +256,7 @@ Highcharts.lightGreen = {
 		backgroundColor: {
 			linearGradient: [0, 0, 0, 500],
 			stops: [
-				[0, '#F2FBED'],
+				[0, '#FFFFFF'],
 				[1, '#99CC66']
 			]
 		},

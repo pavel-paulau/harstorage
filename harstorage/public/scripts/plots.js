@@ -71,7 +71,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
         colors = [
             '#669933',
             '#CC3333',
-            '#FF9933',
+            '#FF9944',
             '#996633',
             '#4572A7',
             '#80699B',
@@ -255,7 +255,7 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         colors = [
             '#669933',
             '#CC3333',
-            '#FF9933',
+            '#FF9944',
             '#996633',
             '#4572A7',
             '#80699B',
