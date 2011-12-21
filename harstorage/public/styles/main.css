@@ -52,7 +52,7 @@ body a:hover {
 .header #close {
     position: absolute;
     top: 7px;
-    right: 5px;
+    right: 8px;
     z-index: 110;
     font-family: "Gill Sans", Verdana;
     font-weight: bold;
