@@ -84,7 +84,8 @@ Highcharts.darkGreen = {
 	plotOptions: {
 		spline: {
 			marker: {
-				lineColor: '#333333'
+				lineColor   : '#333333',
+                                symbol      : 'diamond'
 			}
 		},
                 pie: {
@@ -192,7 +193,8 @@ Highcharts.light = {
         plotOptions: {
 		spline: {
 			marker: {
-				lineColor: '#FFFFFF'
+				lineColor   : '#FFFFFF',
+                                symbol      : 'diamond'
 			}
 		},
                 pie: {
@@ -309,7 +311,8 @@ Highcharts.lightGreen = {
         plotOptions: {
 		spline: {
 			marker: {
-				lineColor: '#FFFFFF'
+				lineColor   : '#FFFFFF',
+                                symbol      : 'diamond'
 			}
 		},
                 pie: {
