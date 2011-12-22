@@ -7,4 +7,5 @@ Author: Pavel Paulau
 Author-email: Pavel.Paulau@gmail.com
 License: BSD, see LICENSE.txt for details
 Description: HAR Storage is repository for automated client-side performance testing. It's built on MongoDB and Pylons.
-Platform: Windows, Linux
+Platform: Linux
+Platform: Windows
