@@ -8,7 +8,7 @@ class HAR():
     HAR Parser
     """
 
-    def __init__(self, har):
+    def __init__(self, har, fixed=False):
         """Deserialize HAR file and initialize variables"""
 
         # Check file size
@@ -16,13 +16,14 @@ class HAR():
             self.status = 'Empty file'
         else:
             try:
-                # Fix Fidler, HttpWatch and Charles Proxy issues
-                if har.rfind('"name" : "HttpWatch') > 0:
-                    har = self.workaround_httpwatch(har)
-                elif har.rfind('"name":"Fiddler"') > 0:
-                    har = self.workaround_fiddler(har)
-                elif har.rfind('"name":"Charles Proxy"') > 0:
-                    har = self.workaround_charles(har)
+                if not fixed:
+                    # Fix Fidler, HttpWatch and Charles Proxy issues
+                    if har.rfind('"name" : "HttpWatch') > 0:
+                        har = self.workaround_httpwatch(har)
+                    elif har.rfind('"name":"Fiddler"') > 0:
+                        har = self.workaround_fiddler(har)
+                    elif har.rfind('"name":"Charles Proxy"') > 0:
+                        har = self.workaround_charles(har)
 
                 # Deserialize HAR file            
                 self.har = json.loads(har)

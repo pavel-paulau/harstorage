@@ -198,7 +198,7 @@ class ResultsController(BaseController):
         )
         
         # HAR parsing
-        har     = HAR(test_results['har'])
+        har     = HAR(test_results['har'], True)
         har_id  = str(test_results['_id'])
         har.analyze()
 
@@ -302,9 +302,9 @@ class ResultsController(BaseController):
 
         # HAR initialization
         try:
-            har = HAR( request.POST['file'].value )
+            har = HAR(request.POST['file'].value)
         except:
-            har = HAR( request.POST['file'] )
+            har = HAR(request.POST['file'])
         
         # Analysis of uploaded data
         if har.status == 'Successful':
