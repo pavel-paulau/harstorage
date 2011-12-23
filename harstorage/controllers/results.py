@@ -256,7 +256,7 @@ class ResultsController(BaseController):
         """HAR Viewer iframe"""
 
         # HAR Viewer customization via cookie
-        response.set_cookie('phaseInterval', '-1')
+        response.set_cookie('phaseInterval', '-1', max_age=365*24*3600 )
 
         return render('./harviewer.html')
     

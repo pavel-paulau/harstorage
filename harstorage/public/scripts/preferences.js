@@ -9,7 +9,9 @@ var HARSTORAGE = HARSTORAGE || {};
  * Cookies
  */
 HARSTORAGE.create_cookie = function(name, value) {
-	document.cookie = name + "=" + value + "; path=/";
+	document.cookie = name + "=" + value + ";" +
+                          "expires=Wed, 1 Jan 2014 00:00:00 UTC;" +
+                          "path=/";
 };
 
 HARSTORAGE.read_cookie = function(name) {
