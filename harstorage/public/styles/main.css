@@ -225,6 +225,8 @@ body a:hover {
 .sp-create .howto {
     width: 980px;
     margin: 20px 0 10px 0;
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
+    font-size: 100%;
     text-align: right;
 }
 .sp-create .howto a {
@@ -239,10 +241,10 @@ body a:hover {
 }
 .sp-create .slct-start {
     float: left;
-    width: 150px;
+    width: 160px;
 }
 .sp-create .slct-end {
-    width: 150px;
+    width: 160px;
 }
 .sp-create .container {
     text-align: left;
@@ -258,7 +260,6 @@ body a:hover {
 }
 .sp-create .title {
     width: 60px;
-    font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
     margin: 4px 0 0 10px;
 }
