@@ -261,7 +261,7 @@ class TestResultsController(TestController):
         # Cookie
         cookie = response.response.headers.get('Set-Cookie')
 
-        assert cookie == 'phaseInterval=-1; Path=/'
+        assert 'phaseInterval=-1; Max-Age=31536000; Path=/;' in cookie
 
     def test_15_delete_label(self):
         """Delete - label"""
