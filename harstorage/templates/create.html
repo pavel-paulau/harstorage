@@ -34,8 +34,8 @@
                             <select name="step_1_end_ts" id="step_1_end_ts" class="slct-end" >
                             </select>
 
-                            <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" />
-                            <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" />
+                            <input id="step_1_add" type="image" src="/images/add_button.png"    class="image" />
+                            <input id="step_1_del" type="image" src="/images/remove_button.png" class="image" />
                         </div>
                     </div>
 
@@ -48,8 +48,8 @@
 
 <script type='text/javascript'>
     $LAB
-    .script("${h.url_for('/scripts/spin.js?ver=1.2.1')}").wait()
-    .script("${h.url_for('/scripts/superpose.js?ver=')}${c.rev}").wait()
+    .script("/scripts/spin.js?ver=1.2.1").wait()
+    .script("/scripts/superpose.js?ver=${c.rev}").wait()
     .wait(function(){
         var superpose_form = new HARSTORAGE.SuperposeForm();
         superpose_form.addSpinner();

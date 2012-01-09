@@ -45,7 +45,7 @@
                     <div class="title-min">Bad Requests:</div>         <div class="value-min" id="bad-requests">n/a</div>
                     <div class="title-min">Domains:</div>              <div class="value-min" id="domains">n/a</div>
 
-                    <div><input type="image" src="${h.url_for('/images/help_button.png')}" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
+                    <div><input type="image" src="/images/help_button.png" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
                 </div>
             </div>
 
@@ -80,22 +80,23 @@
         </div>
 </div>
 </center>
-<script type='text/javascript' src="${h.url_for('/scripts/tabber.js?ver=1.9')}"></script>
+<script type='text/javascript' src="/scripts/tabber.js?ver=1.9"></script>
 <script type='text/javascript'>
     $LAB
-    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
-    .script("${h.url_for('/scripts/highcharts/highcharts.js?ver=2.1.9')}").wait()
-    .script("${h.url_for('/scripts/highcharts/themes.js?ver=')}${c.rev}").wait()
-    .script("${h.url_for('/scripts/highcharts/exporting.js?ver=2.1.9')}")
-    .script("${h.url_for('/scripts/spin.js?ver=1.2.1')}").wait()
-    .script("${h.url_for('/scripts/chosen.jquery.js?ver=0.9.5')}")
-    .script("${h.url_for('/scripts/plots.js?ver=')}${c.rev}").wait()
+    .script("/scripts/jquery-1.7.min.js").wait()
+    .script("/combine/scripts" +
+            "?highcharts/highcharts.js&ver=2.1.9" +
+            "&highcharts/themes.js&ver=${c.rev}" +
+            "&highcharts/exporting.js&ver=2.1.9").wait()
+    .script("/scripts/spin.js?ver=1.2.1").wait()
+    .script("/scripts/chosen.jquery.js?ver=0.9.5")
+    .script("/scripts/plots.js?ver=${c.rev}").wait()
     .wait(function(){
         var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}");
         run_info.addSpinner();
         run_info.get();
         run_info.timedStyleChange();
-        
+
         var timeline = new HARSTORAGE.Timeline(run_info);
         timeline.get("${c.url}", "${c.label}", "${c.mode}");
     })

@@ -45,9 +45,10 @@
 
 <script type='text/javascript'>
     $LAB
-    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
-    .script("${h.url_for('/scripts/datatables/jquery.dataTables.min.js?ver=1.8.2')}").wait()
-    .script("${h.url_for('/scripts/datatables/ColReorder.min.js?ver=1.0.4')}").wait()
+    .script("/scripts/jquery-1.7.min.js").wait()
+    .script("/combine/scripts" +
+            "?datatables/jquery.dataTables.min.js&ver=1.8.2" +
+            "&datatables/ColReorder.min.js&ver=1.0.4").wait()
     .wait(function(){
         $(document).ready(function() {
             $('#stats_table').dataTable({

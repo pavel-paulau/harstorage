@@ -5,15 +5,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>${self.title()}</title>
 
-    <link rel="stylesheet" type="text/css" href="/combine/styles?ver=${c.rev}&main.css&tabber.css&datatables/table_jui.css&datatables/ColReorder.css&datatables/TableTools_JUI.css" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/chosen/chosen.css?ver=0.9.5')}" />
-    <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/datatables/jquery-ui-1.8.4.custom.css')}" />
+    <link rel="stylesheet" type="text/css" href="/combine/styles?main.css&ver=${c.rev}&tabber.css&ver=${c.rev}&datatables/table_jui.css&ver=1.8.2&datatables/ColReorder.css&ver=1.0.4&datatables/TableTools_JUI.css&ver=1.0.4" />
+    <link rel="stylesheet" type="text/css" href="/styles/chosen/chosen.css?ver=0.9.5" />
+    <link rel="stylesheet" type="text/css" href="/styles/datatables/jquery-ui-1.8.4.custom.css" />
     <!--[if IE]>
-        <link rel="stylesheet" type="text/css" href="${h.url_for('/styles/main-ie.css?ver=')}${c.rev}" />
+        <link rel="stylesheet" type="text/css" href="/styles/main-ie.css?ver=${c.rev}" />
     <![endif]-->
 
-    <script type='text/javascript' src="${h.url_for('/scripts/LAB.min.js?ver=2.0.3')}"></script>
-    <script type='text/javascript' src="${h.url_for('/scripts/preferences.js?ver=')}${c.rev}"></script>
+    <script type='text/javascript' src="/combine/scripts?LAB.min.js&ver=2.0.3&preferences.js&ver=${c.rev}"></script>
 </head>
 <body>
     <div class="header">
@@ -28,9 +27,9 @@
                 <div class="hr"></div>
                 
                 <form id="theme-list" action="none">
-                    <input class="radio" type="radio" name="theme" value="light" />       <span class="theme-name">Light<br /></span>
-                    <input class="radio" type="radio" name="theme" value="light-green" /> <span class="theme-name">Light Green<br /></span>
-                    <input class="radio" type="radio" checked="true" name="theme" value="dark-green" />  <span class="theme-name">Dark Green</span>
+                    <input class="radio" type="radio" name="theme" value="light" /><span class="theme-name">Light<br /></span>
+                    <input class="radio" type="radio" name="theme" value="light-green" /><span class="theme-name">Light Green<br /></span>
+                    <input class="radio" type="radio" checked="true" name="theme" value="dark-green" /><span class="theme-name">Dark Green</span>
                 </form>
 
                 <div class="hr"></div>
