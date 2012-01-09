@@ -211,7 +211,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
             type    : 'spline',
             yAxis   : 3,
             data    : scoreArray
-        } ]
+        }]
     });
 };
 
@@ -444,7 +444,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
     }
 
     // Chart object
-    new Highcharts.Chart({
+    return new Highcharts.Chart({
         chart: {
             renderTo            : div,
             plotBackgroundColor : null,
@@ -489,7 +489,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
         },
         series: [{
             type: 'pie',
-            data: data    
+            data: data
         }]
     });
 };
@@ -511,7 +511,7 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
     var height = Math.max(75 + 20 * rules.length, 100);
 
     // Chart object
-    new Highcharts.Chart({
+    return new Highcharts.Chart({
         chart: {
             renderTo            : 'pagespeed',
             defaultSeriesType   : 'bar',
@@ -538,7 +538,7 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
             title: {
                 text: null
             },
-            categories  : rules,
+            categories : rules,
             labels: {
                 formatter: function() {
                     if (this.value === 'Total Score') {
@@ -651,13 +651,17 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         $('#bad-requests').html         ( that.formatter(that.json.summary.bad_requests             ) );
         $('#domains').html              ( that.formatter(that.json.summary.domains                  ) );
 
-        // Resources
-        that.resources('by-size','Resources by Size', that.json.weights,  ' kB' , 450);
-        that.resources('by-req','Resources by Requests', that.json.requests, '' , 450);
+        // Resources by Size
+        that.resources('by-size', 'Resources by Size', that.json.weights, ' kB', 450);
 
-        // Domains
-        that.resources('domains-by-size','Domains by Size', that.json.d_weights,     ' kB' , 930);
-        that.resources('domains-by-req','Domains by Requests', that.json.d_requests, ''    , 930);
+        // Resources by Requests
+        that.resources('by-req', 'Resources by Requests', that.json.requests, '', 450);
+
+        // Domains by Size
+        that.resources('domains-by-size', 'Domains by Size', that.json.d_weights, ' kB', 930);
+
+        // Domains by Requests
+        that.resources('domains-by-req', 'Domains by Requests', that.json.d_requests, '', 930);
 
         // Page Speed Details
         that.pagespeed(that.json.pagespeed);
@@ -693,8 +697,8 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
     // Request data via XHR or read from cache
     
     // Get timestamp from argument of function or from select box
-    var selector    = document.getElementById('run_timestamp');
-    var timestamp;
+    var selector = document.getElementById('run_timestamp'),
+        timestamp;
 
     if ( typeof(opt_ts) !== 'undefined' ) {
         timestamp = opt_ts;
