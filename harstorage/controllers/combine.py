@@ -36,8 +36,32 @@ class CombineController(BaseController):
 
         # Additional HTTP headers
         response.headerlist = [
-            ('Content-type', 'text/css'),
-            ('Last-Modified', 'Fri, 16 Dec 2011 12:00:00 GMT')
+            ('Content-type', 'text/css')            
+        ]
+
+        return combo
+
+    @restrict('GET')
+    def scripts(self):
+        """Read list of JavaScript files and combine them"""
+
+        # Concatenation
+        for key in request.GET.keys():
+            if key != 'ver':
+                base = config['pylons.paths']['static_files']
+                try:
+                    with open(base + "/scripts/" + key) as file:
+                        try:
+                            combo += file.read()
+                        except UnboundLocalError:
+                            combo  = file.read()
+                except IOError:
+                    response.status_int = 404
+                    return None
+
+        # Additional HTTP headers
+        response.headerlist = [
+            ('Content-type', 'application/javascript')            
         ]
 
         return combo
