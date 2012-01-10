@@ -78,19 +78,19 @@
                 </div>
             </div>
         </div>
-</div>
+    </div>
 </center>
-<script type='text/javascript' src="/scripts/tabber.js?ver=1.9"></script>
 <script type='text/javascript'>
     $LAB
+    .script("/scripts/tabber.js?ver=1.9.1").wait()
     .script("/scripts/jquery-1.7.min.js").wait()
     .script("/combine/scripts" +
             "?highcharts/highcharts.js&ver=2.1.9" +
             "&highcharts/themes.js&ver=${c.rev}" +
             "&highcharts/exporting.js&ver=2.1.9").wait()
-    .script("/scripts/spin.js?ver=1.2.1").wait()
-    .script("/scripts/chosen.jquery.js?ver=0.9.5")
-    .script("/scripts/plots.js?ver=${c.rev}").wait()
+    .script("/combine/scripts?spin.js&ver=1.2.1" + 
+            "&chosen.jquery.js&ver=0.9.5" +
+            "&plots.js&ver=${c.rev}").wait()
     .wait(function(){
         var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}");
         run_info.addSpinner();
