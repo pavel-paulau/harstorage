@@ -1,5 +1,3 @@
-"use strict";
-
 /*
  * Name space
  */
@@ -9,11 +7,15 @@ var HARSTORAGE = HARSTORAGE || {};
  * Timeline chart
  */
 HARSTORAGE.Timeline = function(run_info) {
+    "use strict";
+
     this.run_info = run_info;
 };
 
 // Get data for timeline
 HARSTORAGE.Timeline.prototype.get = function(url, label, mode) {
+    "use strict";
+
     // Pointer
     var that = this;
 
@@ -34,6 +36,8 @@ HARSTORAGE.Timeline.prototype.get = function(url, label, mode) {
 
 // Draw timeline
 HARSTORAGE.Timeline.prototype.draw = function(points) {
+    "use strict";
+
     // Pointer
     var that = this;
 
@@ -218,9 +222,13 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
 /*
  * Column Chart
  */
-HARSTORAGE.Columns = function() {};
+HARSTORAGE.Columns = function() {
+    "use strict";
+};
 
 HARSTORAGE.Columns.prototype.draw = function(points) {
+    "use strict";
+
     var splitResults = points.split(';');
 
     var tsArray     = splitResults[0].split('#'),
@@ -394,6 +402,8 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
  * Test results
  */
 HARSTORAGE.RunInfo = function(mode, label, query) {
+    "use strict";
+
     // Pointer
     var that = this;
 
@@ -434,6 +444,8 @@ HARSTORAGE.RunInfo = function(mode, label, query) {
 
 //Page Resources
 HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, width) {
+    "use strict";
+
     // Extract data
     var data  = [];
 
@@ -496,6 +508,8 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
 
 //Page Speed details
 HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
+    "use strict";
+
     // Spliting data for chart
     var rules   = ['Total Score'],
         scores  = [pagespeed['Total Score']];
@@ -581,6 +595,8 @@ HARSTORAGE.RunInfo.prototype.pagespeed = function (pagespeed) {
 
 //Get data for Run Info
 HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
+    "use strict";
+
     // Pointer
     var that = this;
 
@@ -615,7 +631,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
                 return value + ' ' + units;
             }
         case "string":
-            return value;            
+            return value;
         default:
             return "n/a";
         }
@@ -735,6 +751,8 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
 //Delete current run from set of test results
 HARSTORAGE.RunInfo.prototype.del = function(id, mode, all) {
+    "use strict";
+
     //
     var answer = window.confirm('Are you sure?');
 
@@ -761,6 +779,8 @@ HARSTORAGE.RunInfo.prototype.del = function(id, mode, all) {
 
 // Add delay for async rendering
 HARSTORAGE.RunInfo.prototype.changeVisibility = function () {
+    "use strict";
+
     var del_btn     = document.getElementById('del-btn'),
         del_all_btn = document.getElementById('del-all-btn'),
         newtab_btn  = document.getElementById('newtab');
@@ -771,10 +791,14 @@ HARSTORAGE.RunInfo.prototype.changeVisibility = function () {
 };
 
 HARSTORAGE.RunInfo.prototype.timedStyleChange = function () {
+    "use strict";
+
     setTimeout(this.changeVisibility, 1000);    
 };
 
 HARSTORAGE.RunInfo.prototype.addSpinner = function() {
+    "use strict";
+
     var opts = {
             lines:  10,
             length: 5,
@@ -793,6 +817,8 @@ HARSTORAGE.RunInfo.prototype.addSpinner = function() {
  * Auto Height module
  */
 HARSTORAGE.autoHeight = function() {
+    "use strict";
+
     var iframe = document.getElementById('harviewer-iframe');
     iframe.height = iframe.contentDocument.body.offsetHeight;
 };
@@ -801,6 +827,8 @@ HARSTORAGE.autoHeight = function() {
  * Aggregated Statistics
  */
 HARSTORAGE.AggregatedStatistics = function() {
+    "use strict";
+
     // Determine metric type from Query string
     var metric,
         href;
