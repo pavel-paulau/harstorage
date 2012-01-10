@@ -1,2 +1,325 @@
-//fgnass.github.com/spin.js#v1.2.1
-(function(a,b,c){function n(a){var b={x:a.offsetLeft,y:a.offsetTop};while(a=a.offsetParent)b.x+=a.offsetLeft,b.y+=a.offsetTop;return b}function m(a,b){for(var d in b)a[d]===c&&(a[d]=b[d]);return a}function l(a,b){for(var c in b)a.style[k(a,c)||c]=b[c];return a}function k(a,b){var e=a.style,f,g;if(e[b]!==c)return b;b=b.charAt(0).toUpperCase()+b.slice(1);for(g=0;g<d.length;g++){f=d[g]+b;if(e[f]!==c)return f}}function j(a,b,c,d){var g=["opacity",b,~~(a*100),c,d].join("-"),h=.01+c/d*100,j=Math.max(1-(1-a)/b*(100-h),a),k=f.substring(0,f.indexOf("Animation")).toLowerCase(),l=k&&"-"+k+"-"||"";e[g]||(i.insertRule("@"+l+"keyframes "+g+"{"+"0%{opacity:"+j+"}"+h+"%{opacity:"+a+"}"+(h+.01)+"%{opacity:1}"+(h+b)%100+"%{opacity:"+a+"}"+"100%{opacity:"+j+"}"+"}",0),e[g]=1);return g}function h(a,b,c){c&&!c.parentNode&&h(a,c),a.insertBefore(b,c||null);return a}function g(a,c){var d=b.createElement(a||"div"),e;for(e in c)d[e]=c[e];return d}var d=["webkit","Moz","ms","O"],e={},f;h(b.getElementsByTagName("head")[0],g("style"));var i=b.styleSheets[b.styleSheets.length-1],o=function q(a){if(!this.spin)return new q(a);this.opts=m(a||{},{lines:12,length:7,width:5,radius:10,color:"#000",speed:1,trail:100,opacity:.25,fps:20})},p=o.prototype={spin:function(a){this.stop();var b=this,c=b.el=l(g(),{position:"relative"}),d,e;a&&(e=n(h(a,c,a.firstChild)),d=n(c),l(c,{left:(a.offsetWidth>>1)-d.x+e.x+"px",top:(a.offsetHeight>>1)-d.y+e.y+"px"})),c.setAttribute("aria-role","progressbar"),b.lines(c,b.opts);if(!f){var i=b.opts,j=0,k=i.fps,m=k/i.speed,o=(1-i.opacity)/(m*i.trail/100),p=m/i.lines;(function q(){j++;for(var a=i.lines;a;a--){var d=Math.max(1-(j+a*p)%m*o,i.opacity);b.opacity(c,i.lines-a,d,i)}b.timeout=b.el&&setTimeout(q,~~(1e3/k))})()}return b},stop:function(){var a=this.el;a&&(clearTimeout(this.timeout),a.parentNode&&a.parentNode.removeChild(a),this.el=c);return this}};p.lines=function(a,b){function e(a,d){return l(g(),{position:"absolute",width:b.length+b.width+"px",height:b.width+"px",background:a,boxShadow:d,transformOrigin:"left",transform:"rotate("+~~(360/b.lines*c)+"deg) translate("+b.radius+"px"+",0)",borderRadius:(b.width>>1)+"px"})}var c=0,d;for(;c<b.lines;c++)d=l(g(),{position:"absolute",top:1+~(b.width/2)+"px",transform:"translate3d(0,0,0)",opacity:b.opacity,animation:f&&j(b.opacity,b.trail,c,b.lines)+" "+1/b.speed+"s linear infinite"}),b.shadow&&h(d,l(e("#000","0 0 4px #000"),{top:"2px"})),h(a,h(d,e(b.color,"0 0 1px rgba(0,0,0,.1)")));return a},p.opacity=function(a,b,c){b<a.childNodes.length&&(a.childNodes[b].style.opacity=c)},function(){var a=l(g("group"),{behavior:"url(#default#VML)"}),b;if(!k(a,"transform")&&a.adj){for(b=4;b--;)i.addRule(["group","roundrect","fill","stroke"][b],"behavior:url(#default#VML)");p.lines=function(a,b){function k(a,d,i){h(f,h(l(e(),{rotation:360/b.lines*a+"deg",left:~~d}),h(l(g("roundrect",{arcsize:1}),{width:c,height:b.width,left:b.radius,top:-b.width>>1,filter:i}),g("fill",{color:b.color,opacity:b.opacity}),g("stroke",{opacity:0}))))}function e(){return l(g("group",{coordsize:d+" "+d,coordorigin:-c+" "+ -c}),{width:d,height:d})}var c=b.length+b.width,d=2*c,f=e(),i=~(b.length+b.radius+b.width)+"px",j;if(b.shadow)for(j=1;j<=b.lines;j++)k(j,-2,"progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)");for(j=1;j<=b.lines;j++)k(j);return h(l(a,{margin:i+" 0 0 "+i,zoom:1}),f)},p.opacity=function(a,b,c,d){var e=a.firstChild;d=d.shadow&&d.lines||0,e&&b+d<e.childNodes.length&&(e=e.childNodes[b+d],e=e&&e.firstChild,e=e&&e.firstChild,e&&(e.opacity=c))}}else f=k(a,"animation")}(),a.Spinner=o})(window,document)
+/**
+ * Copyright (c) 2011 Felix Gnass [fgnass at neteye dot de]
+ * Licensed under the MIT license
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var prefixes = ['webkit', 'Moz', 'ms', 'O'], /* Vendor prefixes */
+        animations = {}, /* Animation rules keyed by their name */
+        useCssAnimations;
+
+    /**
+    * Utility function to create elements. If no tag name is given,
+    * a DIV is created. Optionally properties can be passed.
+    */
+    function createEl(tag, prop) {
+        var el = document.createElement(tag || 'div'),
+            n;
+
+        for (n in prop) {
+            if (prop.hasOwnProperty(n)) {
+                el[n] = prop[n];
+            }
+        }
+        return el;
+    }
+
+    /**
+    * Inserts child1 before child2. If child2 is not specified,
+    * child1 is appended. If child2 has no parentNode, child2 is
+    * appended first.
+    */
+    function ins(parent, child1, child2) {
+        if (child2 && !child2.parentNode) {
+            ins(parent, child2);
+        }
+        parent.insertBefore(child1, child2||null);
+        return parent;
+    }
+
+    /**
+    * Insert a new stylesheet to hold the @keyframe or VML rules.
+    */
+    var sheet = (function() {
+        var el = createEl('style');
+        ins(document.getElementsByTagName('head')[0], el);
+        return el.sheet || el.styleSheet;
+    })();
+
+    /**
+    * Creates an opacity keyframe animation rule and returns its name.
+    * Since most mobile Webkits have timing issues with animation-delay,
+    * we create separate rules for each line/segment.
+    */
+    function addAnimation(alpha, trail, i, lines) {
+        var name = ['opacity', trail, ~~(alpha*100), i, lines].join('-'),
+            start = 0.01 + i/lines*100,
+            z = Math.max(1-(1-alpha)/trail*(100-start) , alpha),
+            prefix = useCssAnimations.substring(0, useCssAnimations.indexOf('Animation')).toLowerCase(),
+            pre = prefix && '-'+prefix+'-' || '';
+
+        if (!animations[name]) {
+            sheet.insertRule(
+                '@' + pre + 'keyframes ' + name + '{' +
+                '0%{opacity:'+z+'}' +
+                start + '%{opacity:'+ alpha + '}' +
+                (start+0.01) + '%{opacity:1}' +
+                (start+trail)%100 + '%{opacity:'+ alpha + '}' +
+                '100%{opacity:'+ z + '}' +
+                '}', 0
+            );
+            animations[name] = 1;
+        }
+        return name;
+    }
+
+    /**
+    * Tries various vendor prefixes and returns the first supported property.
+    **/
+    function vendor(el, prop) {
+        var s = el.style,
+            pp,
+            i;
+
+        if (s[prop] !== undefined) {
+            return prop;
+        }
+        prop = prop.charAt(0).toUpperCase() + prop.slice(1);
+        for (i=0; i<prefixes.length; i++) {
+            pp = prefixes[i]+prop;
+            if(s[pp] !== undefined) {
+                return pp;
+            }
+        }
+    }
+
+    /**
+    * Sets multiple style properties at once.
+    */
+    function css(el, prop) {
+        for (var n in prop) {
+            if (prop.hasOwnProperty(n)) {
+                el.style[vendor(el, n)||n] = prop[n];
+            }
+        }
+        return el;
+    }
+
+    /**
+    * Fills in default values.
+    */
+    function merge(obj) {
+        for (var i=1; i < arguments.length; i++) {
+            var def = arguments[i];
+            for (var n in def) {
+                if (obj[n] === undefined) {
+                    obj[n] = def[n];
+                }
+            }
+        }
+        return obj;
+    }
+
+    /**
+    * Returns the absolute page-offset of the given element.
+    */
+    function pos(el) {
+        var o = {x:el.offsetLeft, y:el.offsetTop};
+        while ((el = el.offsetParent)) {
+            o.x+=el.offsetLeft;
+            o.y+=el.offsetTop;
+        }
+        return o;
+    }
+
+    /** The constructor */
+    var Spinner = function Spinner(o) {
+        if (!this.spin) {
+            return new Spinner(o);
+        }
+        this.opts = merge(o || {}, Spinner.defaults, defaults);
+    };
+    
+    var defaults = Spinner.defaults = {
+        lines: 12, // The number of lines to draw
+        length: 7, // The length of each line
+        width: 5, // The line thickness
+        radius: 10, // The radius of the inner circle
+        color: '#000', // #rgb or #rrggbb
+        speed: 1, // Rounds per second
+        trail: 100, // Afterglow percentage
+        opacity: 1/4,
+        fps: 20
+    };
+    var proto = Spinner.prototype = {
+        spin: function(target) {
+            this.stop();
+            var self = this,
+                el = self.el = css(createEl(), {position: 'relative'}),
+                ep, // element position
+                tp; // target position
+
+            if (target) {
+                tp = pos(ins(target, el, target.firstChild));
+                ep = pos(el);
+                css(el, {
+                    left: (target.offsetWidth >> 1) - ep.x+tp.x + 'px',
+                    top: (target.offsetHeight >> 1) - ep.y+tp.y + 'px'
+                });
+            }
+            el.setAttribute('aria-role', 'progressbar');
+            self.lines(el, self.opts);
+            if (!useCssAnimations) {
+                // No CSS animation support, use setTimeout() instead
+                var o = self.opts,
+                    i = 0,
+                    fps = o.fps,
+                    f = fps/o.speed,
+                    ostep = (1-o.opacity)/(f*o.trail / 100),
+                    astep = f/o.lines;
+
+                (function anim() {
+                    i++;
+                    for (var s=o.lines; s; s--) {
+                        var alpha = Math.max(1-(i+s*astep)%f * ostep, o.opacity);
+                        self.opacity(el, o.lines-s, alpha, o);
+                    }
+                    self.timeout = self.el && setTimeout(anim, ~~(1000/fps));
+                })();
+            }
+            return self;
+        },
+        stop: function() {
+            var el = this.el;
+            if (el) {
+                clearTimeout(this.timeout);
+                if (el.parentNode) {
+                    el.parentNode.removeChild(el);
+                }
+                this.el = undefined;
+            }
+            return this;
+        }
+    };
+
+    proto.lines = function(el, o) {
+        var i = 0,
+            seg;
+
+        function fill(color, shadow) {
+            return css(createEl(), {
+                position: 'absolute',
+                width: (o.length+o.width) + 'px',
+                height: o.width + 'px',
+                background: color,
+                boxShadow: shadow,
+                transformOrigin: 'left',
+                transform: 'rotate(' + ~~(360/o.lines*i) + 'deg) translate(' + o.radius+'px' +',0)',
+                borderRadius: (o.width>>1) + 'px'
+            });
+        }
+
+        for (; i < o.lines; i++) {
+            seg = css(createEl(), {
+                position: 'absolute',
+                top: 1+~(o.width/2) + 'px',
+                transform: 'translate3d(0,0,0)',
+                opacity: o.opacity,
+                animation: useCssAnimations && addAnimation(o.opacity, o.trail, i, o.lines) + ' ' + 1/o.speed + 's linear infinite'
+            });
+            if (o.shadow) {
+                ins(seg, css(fill('#000', '0 0 4px ' + '#000'), {top: 2+'px'}));
+            }
+            ins(el, ins(seg, fill(o.color, '0 0 1px rgba(0,0,0,.1)')));
+        }
+        return el;
+    };
+  
+    proto.opacity = function(el, i, val) {
+        if (i < el.childNodes.length) {
+            el.childNodes[i].style.opacity = val;
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////
+    // VML rendering for IE
+    /////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Check and init VML support
+    */
+    (function() {
+        var s = css(createEl('group'), {behavior: 'url(#default#VML)'}),
+            i;
+
+        if (!vendor(s, 'transform') && s.adj) {
+            
+            // VML support detected. Insert CSS rules ...
+            for (i=4; i--;) {
+                sheet.addRule(['group', 'roundrect', 'fill', 'stroke'][i], 'behavior:url(#default#VML)');
+            }
+
+            proto.lines = function(el, o) {
+                var r = o.length+o.width,
+                    s = 2*r;
+
+                function grp() {
+                    return css(createEl('group', {coordsize: s +' '+s, coordorigin: -r +' '+-r}), {width: s, height: s});
+                }
+
+                var g = grp(),
+                    margin = ~(o.length+o.radius+o.width)+'px',
+                    i;
+
+                function seg(i, dx, filter) {
+                    ins(g,
+                        ins(css(grp(), {rotation: 360 / o.lines * i + 'deg', left: ~~dx}),
+                            ins(css(createEl('roundrect',
+                                        {arcsize: 1}), {
+                                        width: r,
+                                        height: o.width,
+                                        left: o.radius,
+                                        top: -o.width>>1,
+                                        filter: filter}),
+                                createEl('fill', {color: o.color, opacity: o.opacity}),
+                                createEl('stroke', {opacity: 0}) // transparent stroke to fix color bleeding upon opacity change
+                            )
+                        )
+                    );
+                }
+
+                if (o.shadow) {
+                    for (i = 1; i <= o.lines; i++) {
+                        seg(i, -2, 'progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)');
+                    }
+                }
+                for (i = 1; i <= o.lines; i++) {
+                    seg(i);
+                }
+                return ins(css(el, {
+                    margin: margin + ' 0 0 ' + margin,
+                    zoom: 1
+                }), g);
+            };
+
+            proto.opacity = function(el, i, val, o) {
+                var c = el.firstChild;
+                o = o.shadow && o.lines || 0;
+                if (c && i+o < c.childNodes.length) {
+                    c = c.childNodes[i+o]; c = c && c.firstChild; c = c && c.firstChild;
+                    if (c) {
+                        c.opacity = val;
+                    }
+                }
+            };
+        }
+        else {
+            useCssAnimations = vendor(s, 'animation');
+        }
+    })();
+
+    window.Spinner = Spinner;
+
+})(window, document);
