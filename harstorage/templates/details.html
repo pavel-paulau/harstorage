@@ -84,6 +84,9 @@
     $LAB
     .script("/scripts/tabber.js?ver=1.9.1").wait()
     .script("/scripts/jquery-1.7.min.js").wait()
+    .script("/scripts/harviewer/require.js").wait()
+    .script("/scripts/harviewer/core/trace.js").wait()
+    .script("/scripts/harviewer/domplate/domplate.js").wait()
     .script("/combine/scripts" +
             "?highcharts/highcharts.js&ver=2.1.9" +
             "&highcharts/themes.js&ver=${c.rev}" +

@@ -667,21 +667,6 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         $('#bad-requests').html         ( that.formatter(that.json.summary.bad_requests             ) );
         $('#domains').html              ( that.formatter(that.json.summary.domains                  ) );
 
-        // Resources by Size
-        that.resources('by-size', 'Resources by Size', that.json.weights, ' kB', 450);
-
-        // Resources by Requests
-        that.resources('by-req', 'Resources by Requests', that.json.requests, '', 450);
-
-        // Domains by Size
-        that.resources('domains-by-size', 'Domains by Size', that.json.d_weights, ' kB', 930);
-
-        // Domains by Requests
-        that.resources('domains-by-req', 'Domains by Requests', that.json.d_requests, '', 930);
-
-        // Page Speed Details
-        that.pagespeed(that.json.pagespeed);
-
         // HAR Viewer
         var iframe  = document.createElement('iframe');
         var url = '/results/harviewer?inputUrl=/results/download%3Fid%3D';
@@ -705,6 +690,46 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         newtab.onclick = function () {
             window.open(url);
         };
+
+        // Resources by Size
+        setTimeout(
+            function() {
+                that.resources('by-size', 'Resources by Size', that.json.weights, ' kB', 450);
+            },
+            50
+        );
+
+        // Resources by Requests
+        setTimeout(
+            function() {
+                that.resources('by-req', 'Resources by Requests', that.json.requests, '', 450);
+            },
+            150
+        );
+
+        // Domains by Size
+        setTimeout(
+            function() {
+                that.resources('domains-by-size', 'Domains by Size', that.json.d_weights, ' kB', 930);
+            },
+            250
+        );
+
+        // Domains by Requests
+        setTimeout(
+            function() {
+                that.resources('domains-by-req', 'Domains by Requests', that.json.d_requests, '', 930);
+            },
+            350
+        );
+
+        // Page Speed Details
+        setTimeout(
+            function() {
+                that.pagespeed(that.json.pagespeed);
+            },
+            450
+        );
 
         // Hide Ajax spinner
         that.spinner.style.display = 'none';
@@ -793,7 +818,7 @@ HARSTORAGE.RunInfo.prototype.changeVisibility = function () {
 HARSTORAGE.RunInfo.prototype.timedStyleChange = function () {
     "use strict";
 
-    setTimeout(this.changeVisibility, 1000);    
+    setTimeout(this.changeVisibility, 1000);
 };
 
 HARSTORAGE.RunInfo.prototype.addSpinner = function() {
