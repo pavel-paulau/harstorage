@@ -35,7 +35,7 @@ class SuperposedController(BaseController):
         for label in md_handler.collection.distinct('label'):
             c.labels.append(label)
         
-        return render('./create.html')
+        return render('./create/core.html')
     
     @restrict('GET')
     def dates(self):
@@ -148,7 +148,7 @@ class SuperposedController(BaseController):
                  + req_points[:-1]  + ';' \
                  + score_points[:-1]
 
-        return render('./display.html')
+        return render('./display/core.html')
 
     def _average(self, results):
         """

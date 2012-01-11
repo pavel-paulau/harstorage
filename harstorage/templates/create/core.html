@@ -1,5 +1,10 @@
-<%inherit file="/base.html"/>
-<%def name="title()">Superposed Tests</%def>
+<%namespace name="jsloader" file="/create/jsloader.html"/>
+<%namespace name="dochead"  file="/common/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+
+${dochead.html("Superposed Tests")}
+${header.html()}
 <center>
     <div class="sp-create">
         <div class="howto">
@@ -39,19 +44,13 @@
                         </div>
                     </div>
 
-                    <input type="submit" class="submit" id="submit" value="View Result" />
+                    <div>                        
+                        <input type="submit" class="submit" id="submit" value="View Result" />
+                    </div>
                 </fieldset>
             </form>
         </div>
     </div>
 </center>
-
-<script type='text/javascript'>
-    $LAB
-    .script("/combine/scripts?spin.js&ver=1.2.1&superpose.js&ver=${c.rev}").wait()
-    .wait(function(){
-        var superpose_form = new HARSTORAGE.SuperposeForm();
-        superpose_form.addSpinner();
-        superpose_form.setTimestamps('step_1_label');
-    })
-</script>
+${jsloader.html()}
+${footer.html()}

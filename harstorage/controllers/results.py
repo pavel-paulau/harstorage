@@ -70,7 +70,7 @@ class ResultsController(BaseController):
             c.metrics_table[5].append( round(result["full_load_time"]/1000.0,1) )
             c.metrics_table[6].append( result["timestamp"]                      )
 
-        return render('./home.html')
+        return render('./home/core.html')
 
     @restrict('GET')
     def details(self):
@@ -89,7 +89,7 @@ class ResultsController(BaseController):
             c.mode  = 'label'
             c.url   = c.label
  
-        return render('./details.html')
+        return render('./details/core.html')
     
     def _selectors(self, label, url):
         """

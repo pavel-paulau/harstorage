@@ -1,5 +1,10 @@
-<%inherit file="/base.html"/>
-<%def name="title()">HAR Storage</%def>
+<%namespace name="jsloader" file="/home/jsloader.html"/>
+<%namespace name="dochead"  file="/home/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+
+${dochead.html("HAR Storage")}
+${header.html()}
 <center>
     <div class="uploader">
         <form action="/results/upload" enctype="multipart/form-data" method="post">
@@ -42,22 +47,5 @@
         <button type="button" onclick="window.location.href='/superposed/create';">Aggregate and Compare</button>
     </div>
 </center>
-
-<script type='text/javascript'>
-    $LAB
-    .script("/scripts/jquery-1.7.min.js").wait()
-    .script("/combine/scripts" +
-            "?datatables/jquery.dataTables.min.js&ver=1.8.2" +
-            "&datatables/ColReorder.min.js&ver=1.0.4").wait()
-    .wait(function(){
-        $(document).ready(function() {
-            $('#stats_table').dataTable({
-                "bJQueryUI": true,
-                "sPaginationType": "full_numbers",
-                "sDom": 'R<"H"lfr>t<"F"ip<',
-                "bAutoWidth": false,
-                "iDisplayLength": 25
-            });
-        });
-    })
-</script>
+${jsloader.html()}
+${footer.html()}

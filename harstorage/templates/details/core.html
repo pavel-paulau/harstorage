@@ -1,6 +1,10 @@
-<%inherit file="/base.html"/>
-<%def name="title()">Details | ${c.label}</%def>
+<%namespace name="jsloader" file="/details/jsloader.html"/>
+<%namespace name="dochead"  file="/details/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
 
+${dochead.html("Details | " + c.label)}
+${header.html()}
 <center>
     <div class="results">
         <div id="timeline"></div>
@@ -80,27 +84,5 @@
         </div>
     </div>
 </center>
-<script type='text/javascript'>
-    $LAB
-    .script("/scripts/tabber.js?ver=1.9.1").wait()
-    .script("/scripts/jquery-1.7.min.js").wait()
-    .script("/scripts/harviewer/require.js").wait()
-    .script("/scripts/harviewer/core/trace.js").wait()
-    .script("/scripts/harviewer/domplate/domplate.js").wait()
-    .script("/combine/scripts" +
-            "?highcharts/highcharts.js&ver=2.1.9" +
-            "&highcharts/themes.js&ver=${c.rev}" +
-            "&highcharts/exporting.js&ver=2.1.9").wait()
-    .script("/combine/scripts?spin.js&ver=1.2.1" + 
-            "&chosen.jquery.js&ver=0.9.5" +
-            "&plots.js&ver=${c.rev}").wait()
-    .wait(function(){
-        var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}");
-        run_info.addSpinner();
-        run_info.get();
-        run_info.timedStyleChange();
-
-        var timeline = new HARSTORAGE.Timeline(run_info);
-        timeline.get("${c.url}", "${c.label}", "${c.mode}");
-    })
-</script>
+${jsloader.html()}
+${footer.html()}

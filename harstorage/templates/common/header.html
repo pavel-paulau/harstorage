@@ -1,0 +1,28 @@
+<%def name="html()">
+<div class="header">
+    <div class="left"><a href="/">HAR Storage</a></div>
+    <div class="right"><a href="http://code.google.com/p/harstorage/">Project Page</a></div>
+    <div class="right"><a href="javascript:HARSTORAGE.view_preferences()">Preferences</a></div>
+    <div class="hr"></div>
+
+    <div id="preferences">
+        <strong>Chart Theme</strong>
+
+        <div class="hr"></div>
+
+        <form id="theme-list" action="none">
+            <input class="radio" type="radio" name="theme" value="light" /><span class="theme-name">Light<br /></span>
+            <input class="radio" type="radio" name="theme" value="light-green" /><span class="theme-name">Light Green<br /></span>
+            <input class="radio" type="radio" checked="true" name="theme" value="dark-green" /><span class="theme-name">Dark Green</span>
+        </form>
+
+        <div class="hr"></div>
+
+        <button type="button" onclick="javascript:HARSTORAGE.update_preferences();">Apply</button>
+
+        <div id="close">
+            <a href="javascript:HARSTORAGE.view_preferences()">X</a>
+        </div>
+    </div>
+</div>
+</%def>

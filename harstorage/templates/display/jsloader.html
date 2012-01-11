@@ -1,0 +1,36 @@
+<%def name="html()">
+<script type='text/javascript'>
+    $LAB
+    .script("/scripts/jquery-1.7.min.js").wait()
+    .script("/combine/scripts" +
+            "?datatables/jquery.dataTables.min.js&ver=1.8.2" +
+            "&datatables/ColReorder.min.js&ver=1.0.4" +
+            "&datatables/TableTools.min.js&ver=1.0.4").wait()
+    .script("/combine/scripts" +
+            "?highcharts/highcharts.js&ver=2.1.9" +
+            "&highcharts/themes.js&ver=${c.rev}" +
+            "&highcharts/exporting.js&ver=2.1.9").wait()
+    .script("/scripts/chosen.jquery.js?ver=0.9.5")
+    .script("/scripts/plots.js?ver=${c.rev}").wait()
+    .wait(function(){
+        var columns = new HARSTORAGE.Columns();
+        columns.draw("${c.points}");
+
+        HARSTORAGE.AggregatedStatistics();
+
+        $(document).ready(function() {
+            $('#stats_table').dataTable({
+                "bJQueryUI": true,
+                "sPaginationType": "full_numbers",
+                "sDom": 'R<"H"Tfr>t<"F"ip>',
+                "oTableTools": {
+                        "sSwfPath": "/swf/copy_cvs_xls.swf",
+                        "aButtons": ["copy", "csv", "xls"]
+                },
+                "bAutoWidth": false,
+                "iDisplayLength": 25
+            });
+        });
+    })
+</script>
+</%def>
