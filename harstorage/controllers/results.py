@@ -59,16 +59,16 @@ class ResultsController(BaseController):
         # Populate data table with the latest test results
         for group in latest_results:
             result = mdb_handler.collection.find_one(
-                {'label' : group['label'], 'timestamp' : group['timestamp']}
+                {'label' : group['label'], 'timestamp' : group['timestamp']},
+                fields = ['timestamp', 'label', 'url', 'total_size', 'requests', 'full_load_time'],
             )
-            
-            c.metrics_table[0].append( result['label']                          )
-            c.metrics_table[1].append( result['url']                            )
-            c.metrics_table[2].append( result['ps_scores']['Total Score']       )
-            c.metrics_table[3].append( result["total_size"]                     )
-            c.metrics_table[4].append( result["requests"]                       )
-            c.metrics_table[5].append( round(result["full_load_time"]/1000.0,1) )
-            c.metrics_table[6].append( result["timestamp"]                      )
+
+            c.metrics_table[0].append( result['timestamp']                      )
+            c.metrics_table[1].append( result['label']                          )
+            c.metrics_table[2].append( result['url']                            )
+            c.metrics_table[3].append( result['total_size']                     )
+            c.metrics_table[4].append( result['requests']                       )
+            c.metrics_table[5].append( round(result['full_load_time']/1000.0,1) )
 
         return render('./home/core.html')
 
