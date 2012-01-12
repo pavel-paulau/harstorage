@@ -50,17 +50,19 @@ class ResultsController(BaseController):
                     if ( doc.timestamp > prev.timestamp ) { \
                         prev.timestamp = doc.timestamp;     \
                     }                                       \
-                }"
+                }"            
         )
 
         # Numner of records
         c.rowcount = len(latest_results)
 
+        latest_results = sorted(latest_results, key = lambda timestamp: timestamp['timestamp'], reverse=True)
+
         # Populate data table with the latest test results
         for group in latest_results:
             result = mdb_handler.collection.find_one(
                 {'label' : group['label'], 'timestamp' : group['timestamp']},
-                fields = ['timestamp', 'label', 'url', 'total_size', 'requests', 'full_load_time'],
+                fields = ['timestamp', 'label', 'url', 'total_size', 'requests', 'full_load_time']
             )
 
             c.metrics_table[0].append( result['timestamp']                      )
