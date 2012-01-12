@@ -140,7 +140,7 @@ body a:hover {
 /* Summary Table on Home Page */
 .summary {
     width: 960px;
-    display: none;
+    visibility: hidden;
 }
 .summary .title {
     font-family: times, "Times New Roman", times-roman, georgia, serif;
