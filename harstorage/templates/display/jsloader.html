@@ -15,7 +15,7 @@
             "&highcharts/exporting.js&ver=2.1.9").wait()
     % endif
     .script("/scripts/chosen.jquery.js?ver=0.9.5")
-    .script("/scripts/plots.js?ver=${c.rev}").wait()
+    .script("/scripts/harstorage.js?ver=${c.rev}").wait()
     .wait(function(){
         % if c.chart == 'true':
         var columns = new HARSTORAGE.Columns();

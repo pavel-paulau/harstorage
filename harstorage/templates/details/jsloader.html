@@ -12,7 +12,7 @@
             "&highcharts/exporting.js&ver=2.1.9").wait()
     .script("/combine/scripts?spin.js&ver=1.2.1" +
             "&chosen.jquery.js&ver=0.9.5" +
-            "&plots.js&ver=${c.rev}").wait()
+            "&harstorage.js&ver=${c.rev}").wait()
     .wait(function(){
         var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}");
         run_info.addSpinner();
