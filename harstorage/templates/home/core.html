@@ -34,8 +34,8 @@ ${header.html()}
                 % for index in range(c.rowcount):
                 <tr> 
                     <td class="left">${c.metrics_table[0][index]}</td>
-                    <td class="left"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
-                    <td class="left"><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[1][index],method='GET')}">${c.metrics_table[2][index]}</a></td>
+                    <td class="left"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[1][index],method='GET')}">${c.metrics_table[1][index]}</a></td>
+                    <td class="left"><a href="${h.url_for(controller='results',action='details',url=c.metrics_table[2][index],method='GET')}">${c.metrics_table[2][index]}</a></td>
                     <td class="center">${c.metrics_table[3][index]}</td>
                     <td class="center">${c.metrics_table[4][index]}</td>
                     <td class="center">${c.metrics_table[5][index]}</td>
