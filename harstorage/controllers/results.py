@@ -53,10 +53,10 @@ class ResultsController(BaseController):
                 }"            
         )
 
+        latest_results = sorted(latest_results, key = lambda timestamp: timestamp['timestamp'], reverse=True)
+
         # Numner of records
         c.rowcount = len(latest_results)
-
-        latest_results = sorted(latest_results, key = lambda timestamp: timestamp['timestamp'], reverse=True)
 
         # Populate data table with the latest test results
         for group in latest_results:
