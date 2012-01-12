@@ -69,6 +69,13 @@ class SuperposedController(BaseController):
         # MongoDB handler
         md_handler = MongoDB()
 
+        # Checkbox options
+        c.chart_type    = request.GET.get('chart', None)        
+        c.table         = request.GET.get('table', 'false')
+        init            = request.GET.get('metric', 'true')
+
+        c.chart = 'true' if c.chart_type else 'false'
+
         # 5 Arrays for columns chart
         lbl_points      = str()
         time_points     = str()
@@ -77,7 +84,10 @@ class SuperposedController(BaseController):
         score_points    = str()
 
         # Number of records
-        c.rowcount = len(request.GET) /3
+        if c.chart == 'true' and c.table == 'true' and init != 'true':
+            c.rowcount = len(request.GET) / 3 - 1
+        else:
+            c.rowcount = len(request.GET) / 3
 
         # Data table
         c.metrics_table = list()
@@ -114,7 +124,7 @@ class SuperposedController(BaseController):
                 results['score'].append(document['ps_scores']['Total Score'])
 
             # Aggregated statistics
-            c.metric = request.GET.get('metric', 'Average')
+            c.metric = request.GET.get('metric', 'Average')            
 
             if c.metric == 'Average':
                 time, size, req, score = self._average(results)

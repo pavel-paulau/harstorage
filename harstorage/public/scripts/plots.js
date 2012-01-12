@@ -226,9 +226,13 @@ HARSTORAGE.Columns = function() {
     "use strict";
 };
 
-HARSTORAGE.Columns.prototype.draw = function(points) {
+HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
     "use strict";
 
+    // Chart type
+    chart_type = (typeof(chart_type) !== 'undefined') ? chart_type : 'column';
+
+    // Chart points
     var splitResults = points.split(';');
 
     var tsArray     = splitResults[0].split('#'),
@@ -376,22 +380,22 @@ HARSTORAGE.Columns.prototype.draw = function(points) {
         },
         series: [{
             name    : 'Full Load Time',
-            type    : 'column',
+            type    : chart_type,
             yAxis   : 0,
             data    : timeArray
         }, {
             name    : 'Total Requests',
-            type    : 'column',
+            type    : chart_type,
             yAxis   : 1,
             data    : reqArray
         }, {
             name    : 'Total Size',
-            type    : 'column',
+            type    : chart_type,
             yAxis   : 2,
             data    : sizeArray
         }, {
             name    : 'Page Speed Score',
-            type    : 'column',
+            type    : chart_type,
             yAxis   : 3,
             data    : scoreArray
         }]
@@ -437,7 +441,7 @@ HARSTORAGE.RunInfo = function(mode, label, query) {
     if (query !== 'None') {
         agg_btn.style.display = 'inline';
         agg_btn.onclick = function() {
-            location.href = query.replace(/amp;/g,'');
+            location.href = query.replace(/amp;/g,'') + '&chart=column&table=true';
         };
     }
 };

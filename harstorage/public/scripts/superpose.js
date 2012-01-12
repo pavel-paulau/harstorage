@@ -33,11 +33,22 @@ HARSTORAGE.SuperposeForm = function() {
     };
 
     // Delete button event handler
-    var del= document.getElementById('step_1_del');
+    var del = document.getElementById('step_1_del');
     del.onclick = function() {
         that.del(this);
     };
     del.style.display = 'none';
+
+    // Chart options
+    var checkbox = document.getElementById('column');
+    checkbox.onclick = function() {
+        that.checkbox(this);
+    };
+
+    checkbox = document.getElementById('spline');
+    checkbox.onclick = function() {
+        that.checkbox(this);
+    };
 };
 
 // Form validation
@@ -284,4 +295,19 @@ HARSTORAGE.SuperposeForm.prototype.addSpinner = function() {
 
     this.spinner = document.getElementById('spinner');
     new Spinner(opts).spin(this.spinner);
+};
+
+// Checkbox group
+HARSTORAGE.SuperposeForm.prototype.checkbox = function(input) {
+    "use strict";
+
+    var id1  = 'spline',
+        id2  = 'column',
+        id;
+
+    if (input.checked) {
+        id = (input.id === id1) ? id2 : id1;
+        var checkbox = document.getElementById(id);
+        checkbox.checked = false;
+    }
 };

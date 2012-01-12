@@ -270,7 +270,7 @@ body a:hover {
 .sp-create .submit {
     width: 220px;
     padding: 4px 0;
-    margin: 30px 0 20px 0;
+    margin: 20px 0 20px 0;
     color: #000;
     font-family: arial;
     font-size: 77%;
@@ -280,6 +280,14 @@ body a:hover {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
+}
+.sp-create .checkbox {
+    margin: 25px 5px 0 20px;
+    vertical-align: -2px;    
+}
+.sp-create .checkbox-text {
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
+    font-size: 93%;    
 }
 /* Results */
 .results {
