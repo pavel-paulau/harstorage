@@ -84,20 +84,18 @@ class ResultsController(BaseController):
 
         # Try to fetch data for selecetor box
         try:
-            c.url = request.GET['url']
-            self._selectors(None, c.url)
+            c.label = request.GET['url']
             c.mode  = 'url'
-            c.label = c.url
         # Use label parameter instead of URL parameter
         except:
             c.label = request.GET['label']
-            self._selectors(c.label, None)
             c.mode  = 'label'
-            c.url   = c.label
+
+        self._selectors(c.mode, c.label)
  
         return render('./details/core.html')
     
-    def _selectors(self, label, url):
+    def _selectors(self, mode, label):
         """
         Create context data - a list of timestamps.
         Additionally generate URL for aggregation of test results
@@ -112,28 +110,22 @@ class ResultsController(BaseController):
         # Read data for selector box from database
         c.timestamp     = list()
 
-        if label is not None:
-            results = mdb_handler.collection.find(
-                {"label" : label},
-                fields = ["timestamp"],
-                sort   = [("timestamp", -1)]
-            )
-            for result in results:
-                c.timestamp.append(result["timestamp"])
+        results = mdb_handler.collection.find(
+            {mode : label},
+            fields = ['timestamp'],
+            sort   = [('timestamp', -1)]
+        )
+        
+        for result in results:
+            c.timestamp.append(result["timestamp"])
 
+        # Define url for data aggregation
+        if mode == 'label':
             c.query  = "/superposed/display?"
             c.query += "step_1_label=" + label
             c.query += "&step_1_start_ts=" + min(c.timestamp)
             c.query += "&step_1_end_ts=" + max(c.timestamp)
         else:
-            results = mdb_handler.collection.find(
-                {"url" : url},
-                fields = ["timestamp"],
-                sort   = [("timestamp", -1)]
-            )
-            for result in results:
-                c.timestamp.append(result["timestamp"])
-
             c.query = 'None'
 
     @restrict('GET')
@@ -141,7 +133,6 @@ class ResultsController(BaseController):
         """Generate data for timeline chart"""
 
         # Parameters from GET request
-        url     = request.GET['url']
         label   = request.GET['label']
         mode    = request.GET['mode']
         
@@ -157,30 +148,17 @@ class ResultsController(BaseController):
         
         # Read data for timeline from database in custom format
         # (hash separated)
-        if mode == 'label':
-            results = mdb_handler.collection.find(
-                {"label" : label},
-                fields = ["timestamp", "full_load_time", "total_size", "requests", "ps_scores"],
-                sort   = [("timestamp", 1)]
-            )
-            for result in results:
-                ts_points       += str(result["timestamp"]) + "#"
-                time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
-                size_points     += str(result["total_size"]) + "#"
-                req_points      += str(result["requests"]) + "#"
-                score_points    += str(result["ps_scores"]["Total Score"]) + "#"
-        else:
-            results = mdb_handler.collection.find(
-                {"url" : url},
-                fields = ["timestamp", "full_load_time", "total_size", "requests", "ps_scores"],
-                sort   = [("timestamp", 1)]
-            )
-            for result in results:
-                ts_points       += str(result["timestamp"]) + "#"
-                time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
-                size_points     += str(result["total_size"]) + "#"
-                req_points      += str(result["requests"]) + "#"
-                score_points    += str(result["ps_scores"]["Total Score"]) + "#"
+        results = mdb_handler.collection.find(
+            {mode : label},
+            fields = ["timestamp", "full_load_time", "total_size", "requests", "ps_scores"],
+            sort   = [("timestamp", 1)]
+        )
+        for result in results:
+            ts_points       += str(result["timestamp"]) + "#"
+            time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
+            size_points     += str(result["total_size"]) + "#"
+            req_points      += str(result["requests"]) + "#"
+            score_points    += str(result["ps_scores"]["Total Score"]) + "#"
 
         return ts_points[:-1]   + ";" \
              + time_points[:-1] + ";" \
