@@ -8,7 +8,7 @@ class MongoDB():
     Interface for MongoDB database
     """
 
-    def __init__(self):
+    def __init__(self, database='harstorage', collection='results' ):
         """Initilize connection and check indeces"""
 
         # Connection handler
@@ -16,10 +16,10 @@ class MongoDB():
         port = int( config['app_conf']['mongo_port'] )
 
         connection = pymongo.Connection(host, port)
-        db = connection['harstorage']        
-        self.collection = db['results']
+        db = connection[database]
+        self.collection = db[collection]
 
-        # Indeces
+        # Indecies
         self.collection.ensure_index([
             ('label',      1),
             ('timestamp', -1)
