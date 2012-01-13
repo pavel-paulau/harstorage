@@ -4,6 +4,7 @@ import os
 import hashlib
 import mimetypes
 import time
+import re
 
 from pylons import request, response, tmpl_context as c
 from pylons import config
@@ -30,6 +31,9 @@ class ResultsController(BaseController):
     @restrict('GET')
     def index(self):
         """Home page with the latest test results"""
+
+        # Migration (harstorage v0.7)
+        self._migration()
 
         # MongoDB handler
         mdb_handler = MongoDB()
@@ -199,46 +203,44 @@ class ResultsController(BaseController):
             {"timestamp":timestamp}
         )
         
-        # HAR parsing
-        har     = HAR(test_results['har'], True)
-        har_id  = str(test_results['_id'])
-        har.analyze()
-
-        # Summary stats
-        summary = { 'full_load_time'        : test_results['full_load_time'],
-                    'onload_event'          : har.onload_event,
-                    'start_render_time'     : har.start_render_time,
-                    'time_to_first_byte'    : har.time_to_first_byte,
-                    'total_dns_time'        : har.total_dns_time,
-                    'total_transfer_time'   : har.total_transfer_time,
-                    'total_server_time'     : har.total_server_time,
-                    'avg_connecting_time'   : har.avg_connecting_time,
-                    'avg_blocking_time'     : har.avg_blocking_time,
-                    'total_size'            : test_results['total_size'],
-                    'text_size'             : har.text_size,
-                    'media_size'            : har.media_size,
-                    'cache_size'            : har.cache_size,
-                    'requests'              : test_results['requests'],
-                    'redirects'             : har.redirects,
-                    'bad_requests'          : har.bad_requests,
-                    'domains'               : len(har.domains)
-        }
-
-        # Domains
+        # Domains breakdown
         domains_req_ratio = dict()
         domains_weight_ratio = dict()
 
-        for key,value in har.domains.items():
-            domains_req_ratio[key] = value[0]
-            domains_weight_ratio[key] = value[1]
-        
+        for hostname, value in test_results['domains_ratio'].items():
+            hostname = re.sub('\|','.', hostname)
+            domains_req_ratio[hostname]    = value[0]
+            domains_weight_ratio[hostname] = value[1]
+
+        # Summary stats
+        summary = { 'full_load_time'        : test_results['full_load_time'],
+                    'onload_event'          : test_results['onload_event'],
+                    'start_render_time'     : test_results['start_render_time'],
+                    'time_to_first_byte'    : test_results['time_to_first_byte'],
+                    'total_dns_time'        : test_results['total_dns_time'],
+                    'total_transfer_time'   : test_results['total_transfer_time'],
+                    'total_server_time'     : test_results['total_server_time'],
+                    'avg_connecting_time'   : test_results['avg_connecting_time'],
+                    'avg_blocking_time'     : test_results['avg_blocking_time'],
+                    'total_size'            : test_results['total_size'],
+                    'text_size'             : test_results['text_size'],
+                    'media_size'            : test_results['media_size'],
+                    'cache_size'            : test_results['cache_size'],
+                    'requests'              : test_results['requests'],
+                    'redirects'             : test_results['redirects'],
+                    'bad_requests'          : test_results['bad_requests'],
+                    'domains'               : test_results['domains']
+        }
+
         # Page Speed Scores
         scores = dict()
         
-        for rule,score in test_results['ps_scores'].items():
+        for rule, score in test_results['ps_scores'].items():
             scores[rule] = score
         
         # Data for HAR Viewer
+        har_id = str(test_results['_id'])
+
         filename = os.path.join( config['app_conf']['temp_store'], har_id )
         with open(filename, 'w') as file:
             file.write( test_results['har'].encode('utf-8') )
@@ -246,8 +248,8 @@ class ResultsController(BaseController):
         # Final JSON
         return json.dumps({'summary'    : summary,
                            'pagespeed'  : scores,
-                           'weights'    : har.weight_ratio(),
-                           'requests'   : har.req_ratio(),
+                           'weights'    : test_results['weights_ratio'],
+                           'requests'   : test_results['requests_ratio'],
                            'd_weights'  : domains_weight_ratio,
                            'd_requests' : domains_req_ratio,
                            'har'        : har_id,
@@ -353,14 +355,31 @@ class ResultsController(BaseController):
             
             # Add document to collection
             mdb_handler.collection.insert({
-                "label"          : har.label,
-                "url"            : har.url,
-                "timestamp"      : time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                "full_load_time" : har.full_load_time,
-                "total_size"     : har.total_size,
-                "requests"       : har.requests,
-                "ps_scores"      : scores,
-                "har"            : har.origin
+                'label'                 : har.label,
+                'url'                   : har.url,
+                'timestamp'             : time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                'full_load_time'        : har.full_load_time,
+                'onload_event'          : har.onload_event,
+                'start_render_time'     : har.start_render_time,
+                'time_to_first_byte'    : har.time_to_first_byte,
+                'total_dns_time'        : har.total_dns_time,
+                'total_transfer_time'   : har.total_transfer_time,
+                'total_server_time'     : har.total_server_time,
+                'avg_connecting_time'   : har.avg_connecting_time,
+                'avg_blocking_time'     : har.avg_blocking_time,
+                'total_size'            : har.total_size,
+                'text_size'             : har.text_size,
+                'media_size'            : har.media_size,
+                'cache_size'            : har.cache_size,
+                'requests'              : har.requests,
+                'redirects'             : har.redirects,
+                'bad_requests'          : har.bad_requests,
+                'domains'               : len(har.domains),
+                'ps_scores'             : scores,
+                'har'                   : har.origin,
+                'weights_ratio'         : har.weight_ratio(),
+                'requests_ratio'        : har.req_ratio(),
+                'domains_ratio'         : har.domains
             })
 
             try:
@@ -393,3 +412,53 @@ class ResultsController(BaseController):
         response.content_type = mimetypes.guess_type(filename)[0] or 'text/plain'
 
         return data
+
+    def _migration(self):
+        # MongoDB handler
+        migration_handler = MongoDB(database='harstorage', collection='migration')
+
+        status = migration_handler.collection.find_one({'status':'ok'})
+
+        if status is None:
+            mdb_handler = MongoDB()
+
+            for document in mdb_handler.collection.find(fields=['_id', 'har']):
+                id = document['_id']
+
+                har = HAR(document['har'], True)
+
+                har.analyze()
+
+                domains_req_ratio = dict()
+                domains_weight_ratio = dict()
+
+                for key,value in har.domains.items():
+                    domains_req_ratio[key] = value[0]
+                    domains_weight_ratio[key] = value[1]
+
+                data = {
+                    'full_load_time'        : har.full_load_time,
+                    'onload_event'          : har.onload_event,
+                    'start_render_time'     : har.start_render_time,
+                    'time_to_first_byte'    : har.time_to_first_byte,
+                    'total_dns_time'        : har.total_dns_time,
+                    'total_transfer_time'   : har.total_transfer_time,
+                    'total_server_time'     : har.total_server_time,
+                    'avg_connecting_time'   : har.avg_connecting_time,
+                    'avg_blocking_time'     : har.avg_blocking_time,
+                    'total_size'            : har.total_size,
+                    'text_size'             : har.text_size,
+                    'media_size'            : har.media_size,
+                    'cache_size'            : har.cache_size,
+                    'requests'              : har.requests,
+                    'redirects'             : har.redirects,
+                    'bad_requests'          : har.bad_requests,
+                    'domains'               : len(har.domains),
+                    'weights_ratio'         : har.weight_ratio(),
+                    'requests_ratio'        : har.req_ratio(),
+                    'domains_ratio'         : har.domains
+                }
+
+                mdb_handler.collection.update({"_id": id}, {"$set" : data})
+
+            migration_handler.collection.insert({'status':'ok'})

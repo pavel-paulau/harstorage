@@ -222,9 +222,11 @@ class HAR():
             # List of hosts
             hostname = entry['request']['url'].partition('//')[-1].partition('/')[0]
 
-            self.domains[hostname] = [
-                self.domains.get(hostname, [0,0])[0] + 1,
-                self.domains.get(hostname, [0,0])[1] + self.b2k(size)
+            md_hostname = re.sub('\.','|', hostname)
+
+            self.domains[md_hostname] = [
+                self.domains.get(md_hostname, [0,0])[0] + 1,
+                self.domains.get(md_hostname, [0,0])[1] + self.b2k(size)
             ]
 
         # Label
