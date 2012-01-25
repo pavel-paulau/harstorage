@@ -54,7 +54,7 @@ class ResultsController(BaseController):
                     if ( doc.timestamp > prev.timestamp ) { \
                         prev.timestamp = doc.timestamp;     \
                     }                                       \
-                }"            
+                }"
         )
 
         latest_results = sorted(latest_results, key = lambda timestamp: timestamp['timestamp'], reverse=True)
@@ -139,32 +139,42 @@ class ResultsController(BaseController):
         # MongoDB handler
         mdb_handler = MongoDB()
         
-        # 5 Arrays for timeline chart
-        ts_points       = str()
-        time_points     = str()
-        size_points     = str()
-        req_points      = str()
-        score_points    = str()
-        
-        # Read data for timeline from database in custom format
-        # (hash separated)
+        # Data containers
+        data = list()
+        output = str()
+
+        # Metrics
+        metrics = [ 'timestamp', 'full_load_time', 'requests', 'total_size',
+                    'ps_scores', 'onload_event', 'start_render_time',
+                    'time_to_first_byte', 'total_dns_time',
+                    'total_transfer_time', 'total_server_time',
+                    'avg_connecting_time', 'avg_blocking_time', 'text_size',
+                    'media_size', 'cache_size', 'redirects', 'bad_requests',
+                    'domains']
+
+        for index in range(len(metrics)):
+            data.append(str())
+
+        # Read data for timeline from database in custom format (hash separated)
         results = mdb_handler.collection.find(
             {mode : label},
-            fields = ["timestamp", "full_load_time", "total_size", "requests", "ps_scores"],
-            sort   = [("timestamp", 1)]
+            fields = metrics,
+            sort = [('timestamp', 1)]
         )
-        for result in results:
-            ts_points       += str(result["timestamp"]) + "#"
-            time_points     += str(round(result["full_load_time"]/1000.0,1)) + "#"
-            size_points     += str(result["total_size"]) + "#"
-            req_points      += str(result["requests"]) + "#"
-            score_points    += str(result["ps_scores"]["Total Score"]) + "#"
 
-        return ts_points[:-1]   + ";" \
-             + time_points[:-1] + ";" \
-             + size_points[:-1] + ";" \
-             + req_points[:-1]  + ";" \
-             + score_points[:-1]
+        for result in results:
+            index = 0
+            for metric in metrics:
+                if metric != 'ps_scores':
+                    data[index] += str(result[metric]) + "#"
+                else:
+                    data[index] += str(result[metric]['Total Score']) + "#"
+                index += 1
+
+        for dataset in data:
+            output += dataset[:-1] + ";"
+
+        return output
 
     @restrict('GET')
     def runinfo(self):

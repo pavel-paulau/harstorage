@@ -1,7 +1,62 @@
+//JSHint options
+/*global Highcharts, Spinner*/
+
+/*
+ * Fix missing indexOf in IE8
+ */
+if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function(elt /*, from*/) {
+         "use strict";
+
+        var len  = this.length >>> 0,
+            from = Number(arguments[1]) || 0;
+
+        from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+
+        if (from < 0) {
+            from += len;
+        }
+
+        for (; from < len; from++) {
+            if (from in this && this[from] === elt) {
+                return from;
+            }
+        }
+
+        return -1;
+    };
+}
+
 /*
  * Name space
  */
 var HARSTORAGE = HARSTORAGE || {};
+
+
+
+/*
+ * Chart Labels
+ */
+HARSTORAGE.labels = [
+        'Full Load Time',
+        'Total Requests',
+        'Total Size',
+        'Page Speed Score',
+        'onLoad Event',
+        'Start Render Time',
+        'Time to First Byte',
+        'Total DNS Time',
+        'Total Transfer Time',
+        'Total Server Time',
+        'Avg. Connecting Time',
+        'Avg. Blocking Time',
+        'Text Size',
+        'Media Size',
+        'Cache Size',
+        'Redirects',
+        'Bad Rquests',
+        'Domains'
+];
 
 /*
  * Timeline chart
@@ -41,21 +96,25 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
     // Pointer
     var that = this;
 
-    var splitResults = points.split(';');
+    // Series data
+    var splitResults = points.split(';'),
+        dataArray = [],
+        timeArray = [1, 5, 6, 7];
 
-    var tsArray     = splitResults[0].split('#'),
-        timeArray   = splitResults[1].split('#'),
-        sizeArray   = splitResults[2].split('#'),
-        reqArray    = splitResults[3].split('#'),
-        scoreArray  = splitResults[4].split('#');
+    dataArray.push(splitResults[0].split('#'));
 
-    for(var index = 0, len = tsArray.length; index < len; index += 1) {
-        timeArray[index]    =   parseFloat(timeArray[index], 10);
-        sizeArray[index]    =   parseFloat(sizeArray[index], 10);
-        reqArray[index]     =   parseInt(reqArray[index], 10);
-        scoreArray[index]   =   parseInt(scoreArray[index], 10);
+    for (var i1 = 1, l1 = splitResults.length; i1 < l1 ; i1 += 1 ) {
+        dataArray.push(splitResults[i1].split('#'));
+
+        for (var i2 = 0, l2 = dataArray[i1].length; i2 < l2; i2 += 1 ) {
+            if (timeArray.indexOf(i1) !== -1 ) {
+                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10)*10) / 10;
+            } else {
+                dataArray[i1][i2] = parseInt(dataArray[i1][i2], 10);
+            }
+        }
     }
-    
+
     // Colors for Y Axis labels
     var theme = HARSTORAGE.read_cookie('chartTheme');
 
@@ -69,7 +128,18 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
             '#7798BF',
             '#6AF9C4',
             '#DB843D',
-            '#EEAAEE'
+            '#EEAAEE',
+            '#669933',
+            '#CC3333',
+            '#FF9944',
+            '#996633',
+            '#4572A7',
+            '#80699B',
+            '#92A8CD',
+            '#A47D7C',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
         ];
     } else {
         colors = [
@@ -80,10 +150,46 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
             '#4572A7',
             '#80699B',
             '#92A8CD',
-            '#A47D7C'
+            '#EEAAEE',
+            '#A47D7C',
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
         ];
     }
-    
+
+    // Y Axis and series
+    var yAxis = [],
+        series = [];
+
+    for (var i=0, l = HARSTORAGE.labels.length; i < l; i+=1) {
+        yAxis.push({
+            title: {
+                text    : HARSTORAGE.labels[i],
+                style   : {
+                    color   : colors[i]
+                }
+            },
+            min         : 0,
+            opposite    : (i%2 === 0) ? false : true,
+            showEmpty   : false
+        });
+
+        series.push({
+            name    : HARSTORAGE.labels[i],
+            type    : 'spline',
+            yAxis   : i,
+            data    : dataArray[i+1],
+            visible : (i < 3) ? true : false
+        });
+    }
+
     new Highcharts.Chart({
         chart: {
             renderTo    : 'timeline',
@@ -114,63 +220,35 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
             text: 'Performance Trends'
         },
         xAxis: [{
-            categories          : tsArray,
-            tickInterval        : Math.ceil(tsArray.length / 10),
+            categories          : dataArray[0],
+            tickInterval        : Math.ceil(dataArray[0].length / 10),
             tickmarkPlacement   : 'on'
         }],
-        yAxis: [{ // yAxis #1
-            title: {
-                text    : 'Full Load Time',
-                style   : {
-                    color   : colors[0]
-                }
-            },
-            min         : 0,
-            labels: {
-                formatter: function() {
-                    return this.value;
-                }
-            }
-        }, { // yAxis #2
-            title: {
-                text    : 'Total Requests',
-                style   : {
-                    color   : colors[1]
-                }
-            },
-            min         : 0,
-            opposite    : true
-        }, { // yAxis #3
-            title: {
-                text    : 'Total Size (kB)',
-                style   : {
-                    color   : colors[2]
-                }
-            },
-            min         : 0,
-            opposite    : true,
-            labels: {
-                formatter: function() {
-                    return this.value;
-                }
-            }
-        }, { // yAxis #4
-            title: {
-                text    : 'Page Speed Score',
-                style   : {
-                    color   : colors[3]
-                }
-            },
-            min         : 0            
-        }],
+        yAxis: yAxis,
         tooltip: {
             formatter: function() {
-                var unit = {
-                    'Full Load Time'    : 's',
-                    'Total Requests'    : '',
-                    'Total Size'        : 'kB',
-                    'Page Speed Score'  : ''
-                }[this.series.name];
+                var units = {};
+                
+                units[HARSTORAGE.labels[0]]  = 's';
+                units[HARSTORAGE.labels[1]]  = '';
+                units[HARSTORAGE.labels[2]]  = 'kB';
+                units[HARSTORAGE.labels[3]]  = '';
+                units[HARSTORAGE.labels[4]]  = 's';
+                units[HARSTORAGE.labels[5]]  = 's';
+                units[HARSTORAGE.labels[6]]  = 's';
+                units[HARSTORAGE.labels[7]]  = 'ms';
+                units[HARSTORAGE.labels[8]]  = 'ms';
+                units[HARSTORAGE.labels[9]]  = 'ms';
+                units[HARSTORAGE.labels[10]] = 'ms';
+                units[HARSTORAGE.labels[11]] = 'ms';
+                units[HARSTORAGE.labels[12]] = 'kB';
+                units[HARSTORAGE.labels[13]] = 'kB';
+                units[HARSTORAGE.labels[14]] = 'kB';
+                units[HARSTORAGE.labels[15]] = '';
+                units[HARSTORAGE.labels[16]] = '';
+                units[HARSTORAGE.labels[17]] = '';
+                
+                var unit = units[this.series.name];
 
                 return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
@@ -195,27 +273,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
                 }
             }
         },
-        series: [{
-            name    : 'Full Load Time',
-            type    : 'spline',
-            yAxis   : 0,
-            data    : timeArray
-        }, {
-            name    : 'Total Requests',
-            type    : 'spline',
-            yAxis   : 1,
-            data    : reqArray
-        }, {
-            name    : 'Total Size',
-            type    : 'spline',
-            yAxis   : 2,
-            data    : sizeArray
-        }, {
-            name    : 'Page Speed Score',
-            type    : 'spline',
-            yAxis   : 3,
-            data    : scoreArray
-        }]
+        series: series
     });
 };
 
@@ -232,20 +290,24 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
     // Chart type
     chart_type = (typeof(chart_type) !== 'undefined') ? chart_type : 'column';
 
-    // Chart points
-    var splitResults = points.split(';');
+    
+    // Series data
+    var splitResults = points.split(';'),
+        dataArray = [],
+        timeArray = [1, 5, 6, 7];
 
-    var tsArray     = splitResults[0].split('#'),
-        timeArray   = splitResults[1].split('#'),
-        sizeArray   = splitResults[2].split('#'),
-        reqArray    = splitResults[3].split('#'),
-        scoreArray  = splitResults[4].split('#');
+    dataArray.push(splitResults[0].split('#'));
 
-    for(var index = 0, len = tsArray.length; index < len; index += 1) {
-        timeArray[index]    =   parseFloat(timeArray[index], 10);
-        sizeArray[index]    =   parseFloat(sizeArray[index], 10);
-        reqArray[index]     =   parseInt(reqArray[index], 10);
-        scoreArray[index]   =   parseInt(scoreArray[index], 10);
+    for (var i1 = 1, l1 = splitResults.length; i1 < l1 ; i1 += 1 ) {
+        dataArray.push(splitResults[i1].split('#'));
+
+        for (var i2 = 0, l2 = dataArray[i1].length; i2 < l2; i2 += 1 ) {
+            if (timeArray.indexOf(i1) !== -1 ) {
+                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10)*10) / 10;
+            } else {
+                dataArray[i1][i2] = parseInt(dataArray[i1][i2], 10);
+            }
+        }
     }
 
     // Colors for Y Axis labels
@@ -276,6 +338,34 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
         ];
     }
 
+    // Y Axis
+
+    var yAxis = [],
+        series = [];
+
+    for (var i=0, l = HARSTORAGE.labels.length; i < l; i+=1) {
+        yAxis.push({
+            title: {
+                text    : HARSTORAGE.labels[i],
+                style   : {
+                    color   : colors[i]
+                }
+            },
+            min         : 0,
+            opposite    : (i%2 === 0) ? false : true,
+            showEmpty   : false
+        });
+
+        series.push({
+            name    : HARSTORAGE.labels[i],
+            type    : chart_type,
+            yAxis   : i,
+            data    : dataArray[i+1],
+            visible : (i < 3) ? true : false
+        });
+    }
+
+    // Chart Object
     new Highcharts.Chart({
         chart: {
             renderTo    : 'chart'
@@ -305,63 +395,35 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
             text: 'Performance Trends'
         },
         xAxis: [{
-            categories          : tsArray,
-            tickInterval        : Math.ceil(tsArray.length / 10),
+            categories          : dataArray[0],
+            tickInterval        : Math.ceil(dataArray[0].length / 10),
             tickmarkPlacement   : 'on'
         }],
-        yAxis: [{ // yAxis #1
-            title: {
-                text    : 'Full Load Time',
-                style   : {
-                    color   : colors[0]
-                }
-            },
-            min         : 0,
-            labels: {
-                formatter: function() {
-                    return this.value;
-                }
-            }
-        }, { // yAxis #2
-            title: {
-                text    : 'Total Requests',
-                style   : {
-                    color   : colors[1]
-                }
-            },
-            min         : 0,
-            opposite    : true
-        }, { // yAxis #3
-            title: {
-                text    : 'Total Size (kB)',
-                style   : {
-                    color   : colors[2]
-                }
-            },
-            min         : 0,
-            opposite    : true,
-            labels: {
-                formatter: function() {
-                    return this.value;                    
-                }
-            }
-        }, { // yAxis #4
-            title: {
-                text    : 'Page Speed Score',
-                style   : {
-                    color   : colors[3]
-                }
-            },
-            min         : 0
-        }],
+        yAxis: yAxis,
         tooltip: {
             formatter: function() {
-                var unit = {
-                    'Full Load Time'    : 's',
-                    'Total Requests'    : '',
-                    'Total Size'        : 'kB',
-                    'Page Speed Score'  : ''
-                }[this.series.name];
+                var units = {};
+
+                units[HARSTORAGE.labels[0]]  = 's';
+                units[HARSTORAGE.labels[1]]  = '';
+                units[HARSTORAGE.labels[2]]  = 'kB';
+                units[HARSTORAGE.labels[3]]  = '';
+                units[HARSTORAGE.labels[4]]  = 's';
+                units[HARSTORAGE.labels[5]]  = 's';
+                units[HARSTORAGE.labels[6]]  = 's';
+                units[HARSTORAGE.labels[7]]  = 'ms';
+                units[HARSTORAGE.labels[8]]  = 'ms';
+                units[HARSTORAGE.labels[9]]  = 'ms';
+                units[HARSTORAGE.labels[10]] = 'ms';
+                units[HARSTORAGE.labels[11]] = 'ms';
+                units[HARSTORAGE.labels[12]] = 'kB';
+                units[HARSTORAGE.labels[13]] = 'kB';
+                units[HARSTORAGE.labels[14]] = 'kB';
+                units[HARSTORAGE.labels[15]] = '';
+                units[HARSTORAGE.labels[16]] = '';
+                units[HARSTORAGE.labels[17]] = '';
+
+                var unit = units[this.series.name];
 
                 return '<b>' + this.y + ' ' + unit + '</b>' + ' (' + this.x + ')';
             }
@@ -378,27 +440,7 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
                 }
             }
         },
-        series: [{
-            name    : 'Full Load Time',
-            type    : chart_type,
-            yAxis   : 0,
-            data    : timeArray
-        }, {
-            name    : 'Total Requests',
-            type    : chart_type,
-            yAxis   : 1,
-            data    : reqArray
-        }, {
-            name    : 'Total Size',
-            type    : chart_type,
-            yAxis   : 2,
-            data    : sizeArray
-        }, {
-            name    : 'Page Speed Score',
-            type    : chart_type,
-            yAxis   : 3,
-            data    : scoreArray
-        }]
+        series: series
     });
 };
 
@@ -634,6 +676,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
             } else {
                 return value + ' ' + units;
             }
+            break;
         case "string":
             return value;
         default:

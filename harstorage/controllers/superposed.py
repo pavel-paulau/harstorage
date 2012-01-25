@@ -76,12 +76,8 @@ class SuperposedController(BaseController):
 
         c.chart = 'true' if c.chart_type else 'false'
 
-        # 5 Arrays for columns chart
-        lbl_points      = str()
-        time_points     = str()
-        size_points     = str()
-        req_points      = str()
-        score_points    = str()
+        # Metric option
+        c.metric = request.GET.get('metric', 'Average')
 
         # Number of records
         if c.chart == 'true' and c.table == 'true' and init != 'true':
@@ -89,157 +85,154 @@ class SuperposedController(BaseController):
         else:
             c.rowcount = len(request.GET) / 3
 
+        # Data containers        
+        metrics = [ 'full_load_time', 'requests', 'total_size',
+                    'ps_scores', 'onload_event', 'start_render_time',
+                    'time_to_first_byte', 'total_dns_time',
+                    'total_transfer_time', 'total_server_time',
+                    'avg_connecting_time', 'avg_blocking_time', 'text_size',
+                    'media_size', 'cache_size', 'redirects', 'bad_requests',
+                    'domains']
+
+        c.headers = [   'Label', 'Full Load Time (ms)', 'Total Requests',
+                        'Total Size (kB)', 'Page Speed Score',
+                        'onLoad Event (ms)', 'Start Render Time (ms)',
+                        'Time to First Byte (ms)', 'Total DNS Time (ms)',
+                        'Total Transfer Time (ms)', 'Total Server Time (ms)',
+                        'Avg. Connecting Time (ms)', 'Avg. Blocking Time (ms)',
+                        'Text Size (kB)', 'Media Size (kB)', 'Cache Size (kB)',
+                        'Redirects', 'Bad Rquests', 'Domains']
+
+        c.points = str()
+        data = dict()
+        for metric in metrics:
+            data[metric] = list()
+        data['label'] = list()
+
         # Data table
         c.metrics_table = list()
+        c.metrics_table.append(list())
 
-        for index in range(5):
-            c.metrics_table.append( list() )
-
-        # Aggregation
-        for index in range( c.rowcount ):
+        # Test results from database
+        for row in range(c.rowcount):
             # Parameters from GET request
-            label       = request.GET[ 'step_' + str(index+1) + '_label'    ]
-            start_ts    = request.GET[ 'step_' + str(index+1) + '_start_ts' ]
-            end_ts      = request.GET[ 'step_' + str(index+1) + '_end_ts'   ]
+            label       = request.GET[ 'step_' + str(row+1) + '_label'    ]
+            start_ts    = request.GET[ 'step_' + str(row+1) + '_start_ts' ]
+            end_ts      = request.GET[ 'step_' + str(row+1) + '_end_ts'   ]
 
-            # Test results from database
+            # Label
+            c.metrics_table[0].append(label)
+
+            data['label'].append(row)
+            data['label'][row] = label
+
+            # Fetch test results
             documents = md_handler.collection.find(
                 {'label'     : label,
                  'timestamp' : { '$gte':start_ts, '$lte':end_ts }
                 },
-                fields = ['full_load_time', 'total_size', 'requests', 'ps_scores']
+                fields = metrics
             )
 
-            results = {
-                        'full_load_time': [],
-                        'total_size'    : [],
-                        'requests'      : [],
-                        'score'         : []
-            }
+            for metric in metrics:
+                data[metric].append(row)
+                data[metric][row] = list()
 
             for document in documents:
-                results['full_load_time'].append(document['full_load_time'])
-                results['total_size'].append(document['total_size'])
-                results['requests'].append(document['requests'])
-                results['score'].append(document['ps_scores']['Total Score'])
+                for metric in metrics:
+                    if metric != 'ps_scores':
+                        data[metric][row].append(document[metric])
+                    else:
+                        data[metric][row].append(document[metric]['Total Score'])
 
-            # Aggregated statistics
-            c.metric = request.GET.get('metric', 'Average')            
+        # Aggregation
+        for row in range(c.rowcount):
+            c.points += data['label'][row] + '#'
 
-            if c.metric == 'Average':
-                time, size, req, score = self._average(results)
-            elif c.metric == 'Minimum':
-                time, size, req, score = self._minimum(results)
-            elif c.metric == 'Maximum':
-                time, size, req, score = self._maximum(results)
-            elif c.metric == '90th Percentile':
-                time, size, req, score = self._percentile(results, 0.9)
-            elif c.metric == 'Median':
-                time, size, req, score = self._percentile(results, 0.5)
+        column = 1
+        for metric in metrics:
+            c.metrics_table.append(list())
 
-            # Data for table
-            c.metrics_table[0].append( label )
-            c.metrics_table[1].append( score )
-            c.metrics_table[2].append( size  )
-            c.metrics_table[3].append( req   )
-            c.metrics_table[4].append( time  )
+            c.points = c.points[:-1] + ';'
+            for row in range(c.rowcount):
+                if c.metric == 'Average':
+                    average = self._average(data[metric][row])
+                    c.points += str(average) + '#'
+                    c.metrics_table[column].append(average)
+                elif c.metric == 'Minimum':
+                    minimum = self._minimum(data[metric][row])
+                    c.points += str(minimum) + '#'
+                    c.metrics_table[column].append(minimum)
+                elif c.metric == 'Maximum':
+                    maximum = self._maximum(data[metric][row])
+                    c.points += str(maximum) + '#'
+                    c.metrics_table[column].append(maximum)
+                elif c.metric == '90th Percentile':
+                    percentile = self._percentile(data[metric][row], 0.9)
+                    c.points += str(percentile) + '#'
+                    c.metrics_table[column].append(percentile)
+                elif c.metric == 'Median':
+                    percentile = self._percentile(data[metric][row], 0.5)
+                    c.points += str(percentile) + '#'
+                    c.metrics_table[column].append(percentile)
 
-            # Data for column chart in custom format (hash separated)
-            lbl_points      += str(label) + '#'
-            time_points     += str(time)  + '#'
-            size_points     += str(size)  + '#'
-            req_points      += str(req)   + '#'
-            score_points    += str(score) + '#'
+            column += 1
 
-        # Final data for column chart
-        c.points = lbl_points[:-1]  + ';' \
-                 + time_points[:-1] + ';' \
-                 + size_points[:-1] + ';' \
-                 + req_points[:-1]  + ';' \
-                 + score_points[:-1]
+        c.points = c.points[:-1]
 
         return render('./display/core.html')
 
     def _average(self, results):
         """
-        @parameter results - a dictionary with test results
+        @parameter results - a list of test results
 
-        @return - the average value for each subset of results
+        @return - the average value
         """
 
-        # Number or results
-        num = len( results['full_load_time'] )
-
-        # Sum
-        avg_time    = sum(results['full_load_time'])
-        avg_size    = sum(results['total_size']    )
-        avg_req     = sum(results['requests']      )
-        avg_score   = sum(results['score']         )
-
-        # Averaging
-        avg_time    = round( avg_time  / num / 1000.0, 1 )
-        avg_size    = int( round( avg_size  / num, 0 ) )
-        avg_req     = int( round( avg_req   / num, 0 ) )
-        avg_score   = int( round( avg_score / num, 0 ) )
-
-        return avg_time, avg_size, avg_req, avg_score
+        try:
+            num = len( results )
+            total_sum = sum(results)
+            return int( round( total_sum / num, 0 ) )
+        except TypeError:
+            return 'n/a'
 
     def _minimum(self, results):
         """
-        @parameter results - a dictionary with test results
+        @parameter results - a list of test results
 
-        @return - the minimum value for each subset of results
+        @return - the minimum value
         """
 
-        min_time    = round( min(results['full_load_time']) / 1000.0, 1 )
-        min_size    = min(results['total_size']    )
-        min_req     = min(results['requests']      )
-        min_score   = min(results['score']         )
-
-        return min_time, min_size, min_req, min_score
+        return min(results)
 
     def _maximum(self, results):
         """
-        @parameter results - a dictionary with test results
+        @parameter results - a list of test results
 
-        @return - the maximum value for each subset of results
+        @return - the maximum value
         """
 
-        max_time    = round( max(results['full_load_time']) / 1000.0, 1 )
-        max_size    = max(results['total_size']    )
-        max_req     = max(results['requests']      )
-        max_score   = max(results['score']         )
-
-        return max_time, max_size, max_req, max_score
+        return max(results)
 
     def _percentile(self, results, percent, key=lambda x:x):
         """
-        @parameter results - a dictionary with test results
+        @parameter results - a list of test results
         @parameter percent - a float value from 0.0 to 1.0
         @parameter key - optional key function to compute value from each element of N.
 
-        @return - the percentile for each subset of results
+        @return - the percentile
         """
 
-        k = (len(results['full_load_time']) - 1) * percent
+        data = sorted(results)
+
+        k = (len(data) - 1) * percent
         f = math.floor(k)
         c = math.ceil(k)
-
-        for label, data in results.items():
-            data = sorted(data)
-
-            if f == c:
-                percentile = key(data[int(k)])
-            else:
-                percentile = key(data[int(f)]) * (c-k) + key(data[int(c)]) * (k-f)
-
-            if label == 'full_load_time':
-                percentile_time = round( percentile / 1000.0, 1 )
-            elif label == 'total_size':
-                percentile_size = int( round( percentile,   0 ) )
-            elif label == 'requests':
-                percentile_req = int( round( percentile,    0 ) )
-            else:
-                percentile_score = int( round( percentile,  0 ) )
-
-        return percentile_time, percentile_size, percentile_req, percentile_score
+        
+        if f == c:
+            return key(data[int(k)])
+        else:
+            try:
+                return key(data[int(f)]) * (c-k) + key(data[int(c)]) * (k-f)
+            except TypeError:
+                return 'n/a'

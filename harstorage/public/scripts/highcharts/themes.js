@@ -16,7 +16,18 @@ Highcharts.darkGreen = {
             '#7798BF',
             '#6AF9C4',
             '#DB843D',
-            '#EEAAEE'
+            '#EEAAEE',
+            '#669933',
+            '#CC3333',
+            '#FF9944',
+            '#996633',
+            '#4572A7',
+            '#80699B',
+            '#92A8CD',
+            '#A47D7C',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
         ],
 	chart: {
 		backgroundColor: {
@@ -141,7 +152,17 @@ Highcharts.light = {
             '#4572A7',
             '#80699B',
             '#92A8CD',
-            '#A47D7C'
+            '#EEAAEE',
+            '#A47D7C',
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
         ],
 	chart: {
 		borderWidth: 1,
@@ -252,7 +273,17 @@ Highcharts.lightGreen = {
             '#4572A7',
             '#80699B',
             '#92A8CD',
-            '#A47D7C'
+            '#EEAAEE',
+            '#A47D7C',
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
         ],
 	chart: {
 		backgroundColor: {
