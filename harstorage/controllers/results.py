@@ -403,7 +403,7 @@ class ResultsController(BaseController):
 
     def _migration(self):
         # MongoDB handler
-        migration_handler = MongoDB(database='harstorage', collection='migration')
+        migration_handler = MongoDB(collection='migration')
 
         status = migration_handler.collection.find_one({'status':'ok'})
 

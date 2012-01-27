@@ -8,16 +8,25 @@ class MongoDB():
     Interface for MongoDB database
     """
 
-    def __init__(self, database='harstorage', collection='results' ):
+    def __init__(self, collection='results'):
         """Initilize connection and check indeces"""
 
         # Connection handler
         host = config['app_conf']['mongo_host']
-        port = int( config['app_conf']['mongo_port'] )
+        port = config['app_conf']['mongo_port']
+        auth = config['app_conf']['mongo_auth']
 
-        connection = pymongo.Connection(host, port)
-        db = connection[database]
-        self.collection = db[collection]
+        if auth == 'true':
+            user = config['app_conf']['mongo_user']
+            pswd = config['app_conf']['mongo_pswd']
+
+            uri = user + ':' + pswd + '@' + host + ':' + port
+        else:
+            uri = host + ':' + port
+
+        database = config['app_conf']['mongo_db']
+
+        self.collection = pymongo.Connection(uri)[database][collection]
 
         # Indecies
         self.collection.ensure_index([
