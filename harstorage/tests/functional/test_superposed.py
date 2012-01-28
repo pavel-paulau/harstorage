@@ -54,9 +54,7 @@ class TestTestflowController(TestController):
         """Display superposed - Average"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -75,15 +73,13 @@ class TestTestflowController(TestController):
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
 
-        assert len(response.tmpl_context.metrics_table) == 5
+        assert len(response.tmpl_context.metrics_table) == 19
 
     def test_05_display_median(self):
         """Display superposed - Median"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -102,15 +98,13 @@ class TestTestflowController(TestController):
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
 
-        assert len(response.tmpl_context.metrics_table) == 5
+        assert len(response.tmpl_context.metrics_table) == 19
 
     def test_06_display_minimum(self):
         """Display superposed - Minimum"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -129,15 +123,13 @@ class TestTestflowController(TestController):
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
 
-        assert len(response.tmpl_context.metrics_table) == 5
+        assert len(response.tmpl_context.metrics_table) == 19
 
     def test_07_display_maximum(self):
         """Display superposed - Maximum"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -156,15 +148,13 @@ class TestTestflowController(TestController):
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
 
-        assert len(response.tmpl_context.metrics_table) == 5
+        assert len(response.tmpl_context.metrics_table) == 19
 
     def test_08_display_percentile(self):
         """Display superposed - 90th Percentile"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -183,15 +173,13 @@ class TestTestflowController(TestController):
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
 
-        assert len(response.tmpl_context.metrics_table) == 5
+        assert len(response.tmpl_context.metrics_table) == 19
 
     def test_09_close(self):
         """Clear test data from Superposed"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 

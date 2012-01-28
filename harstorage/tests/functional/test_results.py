@@ -45,9 +45,7 @@ class TestResultsController(TestController):
         """Upload valid file"""
 
         # Database collection
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         # Check data in database before
         before = collection.find({"label":'validfile'}).count()
@@ -74,9 +72,7 @@ class TestResultsController(TestController):
         """Upload valid file in automated mode"""
 
         # Database collection
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         # Check data in database before
         before = collection.find({"label":'validfile'}).count()
@@ -183,13 +179,13 @@ class TestResultsController(TestController):
         response = self.app.get(
             url(controller='results', action='timeline'),
             params = {'label' : 'validfile',
-                      'url'   : '',
                       'mode'  : 'label'},
             status = 200
         )
 
         # Data validation
-        assert len( response.body.split('#') ) > len( response.body.split(';') )
+        assert len(response.body.split('#')) == 20
+        assert len(response.body.split(';')) == 20
         
 
     def test_11_timeline_url(self):
@@ -198,22 +194,20 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='timeline'),
-            params = {'label' : '',
-                      'url'   : 'http://valid.host/',
+            params = {'label' : 'http://valid.host/',
                       'mode'  : 'url'},
             status = 200
         )
 
         # Data validation
-        assert len( response.body.split('#') ) > len( response.body.split(';') )
+        assert len(response.body.split('#')) == 20
+        assert len(response.body.split(';')) == 20
 
     def test_12_runinfo(self):
         """Runinfo"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -231,9 +225,7 @@ class TestResultsController(TestController):
         """Download HAR"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         id = collection.find_one({"label":'validfile'})['_id']
 
@@ -267,9 +259,7 @@ class TestResultsController(TestController):
         """Delete - label"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"label":'validfile'})['timestamp']
 
@@ -290,9 +280,7 @@ class TestResultsController(TestController):
         """Delete - url"""
 
         # Fetch data from database
-        connection = pymongo.Connection('localhost', 27017)
-        db = connection['harstorage']
-        collection = db['results']
+        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
 
         timestamp = collection.find_one({"url":'http://valid.host/'})['timestamp']
 
