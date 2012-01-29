@@ -144,13 +144,13 @@ class ResultsController(BaseController):
         output = str()
 
         # Metrics
-        metrics = [ 'timestamp', 'full_load_time', 'requests', 'total_size',
+        metrics = ( 'timestamp', 'full_load_time', 'requests', 'total_size',
                     'ps_scores', 'onload_event', 'start_render_time',
                     'time_to_first_byte', 'total_dns_time',
                     'total_transfer_time', 'total_server_time',
                     'avg_connecting_time', 'avg_blocking_time', 'text_size',
                     'media_size', 'cache_size', 'redirects', 'bad_requests',
-                    'domains']
+                    'domains')
 
         for index in range(len(metrics)):
             data.append(str())
