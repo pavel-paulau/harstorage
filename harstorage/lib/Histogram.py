@@ -22,8 +22,6 @@ class Histogram():
         self.classes    = min(float(len(self._borders())), self.classes)
         self.step       = (self.max_value - self.min_value) / self.classes
 
-
-
     def _borders(self):
         """
         Class (column) borders
@@ -80,6 +78,5 @@ class Histogram():
                 except:
                     freq[index] += 1
                 index += 1
-
 
         return freq

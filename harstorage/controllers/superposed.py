@@ -3,10 +3,11 @@ import math
 
 from pylons import request, tmpl_context as c
 from pylons import config
+from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
-from pylons.decorators.rest import restrict
+from harstorage.lib.Histogram import Histogram
 
 log = logging.getLogger(__name__)
 
@@ -181,6 +182,75 @@ class SuperposedController(BaseController):
         c.points = c.points[:-1]
 
         return render('./display/core.html')
+
+    def histogram(self):
+        """Render chart with histograms"""
+        
+        # MongoDB handler
+        md_handler = MongoDB()
+
+        # Option
+        c.label   = request.GET['label']
+        c.metric  = request.GET['metric']
+
+        # Metrics
+        metrics = [
+                    ("full_load_time", "Full Load Time"),
+                    ("onload_event", "onLoad Event"),
+                    ("start_render_time", "Start Render Time"),
+                    ("time_to_first_byte", "Time to First Byte"),
+                    ("total_dns_time", "Total DNS Time"),
+                    ("total_transfer_time", "Total Transfer Time"),
+                    ("total_server_time", "Total Server Time"),
+                    ("avg_connecting_time", "Avg. Connecting Time"),
+                    ("avg_blocking_time", "Avg. Blocking Time")
+        ]
+
+        c.metrics = list()
+        
+        # Read data from database
+        documents = md_handler.collection.find(
+            {'label' : c.label},
+            fields  = (metric for metric, title in metrics)
+        )
+
+        full_data = list(document for document in documents)
+
+        for metric, title in metrics:
+            try:
+                data = (result[metric] for result in full_data)
+                my_histogram = Histogram(data)
+                my_histogram.midpoints()
+                my_histogram.frequencies()
+
+                if metric == c.metric:
+                    c.data = ""
+
+                    for midpoint in my_histogram.midpoints():
+                        c.data += str(midpoint) + "#"
+
+                    c.data = c.data[:-1] + ';'
+
+                    for frequency in my_histogram.frequencies():
+                        c.data += str(frequency) + "#"
+
+                    c.data = c.data[:-1] + ';'
+
+                    c.title = title
+
+                c.metrics.append((metric, title))
+            except IndexError:
+                pass
+            except TypeError:
+                pass
+            except ValueError:
+                pass
+
+        if len(c.metrics):
+            return render('/histogram/core.html')
+        else:
+            c.message = "Sorry! You haven't enough data."
+            return render('/error.html')
 
     def _average(self, results):
         """

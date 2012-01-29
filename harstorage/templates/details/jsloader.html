@@ -14,7 +14,7 @@
             "&chosen.jquery.js&ver=0.9.5" +
             "&harstorage.js&ver=${c.rev}").wait()
     .wait(function(){
-        var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}");
+        var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}", "${c.histo}");
         run_info.addSpinner();
         run_info.get();
         run_info.timedStyleChange();

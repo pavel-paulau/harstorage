@@ -1,0 +1,18 @@
+<%def name="html()">
+<script type='text/javascript'>
+    $LAB
+    .script("/scripts/jquery-1.7.min.js").wait()
+    .script("/combine/scripts" +
+            "?highcharts/highcharts.src.js&ver=2.1.9" +
+            "&highcharts/themes.js&ver=${c.rev}" +
+            "&highcharts/exporting.js&ver=2.1.9").wait()
+    .script("/scripts/chosen.jquery.js?ver=0.9.5")
+    .script("/scripts/harstorage.js?ver=${c.rev}").wait()
+    .wait(function(){
+        HARSTORAGE.AggregatedStatistics();
+
+        var chart = new HARSTORAGE.Histogram();
+        chart.draw("${c.data}","${c.title}");
+    })
+</script>
+</%def>

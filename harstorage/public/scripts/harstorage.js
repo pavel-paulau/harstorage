@@ -32,8 +32,6 @@ if (!Array.prototype.indexOf) {
  */
 var HARSTORAGE = HARSTORAGE || {};
 
-
-
 /*
  * Chart Labels
  */
@@ -56,6 +54,13 @@ HARSTORAGE.labels = [
         'Redirects',
         'Bad Rquests',
         'Domains'
+];
+
+HARSTORAGE.times = [
+        'Full Load Time',
+        'onLoad Event',
+        'Start Render Time',
+        'Time to First Byte'
 ];
 
 /*
@@ -278,6 +283,123 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
 };
 
 /*
+ * Histogram Chart
+ */
+
+HARSTORAGE.Histogram = function() {
+    "use strict";
+};
+
+HARSTORAGE.Histogram.prototype.draw = function(points, title) {
+    "use strict";
+
+    // Series data
+    var splitResults = points.split(';'),
+        yAxis  = [],
+        series = [];
+
+    series = splitResults[0].split('#');
+
+    var temp_array = splitResults[1].split('#');
+
+    for (var i = 0, l = temp_array.length; i < l; i += 1 ) {
+        yAxis.push(parseInt(temp_array[i]));
+
+        if (HARSTORAGE.times.indexOf(title) !== -1) {
+            series[i] = Math.round(parseFloat(series[i] / 1000, 10)*10) / 10;
+        }
+    }
+
+    // Colors for Y Axis labels
+    var theme = HARSTORAGE.read_cookie('chartTheme'),
+        color;
+
+    if (theme === 'dark-green' || !theme) {
+        color = '#DDDF0D';
+    } else {
+        color = '#669933';
+    }
+
+    // Chart Object
+    new Highcharts.Chart({
+        chart: {
+            renderTo: 'chart',
+            defaultSeriesType: 'column'
+        },
+        credits: {
+            enabled: false
+        },
+        exporting: {
+            buttons : {
+                printButton: {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
+            },
+            url         : '/chart/export',
+            filename    : 'histogram',
+            width       : 960
+        },
+        title: {
+            text: title
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: [{
+            categories: series
+        }],
+        yAxis: [{
+            title: {
+                text: 'Frequency',
+                style: {
+                    color   : color
+                }
+            },
+            min: 0
+        }],
+        tooltip: {
+            formatter: function() {
+                var units = {};
+
+                units[HARSTORAGE.labels[0]]  = 's';
+                units[HARSTORAGE.labels[1]]  = '';
+                units[HARSTORAGE.labels[2]]  = 'kB';
+                units[HARSTORAGE.labels[3]]  = '';
+                units[HARSTORAGE.labels[4]]  = 's';
+                units[HARSTORAGE.labels[5]]  = 's';
+                units[HARSTORAGE.labels[6]]  = 's';
+                units[HARSTORAGE.labels[7]]  = 'ms';
+                units[HARSTORAGE.labels[8]]  = 'ms';
+                units[HARSTORAGE.labels[9]]  = 'ms';
+                units[HARSTORAGE.labels[10]] = 'ms';
+                units[HARSTORAGE.labels[11]] = 'ms';
+                units[HARSTORAGE.labels[12]] = 'kB';
+                units[HARSTORAGE.labels[13]] = 'kB';
+                units[HARSTORAGE.labels[14]] = 'kB';
+                units[HARSTORAGE.labels[15]] = '';
+                units[HARSTORAGE.labels[16]] = '';
+                units[HARSTORAGE.labels[17]] = '';
+
+                var unit = units[title];
+
+                return '<b>' + this.y + '</b>' + ' (' + this.x + ' ' + unit + ')';
+            }
+        },
+        series: [{
+            data: yAxis
+        }]
+    });
+};
+
+/*
  * Column Chart
  */
 HARSTORAGE.Columns = function() {
@@ -447,7 +569,7 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
 /*
  * Test results
  */
-HARSTORAGE.RunInfo = function(mode, label, query) {
+HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     "use strict";
 
     // Pointer
@@ -484,6 +606,16 @@ HARSTORAGE.RunInfo = function(mode, label, query) {
         agg_btn.style.display = 'inline';
         agg_btn.onclick = function() {
             location.href = query.replace(/amp;/g,'') + '&chart=column&table=true';
+        };
+    }
+
+    // Add event handler to histogram button
+    var histo_btn = document.getElementById('histo');
+
+    if (histo === 'true') {
+        histo_btn.style.display = 'inline';
+        histo_btn.onclick = function() {
+            location.href = "/superposed/histogram?label=" + label + "&metric=full_load_time";
         };
     }
 };

@@ -1,0 +1,23 @@
+<%namespace name="jsloader" file="/histogram/jsloader.html"/>
+<%namespace name="dochead"  file="/histogram/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+
+${dochead.html("Histogram | " + c.label)}
+${header.html()}
+<center>
+    <div class="sp-display">
+        <div id="chart"></div>
+        <p class="title">Histogram</p>
+
+        <div class="selector">
+            <select id="metrics" class="chosen-select">
+                % for metric, title in c.metrics:
+                <option value="${metric}">${title}</option>
+                % endfor                
+            </select>
+        </div>
+    </div>
+</center>
+${jsloader.html()}
+${footer.html()}

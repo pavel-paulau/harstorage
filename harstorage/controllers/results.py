@@ -125,7 +125,9 @@ class ResultsController(BaseController):
             c.query += "step_1_label=" + label
             c.query += "&step_1_start_ts=" + min(c.timestamp)
             c.query += "&step_1_end_ts=" + max(c.timestamp)
-        else:
+            c.histo = 'true'
+        else:            
+            c.histo = 'false'
             c.query = 'None'
 
     @restrict('GET')
