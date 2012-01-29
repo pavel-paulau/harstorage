@@ -76,7 +76,7 @@ class ResultsController(BaseController):
             c.metrics_table[4].append( result['requests']                       )
             c.metrics_table[5].append( round(result['full_load_time']/1000.0,1) )
 
-        return render('./home/core.html')
+        return render('/home/core.html')
 
     @restrict('GET')
     def details(self):
@@ -93,7 +93,7 @@ class ResultsController(BaseController):
 
         self._selectors(c.mode, c.label)
  
-        return render('./details/core.html')
+        return render('/details/core.html')
     
     def _selectors(self, mode, label):
         """
@@ -252,7 +252,7 @@ class ResultsController(BaseController):
         # HAR Viewer customization via cookie
         response.set_cookie('phaseInterval', '-1', max_age=365*24*3600 )
 
-        return render('./harviewer.html')
+        return render('/harviewer.html')
     
     @restrict('GET')
     def deleterun(self):
@@ -381,7 +381,7 @@ class ResultsController(BaseController):
                 if request.headers['automated'] == 'true': return har.status # return exception
             except KeyError:
                 c.error = har.status
-                return render('./upload.html') # display error page
+                return render('/upload.html') # display error page
 
     @restrict('GET')
     def download(self):

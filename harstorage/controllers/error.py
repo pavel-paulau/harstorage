@@ -24,4 +24,4 @@ class ErrorController(BaseController):
         resp = request.environ.get('pylons.original_response')
         c.message = literal(resp.status)
 
-        return render('./error.html')
+        return render('/error.html')

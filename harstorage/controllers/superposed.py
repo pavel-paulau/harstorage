@@ -36,7 +36,7 @@ class SuperposedController(BaseController):
         for label in md_handler.collection.distinct('label'):
             c.labels.append(label)
         
-        return render('./create/core.html')
+        return render('/create/core.html')
     
     @restrict('GET')
     def dates(self):
@@ -181,7 +181,7 @@ class SuperposedController(BaseController):
 
         c.points = c.points[:-1]
 
-        return render('./display/core.html')
+        return render('/display/core.html')
 
     def histogram(self):
         """Render chart with histograms"""
