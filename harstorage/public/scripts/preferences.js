@@ -87,3 +87,70 @@ HARSTORAGE.update_preferences = function() {
     // Refresh current window
     window.location.reload();    
 };
+
+/*
+ * Chart colors from theme
+ */
+HARSTORAGE.Colors = function() {
+    "use strict";
+
+    // Colors for Y Axis labels
+    var theme = HARSTORAGE.read_cookie('chartTheme');
+
+    if (theme === 'dark-green' || !theme) {
+        return [
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#EEAAEE',
+            '#669933',
+            '#CC3333',
+            '#FF9944',
+            '#996633',
+            '#4572A7',
+            '#80699B',
+            '#92A8CD',
+            '#A47D7C',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
+        ];
+    } else {
+        return [
+            '#669933',
+            '#CC3333',
+            '#FF9944',
+            '#996633',
+            '#4572A7',
+            '#80699B',
+            '#92A8CD',
+            '#EEAAEE',
+            '#A47D7C',
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#6AF9C4',
+            '#DB843D',
+            '#9A48C9',
+            '#C99A48',
+            '#879D79'
+        ];
+    }
+};
+
+/*
+ * Spinner options
+ */
+HARSTORAGE.SpinnerOpts = {
+    lines: 10,
+    length: 6,
+    width: 3,
+    radius: 6,
+    color: '#498a2d',
+    speed: 0.8,
+    trail: 80
+};
