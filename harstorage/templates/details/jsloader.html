@@ -10,9 +10,9 @@
             "?highcharts/highcharts.src.js&ver=2.1.9" +
             "&highcharts/themes.js&ver=${c.rev}" +
             "&highcharts/exporting.js&ver=2.1.9").wait()
-    .script("/combine/scripts?spin.js&ver=1.2.1" +
-            "&chosen.jquery.js&ver=0.9.5" +
-            "&harstorage.js&ver=${c.rev}").wait()
+    .script("/scripts/spin.js?ver=1.2.1").wait()
+    .script("/scripts/chosen.jquery.js?ver=0.9.5").wait()
+    .script("/scripts/harstorage.js?ver=${c.rev}").wait()
     .wait(function(){
         var run_info = new HARSTORAGE.RunInfo("${c.mode}", "${c.label}", "${c.query}", "${c.histo}");
         run_info.addSpinner();
