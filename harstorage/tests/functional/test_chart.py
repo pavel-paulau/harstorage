@@ -14,14 +14,9 @@ class TestChartController(TestController):
         with open('harstorage/tests/functional/testdata/validfile.svg') as file:
             response = self.app.post(
                 url(controller='chart', action='export'),
-                params = {
-                    'svg'       : file.read(),
-                    'type'      : 'image/svg+xml',
-                    'filename'  : 'chart.svg',
-                    'width'     : 960
-                },
-                status = 200
-            )
+                params = {'svg': file.read(), 'type': 'image/svg+xml',
+                          'filename': 'chart.svg', 'width': 960},
+                status = 200)
 
         # Response header
         assert response.content_type == 'image/svg+xml'
@@ -33,14 +28,9 @@ class TestChartController(TestController):
         with open('harstorage/tests/functional/testdata/validfile.svg') as file:
             response = self.app.post(
                 url(controller='chart', action='export'),
-                params = {
-                    'svg'       : file.read(),
-                    'type'      : 'image/png',
-                    'filename'  : 'chart.png',
-                    'width'     : 960
-                },
-                status = 200
-            )
+                params = {'svg': file.read(), 'type': 'image/png',
+                          'filename': 'chart.png', 'width': 960},
+                status = 200)
 
         # Response header
         assert response.content_type == 'image/png'

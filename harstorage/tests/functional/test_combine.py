@@ -13,16 +13,11 @@ class TestCombineController(TestController):
         # Expected valid response
         response = self.app.get(
             url(controller='combine', action='styles'),
-            params = {
-                'ver' : '1.0',
-                'main.css' : '',
-                'tabber.css' : '',
-                'datatables/table_jui.css' : '',
-                'datatables/ColReorder.css' : '',
-                'datatables/TableTools_JUI.css' : ''
-            },
-            status = 200
-        )
+            params = {'ver': '1.0', 'main.css': '', 'tabber.css' : '',
+                      'datatables/table_jui.css': '',
+                      'datatables/ColReorder.css': '',
+                      'datatables/TableTools_JUI.css': ''},
+            status = 200)
 
         # Response body
         assert response.content_type == 'text/css'
@@ -33,12 +28,8 @@ class TestCombineController(TestController):
         # Expected 404 status code
         response = self.app.get(
             url(controller='combine', action='styles'),
-            params = {
-                'ver' : '1.0',
-                'imnotexistingfile.css' : '',
-            },
-            status = 404
-        )
+            params = {'ver': '1.0', 'imnotexistingfile.css': ''},
+            status = 404)
 
         # Response body
         assert '404 Not Found' in response.body

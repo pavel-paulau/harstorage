@@ -17,9 +17,8 @@ class TestResultsController(TestController):
         # Expected valid response
         response = self.app.post(
             url(controller='results', action='upload'),
-            params={'file' : ''},
-            status = 200
-        )
+            params = {'file': ''},
+            status = 200)
 
         # Response body
         assert 'Empty file' in response.body
@@ -33,10 +32,9 @@ class TestResultsController(TestController):
         # Expected valid response
         response = self.app.post(
             url(controller='results', action='upload'),
-            params = {'file' : ''},
-            headers = {'Automated':'true'},
-            status = 200
-        )
+            params = {'file': ''},
+            headers = {'Automated': 'true'},
+            status = 200)
 
         # Response body
         assert response.body == 'Empty file'
@@ -54,9 +52,8 @@ class TestResultsController(TestController):
         with open('harstorage/tests/functional/testdata/validfile.har') as file:
             response = self.app.post(
                 url(controller='results', action='upload'),
-                params = {'file' : file.read()},
-                status = 302
-            )
+                params = {'file': file.read()},
+                status = 302)
 
         # Response header
         assert 'results/details?label=validfile' in response.location
@@ -81,10 +78,9 @@ class TestResultsController(TestController):
         with open('harstorage/tests/functional/testdata/validfile.har') as file:
             response = self.app.post(
                 url(controller='results', action='upload'),
-                params = {'file' : file.read()},
-                headers = {'Automated' : 'true'},
-                status = 200
-            )
+                params = {'file': file.read()},
+                headers = {'Automated': 'true'},
+                status = 200)
 
         # Response header
         assert response.body == 'Successful'
@@ -102,8 +98,7 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='index'),
-            status = 200
-        )
+            status = 200)
 
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
@@ -116,8 +111,7 @@ class TestResultsController(TestController):
         # Expected 405 status code
         response = self.app.post(
             url(controller='results', action='index'),
-            status = 405
-        )
+            status = 405)
 
         # Response body
         assert '405 Method Not Allowed' in response.body
@@ -133,8 +127,7 @@ class TestResultsController(TestController):
         # Expected 404 status code
         response = self.app.get(
             url('/404'),
-            status = 404
-        )
+            status = 404)
 
         # Response body
         assert '404 Not Found' in response.body
@@ -150,9 +143,8 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='details'),
-            params = {'label' : 'validfile'},
-            status = 200
-        )
+            params = {'label': 'validfile'},
+            status = 200)
 
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
@@ -164,9 +156,8 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='details'),
-            params = {'url' : 'http://valid.host/'},
-            status = 200
-        )
+            params = {'url': 'http://valid.host/'},
+            status = 200)
 
         # Template context
         assert response.tmpl_context.rev == response.config['app_conf']['static_version']
@@ -178,10 +169,8 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='timeline'),
-            params = {'label' : 'validfile',
-                      'mode'  : 'label'},
-            status = 200
-        )
+            params = {'label': 'validfile', 'mode': 'label'},
+            status = 200)
 
         # Data validation
         assert len(response.body.split('#')) == 20
@@ -194,10 +183,9 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='timeline'),
-            params = {'label' : 'http://valid.host/',
-                      'mode'  : 'url'},
-            status = 200
-        )
+            params = {'label': 'http://valid.host/',
+                      'mode': 'url'},
+            status = 200)
 
         # Data validation
         assert len(response.body.split('#')) == 20
@@ -214,9 +202,8 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='runinfo'),
-            params = {'timestamp' : timestamp},
-            status = 200
-        )
+            params = {'timestamp': timestamp},
+            status = 200)
 
         # Data validation
         assert json.loads(response.body)
@@ -232,9 +219,8 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='download'),
-            params = {'id' : id},
-            status = 200
-        )
+            params = {'id': id},
+            status = 200)
 
         # Data validation
         har = response.body.replace('onInputData(','')[:-2]
@@ -247,8 +233,7 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='harviewer'),
-            status = 200
-        )
+            status = 200)
 
         # Cookie
         cookie = response.response.headers.get('Set-Cookie')
@@ -266,12 +251,9 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='deleterun'),
-            params = {'label'     : 'validfile',
-                      'timestamp' : timestamp,
-                      'mode'      : 'label',
-                      'all'       : 'false'},
-            status = 200
-        )
+            params = {'label': 'validfile', 'timestamp': timestamp,
+                      'mode': 'label', 'all': 'false'},
+            status = 200)
 
         # Response validation
         assert response.body == "details?label=validfile"
@@ -287,12 +269,9 @@ class TestResultsController(TestController):
         # Successful response
         response = self.app.get(
             url(controller='results', action='deleterun'),
-            params = {'label'     : 'http://valid.host/',
-                      'timestamp' : timestamp,
-                      'mode'      : 'url',
-                      'all'       : 'false'},
-            status = 200
-        )
+            params = {'label': 'http://valid.host/', 'timestamp' : timestamp,
+                      'mode': 'url', 'all': 'false'},
+            status = 200)
 
         # Response validation
         assert response.body == "/"
