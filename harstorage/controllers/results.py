@@ -287,7 +287,6 @@ class ResultsController(BaseController):
         else:
             return ("/")
 
-    @restrict('POST')
     def upload_rest(function):
         @functools.wraps(function)
         def wrapper(*args):
@@ -309,6 +308,7 @@ class ResultsController(BaseController):
 
         return wrapper
 
+    @restrict('POST')
     @upload_rest
     def upload(self):
         """Controller for uploads of new test results"""
