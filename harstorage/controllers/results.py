@@ -5,6 +5,7 @@ import hashlib
 import mimetypes
 import time
 import re
+import functools
 
 from pylons import request, response, tmpl_context as c
 from pylons import config
@@ -287,6 +288,28 @@ class ResultsController(BaseController):
             return ("/")
 
     @restrict('POST')
+    def upload_rest(function):
+        @functools.wraps(function)
+        def wrapper(*args):
+            result, ext = function(*args)
+
+            if result == True:
+                try:
+                    if request.headers['automated'] == 'true':
+                        return 'Successful'
+                except KeyError:
+                    redirect('/results/details?label=' + ext)
+            else:
+                try:
+                    if request.headers['automated'] == 'true':
+                        return ext
+                except KeyError:
+                    c.error = ext
+                    return render('/upload.html')
+
+        return wrapper
+
+    @upload_rest
     def upload(self):
         """Controller for uploads of new test results"""
 
@@ -330,11 +353,10 @@ class ResultsController(BaseController):
                 scores['Total Score'] = int(output['score'])
                 
                 for rule in output['rule_results']:
-                    scores[rule['localized_rule_name']]=int(rule['rule_score'])
+                    scores[rule['localized_rule_name']] = int(rule['rule_score'])
             
             else:
-                scores = dict()
-                
+                scores = dict()                
                 scores['Total Score'] = 100
             
             # Add document to collection
@@ -368,16 +390,9 @@ class ResultsController(BaseController):
 
             mdb_handler.collection.insert(result)
 
-            try:
-                if request.headers['automated'] == 'true': return 'Successful'
-            except KeyError:
-                redirect('/results/details?label=' + har.label) # redirect to details
+            return True, har.label
         else:
-            try:
-                if request.headers['automated'] == 'true': return har.status # return exception
-            except KeyError:
-                c.error = har.status
-                return render('/upload.html') # display error page
+            return False, har.status
 
     @restrict('GET')
     def download(self):
