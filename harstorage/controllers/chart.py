@@ -1,4 +1,3 @@
-import logging
 import os
 import cairo
 import rsvg
@@ -9,8 +8,6 @@ from pylons import config
 from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController
-
-log = logging.getLogger(__name__)
 
 class ChartController(BaseController):
 

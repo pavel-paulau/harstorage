@@ -1,4 +1,3 @@
-import logging
 import json
 import os
 import hashlib
@@ -15,8 +14,6 @@ from pylons.decorators.rest import restrict
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoDB
-
-log = logging.getLogger(__name__)
 
 class ResultsController(BaseController):
 

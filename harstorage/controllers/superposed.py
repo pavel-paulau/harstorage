@@ -1,4 +1,3 @@
-import logging
 import math
 
 from pylons import request, tmpl_context as c
@@ -8,8 +7,6 @@ from pylons.decorators.rest import restrict
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
 from harstorage.lib.Histogram import Histogram
-
-log = logging.getLogger(__name__)
 
 class SuperposedController(BaseController):
 

@@ -1,12 +1,8 @@
-import logging
-
 from pylons import request, response
 from pylons import config
 from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController
-
-log = logging.getLogger(__name__)
 
 class CombineController(BaseController):
 
