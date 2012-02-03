@@ -31,7 +31,7 @@ class SuperposedController(BaseController):
         md_handler = MongoDB()
         
         # List of labels
-        c.labels    = list()
+        c.labels = list()
         
         for label in md_handler.collection.distinct('label'):
             c.labels.append(label)
@@ -42,18 +42,17 @@ class SuperposedController(BaseController):
     def dates(self):
         """Return a list of timestamps for selected label"""
 
-        # Read label from GET request
-        label = request.GET['label']
-
         # MongoDB handler
         md_handler = MongoDB()
 
+        # Read label from GET request
+        label = request.GET['label']
+
         # Read data from database
         documents = md_handler.collection.find(
-            {'label' : label},
-            fields  = ['timestamp'],
-            sort    = [('timestamp', 1)]
-        )
+            {'label': label},
+            fields = ['timestamp'],
+            sort = [('timestamp', 1)])
         
         for document in documents:
             try:
@@ -71,9 +70,9 @@ class SuperposedController(BaseController):
         md_handler = MongoDB()
 
         # Checkbox options
-        c.chart_type    = request.GET.get('chart', None)        
-        c.table         = request.GET.get('table', 'false')
-        init            = request.GET.get('metric', 'true')
+        c.chart_type = request.GET.get('chart', None)        
+        c.table = request.GET.get('table', 'false')
+        init = request.GET.get('metric', 'true')
 
         c.chart = 'true' if c.chart_type else 'false'
 
@@ -104,10 +103,11 @@ class SuperposedController(BaseController):
                         'Text Size (kB)', 'Media Size (kB)', 'Cache Size (kB)',
                         'Redirects', 'Bad Rquests', 'Domains']
 
-        c.points = str()
         data = dict()
+        
         for metric in metrics:
             data[metric] = list()
+
         data['label'] = list()
 
         # Data table
@@ -117,9 +117,9 @@ class SuperposedController(BaseController):
         # Test results from database
         for row in range(c.rowcount):
             # Parameters from GET request
-            label       = request.GET[ 'step_' + str(row+1) + '_label'    ]
-            start_ts    = request.GET[ 'step_' + str(row+1) + '_start_ts' ]
-            end_ts      = request.GET[ 'step_' + str(row+1) + '_end_ts'   ]
+            label = request.GET['step_' + str(row+1) + '_label']
+            start_ts = request.GET['step_' + str(row+1) + '_start_ts']
+            end_ts = request.GET['step_' + str(row+1) + '_end_ts']
 
             # Label
             c.metrics_table[0].append(label)
@@ -128,12 +128,10 @@ class SuperposedController(BaseController):
             data['label'][row] = label
 
             # Fetch test results
-            documents = md_handler.collection.find(
-                {'label'     : label,
-                 'timestamp' : { '$gte':start_ts, '$lte':end_ts }
-                },
-                fields = metrics
-            )
+            condition = {'label': label,
+                         'timestamp': {'$gte': start_ts, '$lte': end_ts}}
+
+            documents = md_handler.collection.find(condition, fields = metrics)
 
             for metric in metrics:
                 data[metric].append(row)
@@ -147,6 +145,8 @@ class SuperposedController(BaseController):
                         data[metric][row].append(document[metric]['Total Score'])
 
         # Aggregation
+        c.points = str()
+
         for row in range(c.rowcount):
             c.points += data['label'][row] + '#'
 
@@ -157,25 +157,18 @@ class SuperposedController(BaseController):
             c.points = c.points[:-1] + ';'
             for row in range(c.rowcount):
                 if c.metric == 'Average':
-                    average = self._average(data[metric][row])
-                    c.points += str(average) + '#'
-                    c.metrics_table[column].append(average)
+                    value = self._average(data[metric][row])
                 elif c.metric == 'Minimum':
-                    minimum = self._minimum(data[metric][row])
-                    c.points += str(minimum) + '#'
-                    c.metrics_table[column].append(minimum)
+                    value = self._minimum(data[metric][row])
                 elif c.metric == 'Maximum':
-                    maximum = self._maximum(data[metric][row])
-                    c.points += str(maximum) + '#'
-                    c.metrics_table[column].append(maximum)
+                    value = self._maximum(data[metric][row])
                 elif c.metric == '90th Percentile':
-                    percentile = self._percentile(data[metric][row], 0.9)
-                    c.points += str(percentile) + '#'
-                    c.metrics_table[column].append(percentile)
+                    value = self._percentile(data[metric][row], 0.9)
                 elif c.metric == 'Median':
-                    percentile = self._percentile(data[metric][row], 0.5)
-                    c.points += str(percentile) + '#'
-                    c.metrics_table[column].append(percentile)
+                    value = self._percentile(data[metric][row], 0.5)
+
+                c.points += str(value) + '#'
+                c.metrics_table[column].append(value)
 
             column += 1
 
@@ -190,12 +183,11 @@ class SuperposedController(BaseController):
         md_handler = MongoDB()
 
         # Option
-        c.label   = request.GET['label']
-        c.metric  = request.GET['metric']
+        c.label = request.GET['label']
+        c.metric = request.GET['metric']
 
         # Metrics
-        metrics = [
-                    ("full_load_time", "Full Load Time"),
+        metrics = [ ("full_load_time", "Full Load Time"),
                     ("onload_event", "onLoad Event"),
                     ("start_render_time", "Start Render Time"),
                     ("time_to_first_byte", "Time to First Byte"),
@@ -203,16 +195,15 @@ class SuperposedController(BaseController):
                     ("total_transfer_time", "Total Transfer Time"),
                     ("total_server_time", "Total Server Time"),
                     ("avg_connecting_time", "Avg. Connecting Time"),
-                    ("avg_blocking_time", "Avg. Blocking Time")
-        ]
+                    ("avg_blocking_time", "Avg. Blocking Time")]
 
         c.metrics = list()
         
         # Read data from database
-        documents = md_handler.collection.find(
-            {'label' : c.label},
-            fields  = (metric for metric, title in metrics)
-        )
+        condition = {'label': c.label}
+        fields = (metric for metric, title in metrics)
+
+        documents = md_handler.collection.find(condition, fields = fields)
 
         full_data = list(document for document in documents)
 
@@ -262,7 +253,7 @@ class SuperposedController(BaseController):
         try:
             num = len( results )
             total_sum = sum(results)
-            return int( round( total_sum / num, 0 ) )
+            return int(round(total_sum / num, 0))
         except TypeError:
             return 'n/a'
 
@@ -303,6 +294,6 @@ class SuperposedController(BaseController):
             return key(data[int(k)])
         else:
             try:
-                return key(data[int(f)]) * (c-k) + key(data[int(c)]) * (k-f)
+                return key(data[int(f)]) * (c - k) + key(data[int(c)]) * (k - f)
             except TypeError:
                 return 'n/a'

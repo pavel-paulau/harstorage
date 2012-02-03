@@ -23,10 +23,10 @@ class ChartController(BaseController):
         """Main export controller"""
 
         # Parameters from POST request
-        type        = request.POST['type']
-        svg         = request.POST['svg']
-        filename    = request.POST['filename']
-        width       = int( request.POST['width'] )
+        type = request.POST['type']
+        svg = request.POST['svg']
+        filename = request.POST['filename']
+        width = int( request.POST['width'] )
 
         # Image size
         if width == 960:
@@ -40,10 +40,8 @@ class ChartController(BaseController):
             ext = '.png'
 
             # Image name
-            image_name = os.path.join(
-                    config['app_conf']['temp_store'],
-                    hashlib.md5().hexdigest() + ext
-            )
+            image_name = os.path.join(config['app_conf']['temp_store'],
+                                      hashlib.md5().hexdigest() + ext)
             
             # Create PNG file
             self._render_png(svg, image_name, width, height)
@@ -52,17 +50,15 @@ class ChartController(BaseController):
             ext = '.svg'
 
             # Image name
-            image_name = os.path.join(
-                config['app_conf']['temp_store'],
-                hashlib.md5().hexdigest() + ext
-            )
+            image_name = os.path.join(config['app_conf']['temp_store'],
+                                      hashlib.md5().hexdigest() + ext)
             
             # Create SVG file
             self._render_svg(svg, image_name)
         
         # Response headers
         response.headers['Content-Disposition'] = "attachment; filename=" + filename + ext
-        response.headers['Content-type']        = type
+        response.headers['Content-type'] = type
         
         # Return chuncked response
         return self._stream_image(image_name)

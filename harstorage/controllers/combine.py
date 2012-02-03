@@ -29,15 +29,13 @@ class CombineController(BaseController):
                         try:
                             combo += file.read()
                         except UnboundLocalError:
-                            combo  = file.read()
+                            combo = file.read()
                 except IOError:
                     response.status_int = 404
                     return None
 
         # Additional HTTP headers
-        response.headerlist = [
-            ('Content-type', 'text/css')            
-        ]
+        response.headerlist = [('Content-type', 'text/css')]
 
         return combo
 
@@ -54,14 +52,12 @@ class CombineController(BaseController):
                         try:
                             combo += file.read()
                         except UnboundLocalError:
-                            combo  = file.read()
+                            combo = file.read()
                 except IOError:
                     response.status_int = 404
                     return None
 
         # Additional HTTP headers
-        response.headerlist = [
-            ('Content-type', 'application/javascript')            
-        ]
+        response.headerlist = [('Content-type', 'application/javascript')]
 
         return combo
