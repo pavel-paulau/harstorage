@@ -5,6 +5,7 @@ import mimetypes
 import time
 import re
 import functools
+import platform
 
 from pylons import request, response, tmpl_context as c
 from pylons import config
@@ -334,10 +335,20 @@ class ResultsController(BaseController):
                     file.write(json.dumps(har.har))
                 
                 # Run pagespeed_bin
+                os_type = platform.system()
+
+                if os_type == 'Linux':
+                    std_out = " > /dev/null 2>&1"
+                elif os_type == 'Windows':
+                    std_out = " > NUL 2>1"
+                else:
+                    std_out = ""
+
                 os.system(pagespeed_bin + \
                     " -input_file " + filename + \
                     " -output_format formatted_json" + \
-                    " -output_file " + outfile)
+                    " -output_file " + outfile + \
+                    std_out)
 
                 # Output report (JSON)
                 filename = outfile
