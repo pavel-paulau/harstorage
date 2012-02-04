@@ -194,6 +194,9 @@ class SuperposedController(BaseController):
                     ("avg_connecting_time", "Avg. Connecting Time"),
                     ("avg_blocking_time", "Avg. Blocking Time")]
 
+        time_metrics = ["full_load_time", "onload_event", "start_render_time",
+                        "time_to_first_byte"]
+
         c.metrics = list()
         
         # Read data from database
@@ -208,18 +211,23 @@ class SuperposedController(BaseController):
             try:
                 data = (result[metric] for result in full_data)
                 my_histogram = Histogram(data)
-                my_histogram.midpoints()
-                my_histogram.frequencies()
+
+                if metric in time_metrics:
+                    ranges = my_histogram.ranges(True)
+                else:
+                    ranges = my_histogram.ranges()
+
+                frequencies = my_histogram.frequencies()
 
                 if metric == c.metric:
                     c.data = ""
 
-                    for midpoint in my_histogram.midpoints():
-                        c.data += str(midpoint) + "#"
+                    for occ_range in ranges:
+                        c.data += occ_range + "#"
 
                     c.data = c.data[:-1] + ";"
 
-                    for frequency in my_histogram.frequencies():
+                    for frequency in frequencies:
                         c.data += str(frequency) + "#"
 
                     c.data = c.data[:-1] + ";"

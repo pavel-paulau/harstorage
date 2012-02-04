@@ -260,11 +260,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
     var temp_array = splitResults[1].split("#");
 
     for (var i = 0, l = temp_array.length; i < l; i += 1 ) {
-        yAxis.push(parseInt(temp_array[i], 10));
-
-        if (HARSTORAGE.times.indexOf(title) !== -1) {
-            series[i] = Math.round(parseFloat(series[i] / 1000, 10)*10) / 10;
-        }
+        yAxis.push(parseFloat(temp_array[i], 10));
     }
 
     // Colors for Y Axis labels
@@ -298,7 +294,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
             width: 960
         },
         title: {
-            text: title
+            text: title + " (" + HARSTORAGE.Units[title] + ")"
         },
         legend: {
             enabled: false
@@ -313,7 +309,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
         }],
         yAxis: [{
             title: {
-                text: "Frequency",
+                text: "Percentage of Total",
                 style: {
                     color: color
                 }
@@ -323,7 +319,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
         tooltip: {
             formatter: function() {
                 var unit = HARSTORAGE.Units[title];
-                return "<b>" + this.y + "</b>" + " (" + this.x + " " + unit + ")";
+                return "<b>" + this.y + " %</b>" + " (" + this.x + " " + unit + ")";
             }
         },
         series: [{

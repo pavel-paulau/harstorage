@@ -79,69 +79,62 @@ class Histogram():
 
         self.data = sorted(data)
         self.size = len(self.data)
-        self.classes = round(1.0 + 3.32 * math.log10(self.size))
         self.max_value = max(self.data)
         self.min_value = min(self.data)
+        
+        if self.min_value != self.max_value:
+            self.classes = round(1.0 + 3.32 * math.log10(self.size))
+        else:
+            self.classes = 1
         self.step = (self.max_value - self.min_value) / self.classes
 
-        self.classes = min(float(len(self._borders())), self.classes)
-        self.step = (self.max_value - self.min_value) / self.classes
-
-    def _borders(self):
-        """
-        Class (column) borders
-        """
-
-        borders = set()
-
-        step = self.min_value + self.step
-
-        borders.add(self.data[0])
-
-        for value in self.data:
-            if value >= step:
-                borders.add(value)
-                step += self.step
-        return borders
-
-    def midpoints(self):
-        """
-        Class (column) midpoints
-        """
-
-        midpoints = list()
+    def ranges(self, reduced=False):
+        ranges = list()
 
         for klass in range(int(self.classes)):
-            midpoint = self.min_value + self.step * (klass + 0.5)
-            midpoints.append(round(midpoint, 1))
+            range_l = int(self.min_value + self.step * klass)
+            range_r = int(self.min_value + self.step * (klass + 1))
 
-        return midpoints
+            if reduced:
+                try:
+                    order = 1 + int(100 / self.step)
+                except:
+                    order = 1
+
+                range_l = round(range_l / 1000.0, order)
+                range_r = round(range_r / 1000.0, order)
+
+            ranges.append(str(range_l) + " - " + str(range_r))
+
+        return ranges
 
     def frequencies(self):
         """
         Class (column) frequencies
         """
 
-        freq = list()
+        frequencies = list()
 
-        for i in range(int(self.classes)):
-            freq.append(0)
+        for index in range(int(self.classes)):
+            frequencies.append(0)
 
         step = self.min_value + self.step
 
         index = 0
 
         for value in self.data:
-            if value < step:
-                freq[index] += 1
+            if value <= step:
+                frequencies[index] += 1
             else:
-                step += self.step
-                if value == self.max_value:
-                    step += 1
+                while value > step + 1:
+                    step += self.step
+                    index += 1
                 try:
-                    freq[index+1] += 1
+                    frequencies[index+1] += 1
                 except:
-                    freq[index] += 1
-                index += 1
+                    frequencies[index] += 1
+ 
+        for index in range(int(self.classes)):
+            frequencies[index] = round(frequencies[index] * 100.0 / self.size, 1)
 
-        return freq
+        return frequencies
