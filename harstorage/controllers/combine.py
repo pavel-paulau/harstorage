@@ -12,14 +12,14 @@ class CombineController(BaseController):
 
     """
 
-    @restrict('GET')
+    @restrict("GET")
     def styles(self):
         """Read list of stylesheets and combine them"""
 
         # Concatenation
         for key in request.GET.keys():
-            if key != 'ver':
-                base = config['pylons.paths']['static_files']
+            if key != "ver":
+                base = config["pylons.paths"]["static_files"]
                 try:
                     with open(base + "/styles/" + key) as file:
                         try:
@@ -31,18 +31,18 @@ class CombineController(BaseController):
                     return None
 
         # Additional HTTP headers
-        response.headerlist = [('Content-type', 'text/css')]
+        response.headerlist = [("Content-type", "text/css")]
 
         return combo
 
-    @restrict('GET')
+    @restrict("GET")
     def scripts(self):
         """Read list of JavaScript files and combine them"""
 
         # Concatenation
         for key in request.GET.keys():
-            if key != 'ver':
-                base = config['pylons.paths']['static_files']
+            if key != "ver":
+                base = config["pylons.paths"]["static_files"]
                 try:
                     with open(base + "/scripts/" + key) as file:
                         try:
@@ -54,6 +54,6 @@ class CombineController(BaseController):
                     return None
 
         # Additional HTTP headers
-        response.headerlist = [('Content-type', 'application/javascript')]
+        response.headerlist = [("Content-type", "application/javascript")]
 
         return combo

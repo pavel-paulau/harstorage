@@ -12,15 +12,15 @@ class Histogram():
         Initialize histogram parameters
         """
 
-        self.data       = sorted(data)
-        self.size       = len(self.data)
-        self.classes    = round(1.0 + 3.32 * math.log10(self.size))
-        self.max_value  = max(self.data)
-        self.min_value  = min(self.data)
-        self.step       = (self.max_value - self.min_value) / self.classes
+        self.data = sorted(data)
+        self.size = len(self.data)
+        self.classes = round(1.0 + 3.32 * math.log10(self.size))
+        self.max_value = max(self.data)
+        self.min_value = min(self.data)
+        self.step = (self.max_value - self.min_value) / self.classes
 
-        self.classes    = min(float(len(self._borders())), self.classes)
-        self.step       = (self.max_value - self.min_value) / self.classes
+        self.classes = min(float(len(self._borders())), self.classes)
+        self.step = (self.max_value - self.min_value) / self.classes
 
     def _borders(self):
         """

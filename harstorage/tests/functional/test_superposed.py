@@ -14,10 +14,10 @@ class TestTestflowController(TestController):
         """Init data for Superposed"""
 
         # Add valid file
-        with open('harstorage/tests/functional/testdata/validfile.har') as file:
+        with open("harstorage/tests/functional/testdata/validfile.har") as file:
             self.app.post(
-                url(controller='results', action='upload'),
-                params = {'file' : file.read()},
+                url(controller="results", action="upload"),
+                params = {"file": file.read()},
                 status = 302)
 
         time.sleep(1)
@@ -27,11 +27,11 @@ class TestTestflowController(TestController):
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='create'),
+            url(controller="superposed", action="create"),
             status = 200)
 
         # Template context
-        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+        assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
         assert type(response.tmpl_context.labels) == type([])
 
@@ -40,32 +40,32 @@ class TestTestflowController(TestController):
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='dates'),
-            params = {'label': 'validfile',},
+            url(controller="superposed", action="dates"),
+            params = {"label": "validfile",},
             status = 200)
 
         # Template context
-        assert response.body.find(';') == -1
+        assert response.body.find(";") == -1
 
     def test_04_display_average(self):
         """Display superposed - Average"""
 
         # Fetch data from database
-        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
+        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
-        timestamp = collection.find_one({"label": 'validfile'})['timestamp']
+        timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='display'),
-            params = {'step_1_label': 'validfile',
-                      'step_1_start_ts': timestamp,
-                      'step_1_end_ts': timestamp,
-                      'metric': 'Average'},
+            url(controller="superposed", action="display"),
+            params = {"step_1_label": "validfile",
+                      "step_1_start_ts": timestamp,
+                      "step_1_end_ts": timestamp,
+                      "metric": "Average"},
             status = 200)
 
         # Template context
-        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+        assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
         assert len(response.tmpl_context.metrics_table) == 19
 
@@ -73,21 +73,21 @@ class TestTestflowController(TestController):
         """Display superposed - Median"""
 
         # Fetch data from database
-        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
+        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
         timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='display'),
-            params = {'step_1_label': 'validfile',
-                      'step_1_start_ts': timestamp,
-                      'step_1_end_ts': timestamp,
-                      'metric': 'Median'},
+            url(controller="superposed", action="display"),
+            params = {"step_1_label": "validfile",
+                      "step_1_start_ts": timestamp,
+                      "step_1_end_ts": timestamp,
+                      "metric": "Median"},
             status = 200)
 
         # Template context
-        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+        assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
         assert len(response.tmpl_context.metrics_table) == 19
 
@@ -95,21 +95,21 @@ class TestTestflowController(TestController):
         """Display superposed - Minimum"""
 
         # Fetch data from database
-        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
+        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
-        timestamp = collection.find_one({"label": 'validfile'})['timestamp']
+        timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='display'),
-            params = {'step_1_label': 'validfile',
-                      'step_1_start_ts': timestamp,
-                      'step_1_end_ts': timestamp,
-                      'metric': 'Minimum'},
+            url(controller="superposed", action="display"),
+            params = {"step_1_label": "validfile",
+                      "step_1_start_ts": timestamp,
+                      "step_1_end_ts": timestamp,
+                      "metric": "Minimum"},
             status = 200)
 
         # Template context
-        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+        assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
         assert len(response.tmpl_context.metrics_table) == 19
 
@@ -117,21 +117,21 @@ class TestTestflowController(TestController):
         """Display superposed - Maximum"""
 
         # Fetch data from database
-        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
+        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
-        timestamp = collection.find_one({"label": 'validfile'})['timestamp']
+        timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='display'),
-            params = {'step_1_label': 'validfile',
-                      'step_1_start_ts': timestamp,
-                      'step_1_end_ts': timestamp,
-                      'metric': 'Maximum'},
+            url(controller="superposed", action="display"),
+            params = {"step_1_label": "validfile",
+                      "step_1_start_ts": timestamp,
+                      "step_1_end_ts": timestamp,
+                      "metric": "Maximum"},
             status = 200)
 
         # Template context
-        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+        assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
         assert len(response.tmpl_context.metrics_table) == 19
 
@@ -139,21 +139,21 @@ class TestTestflowController(TestController):
         """Display superposed - 90th Percentile"""
 
         # Fetch data from database
-        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
+        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
-        timestamp = collection.find_one({"label": 'validfile'})['timestamp']
+        timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         response = self.app.get(
-            url(controller='superposed', action='display'),
-            params = {'step_1_label': 'validfile',
-                      'step_1_start_ts': timestamp,
-                      'step_1_end_ts': timestamp,
-                      'metric': '90th Percentile'},
+            url(controller="superposed", action="display"),
+            params = {"step_1_label": "validfile",
+                      "step_1_start_ts": timestamp,
+                      "step_1_end_ts": timestamp,
+                      "metric": "90th Percentile"},
             status = 200)
 
         # Template context
-        assert response.tmpl_context.rev == response.config['app_conf']['static_version']
+        assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
         assert len(response.tmpl_context.metrics_table) == 19
 
@@ -161,13 +161,13 @@ class TestTestflowController(TestController):
         """Clear test data from Superposed"""
 
         # Fetch data from database
-        collection = pymongo.Connection('localhost:27017')['harstorage']['results']
+        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
-        timestamp = collection.find_one({"label": 'validfile'})['timestamp']
+        timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         self.app.get(
-            url(controller='results', action='deleterun'),
-            params = {'label': 'validfile', 'timestamp': timestamp,
-                      'mode': 'label', 'all': 'true'},
+            url(controller="results", action="deleterun"),
+            params = {"label": "validfile", "timestamp": timestamp,
+                      "mode": "label", "all": "true"},
             status = 200)

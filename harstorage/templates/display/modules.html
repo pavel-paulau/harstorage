@@ -16,7 +16,7 @@
     <tbody>
         % for row in range(c.rowcount):
         <tr>
-            <td class="left"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][row],method='GET')}">${c.metrics_table[0][row]}</a></td>
+            <td class="left"><a href="${h.url_for(controller='results', action='details', label=c.metrics_table[0][row], method='GET')}">${c.metrics_table[0][row]}</a></td>
             % for column in range(len(c.headers)-1):
                 <td class="center">${c.metrics_table[column+1][row]}</td>
             % endfor

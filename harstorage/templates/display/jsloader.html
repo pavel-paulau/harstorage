@@ -1,14 +1,14 @@
 <%def name="html()">
-<script type='text/javascript'>
+<script type="text/javascript">
     $LAB
     .script("/scripts/jquery-1.7.min.js").wait()
-    % if c.table == 'true':
+    % if c.table == "true":
     .script("/combine/scripts" +
             "?datatables/jquery.dataTables.min.js&ver=1.8.2" +
             "&datatables/ColReorder.min.js&ver=1.0.4" +
             "&datatables/TableTools.min.js&ver=1.0.4").wait()
     % endif
-    % if c.chart == 'true':
+    % if c.chart == "true":
     .script("/combine/scripts" +
             "?highcharts/highcharts.src.js&ver=2.1.9" +
             "&highcharts/themes.js&ver=${c.rev}" +
@@ -17,16 +17,16 @@
     .script("/scripts/chosen.jquery.js?ver=0.9.5")
     .script("/scripts/harstorage.js?ver=${c.rev}").wait()
     .wait(function(){
-        % if c.chart == 'true':
+        % if c.chart == "true":
         var columns = new HARSTORAGE.Columns();
         columns.draw("${c.points}", "${c.chart_type}");
         % endif
 
         HARSTORAGE.AggregatedStatistics();
 
-        % if c.table == 'true':
+        % if c.table == "true":
         $(document).ready(function() {
-            $('#stats_table').dataTable({
+            $("#stats_table").dataTable({
                 "bJQueryUI": true,
                 "sPaginationType": "full_numbers",
                 "sDom": 'R<"H"Tfr>t<"F"ip>',
@@ -39,7 +39,7 @@
                 "sScrollX": "4270px"
             });
 
-            $('#summary-table').css('visibility', 'visible');
+            $("#summary-table").css("visibility", "visible");
         });
         % endif
     })

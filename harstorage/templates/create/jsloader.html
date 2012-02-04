@@ -1,12 +1,12 @@
 <%def name="html()">
-<script type='text/javascript'>
+<script type="text/javascript">
     $LAB
     .script("/combine/scripts?spin.js&ver=1.2.1").wait()
     .script("/combine/scripts?harstorage.js&ver=${c.rev}").wait()
     .wait(function(){
         var superpose_form = new HARSTORAGE.SuperposeForm();
         superpose_form.addSpinner();
-        superpose_form.setTimestamps('step_1_label');
+        superpose_form.setTimestamps("step_1_label");
     })
 </script>
 </%def>

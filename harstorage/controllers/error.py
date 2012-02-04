@@ -16,12 +16,12 @@ class ErrorController(BaseController):
     def __before__(self):
         """Define version of static content"""
 
-        c.rev = config['app_conf']['static_version']
+        c.rev = config["app_conf"]["static_version"]
 
     def document(self):
         """Render the error document"""
 
-        resp = request.environ.get('pylons.original_response')
+        resp = request.environ.get("pylons.original_response")
         c.message = literal(resp.status)
 
-        return render('/error.html')
+        return render("/error.html")

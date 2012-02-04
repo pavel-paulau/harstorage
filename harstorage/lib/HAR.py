@@ -13,7 +13,7 @@ class HAR():
 
         # Check file size
         if len(har) == 0:
-            self.status = 'Empty file'
+            self.status = "Empty file"
         else:
             try:
                 if not fixed:
@@ -33,26 +33,26 @@ class HAR():
                 self.workaround_pagespeed()
 
                 # Initial varaibles
-                self.full_load_time         = 0
+                self.full_load_time = 0
 
-                self.total_dns_time         = 0.0
-                self.total_transfer_time    = 0.0
-                self.total_server_time      = 0.0
-                self.avg_connecting_time    = 0.0
-                self.avg_blocking_time      = 0.0
+                self.total_dns_time      = 0.0
+                self.total_transfer_time = 0.0
+                self.total_server_time   = 0.0
+                self.avg_connecting_time = 0.0
+                self.avg_blocking_time   = 0.0
 
-                self.total_size             = 0.0
-                self.text_size              = 0.0
-                self.media_size             = 0.0
-                self.cache_size             = 0.0
+                self.total_size = 0.0
+                self.text_size  = 0.0
+                self.media_size = 0.0
+                self.cache_size = 0.0
 
-                self.redirects              = 0
-                self.bad_requests           = 0
+                self.redirects    = 0
+                self.bad_requests = 0
 
                 self.domains = dict()
 
                 # Parsing status
-                self.status = 'Successful'
+                self.status = "Successful"
                 
             except Exception as error:
                 self.status = error
@@ -60,61 +60,54 @@ class HAR():
     def workaround_httpwatch(self, har):
         """HttpWatch workaround"""
 
-        return har.decode('latin-1').encode('utf-8')
+        return har.decode("latin-1").encode("utf-8")
 
     def workaround_fiddler(self, har):
         """Fiddler workaround"""
 
-        har = har.partition('{')[1] + har.partition('{')[-1]
+        har = har.partition("{")[1] + har.partition("{")[-1]
 
-        return re.sub(
-                    '"pages":null',
-                    '"pages":[{\
-                        "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
-                        "id":"Undefined",\
-                        "title":"Undefined",\
-                        "pageTimings": {}\
-                    }]',
-                    har
-        )
+        return re.sub('"pages":null',
+                      '"pages":[{\
+                      "startedDateTime": "1970-01-01T00:00:00.000+00:00",\
+                      "id": "Undefined","title": "Undefined",\
+                      "pageTimings": {}}]',
+                      har)
 
     def workaround_charles(self, har):
         """Charles Proxy workaround"""
 
-        return re.sub(
-                    '"log":{',
-                    '"log":{\
-                        "pages":[{\
-                            "startedDateTime":"1970-01-01T00:00:00.000+00:00",\
-                            "id":"Undefined",\
-                            "title":"Undefined",\
-                            "pageTimings": {}\
-                        }],',
-                    har
-        )
+        return re.sub('"log":{',
+                      '"log": {"pages": [{\
+                      "startedDateTime": "1970-01-01T00:00:00.000+00:00",\
+                      "id": "Undefined","title": "Undefined",\
+                      "pageTimings": {}}],',
+                      har)
 
     def workaround_pagespeed(self):
         """Page Speed workaround"""
 
         # Entry level
-        for entry in self.har['log']['entries']:
-            if entry['startedDateTime'].rfind('+') != -1:
-                entry['startedDateTime'] = entry['startedDateTime'].replace('+','-')
+        for entry in self.har["log"]["entries"]:
+            if entry["startedDateTime"].rfind("+") != -1:
+                start_ts = entry["startedDateTime"].replace("+", "-")
+                entry["startedDateTime"] = start_ts
 
-            long_time, dot, seconds         = entry['startedDateTime'].partition('.')
-            milliseconds, dash, timezone    = seconds.partition('-')
+            long_time, dot, seconds = entry["startedDateTime"].partition(".")
+            milliseconds, dash, timezone = seconds.partition("-")
 
-            entry['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+            entry["startedDateTime"] = long_time + dot + milliseconds + "+00:00"
 
         # Page level
-        for page in self.har['log']['pages']:
-            if page['startedDateTime'].rfind('+') != -1:
-                page['startedDateTime'] = page['startedDateTime'].replace('+','-')
+        for page in self.har["log"]["pages"]:
+            if page["startedDateTime"].rfind("+") != -1:
+                start_ts = page["startedDateTime"].replace("+", "-")
+                page["startedDateTime"] = start_ts
 
-            long_time, dot, seconds         = page['startedDateTime'].partition('.')
-            milliseconds, dash, timezone    = seconds.partition('-')
+            long_time, dot, seconds = page["startedDateTime"].partition(".")
+            milliseconds, dash, timezone = seconds.partition("-")
 
-            page['startedDateTime'] = long_time + dot + milliseconds + '+00:00'
+            page["startedDateTime"] = long_time + dot + milliseconds + "+00:00"
 
     def analyze(self):
         """Extract data from HAR container"""
@@ -124,50 +117,49 @@ class HAR():
         max_ts = 0
 
         # Parse each entry of page
-        for entry in self.har['log']['entries']:
+        for entry in self.har["log"]["entries"]:
             # Detailed timgings
-            dns_time        = max( entry['timings']['dns'],                                0)
-            transder_time   = max( entry['timings']['receive'] + entry['timings']['send'], 0)
-            server_time     = max( entry['timings']['wait'],                               0)
-            connecting_time = max( entry['timings']['connect'],                            0)
-            blocking_time   = max( entry['timings']['blocked'],                            0)
+            dns_time        = max(entry["timings"]["dns"], 0)
+            transfer_time   = entry["timings"]["receive"] + entry["timings"]["send"]
+            transfer_time   = max(transfer_time, 0)
+            server_time     = max(entry["timings"]["wait"], 0)
+            connecting_time = max(entry["timings"]["connect"], 0)
+            blocking_time   = max(entry["timings"]["blocked"], 0)
 
-            self.total_dns_time         += dns_time
-            self.total_transfer_time    += transder_time
-            self.total_server_time      += server_time
-            self.avg_connecting_time    += connecting_time
-            self.avg_blocking_time      += blocking_time
+            self.total_dns_time      += dns_time
+            self.total_transfer_time += transfer_time
+            self.total_server_time   += server_time
+            self.avg_connecting_time += connecting_time
+            self.avg_blocking_time   += blocking_time
 
             # Full load time and time to first byte
-            start_time = time.mktime(
-                time.strptime(
-                    entry['startedDateTime'].partition('.')[0],
-                    "%Y-%m-%dT%H:%M:%S"
-                )
-            )
+            start_time = time.mktime(time.strptime(
+                    entry["startedDateTime"].partition(".")[0],
+                    "%Y-%m-%dT%H:%M:%S"))
             
             try:
-                start_time += float( '0.' + entry['startedDateTime'].partition('.')[-1].partition('+')[0] )
+                start_ts = entry["startedDateTime"].partition(".")[-1].partition("+")[0]
             except:
-                start_time += float( '0.' + entry['startedDateTime'].partition('.')[-1].partition('-')[0] )
+                start_ts = entry["startedDateTime"].partition(".")[-1].partition("-")[0]
+            start_time += float("0." + start_ts)
             
-            end_time =  start_time + entry['time']/1000.0
+            end_time = start_time + entry["time"]/1000.0
     
             if start_time < min_ts:
                 min_ts = start_time
                 self.time_to_first_byte = blocking_time + \
                                           dns_time + \
                                           connecting_time + \
-                                          entry['timings']['send'] + \
+                                          entry["timings"]["send"] + \
                                           server_time
 
             if end_time > max_ts:
                 max_ts = end_time
 
             # Size of response body
-            compressed_size = max(entry['response']['bodySize'], 0)
+            compressed_size = max(entry["response"]["bodySize"], 0)
             if compressed_size == 0:
-                size = entry['response']['content']['size']
+                size = entry["response"]["content"]["size"]
             else:
                 size = compressed_size
 
@@ -175,38 +167,32 @@ class HAR():
             
             # Size of text (JavaScript, CSS, HTML, XML, JSON, plain text)
             # and media (images, flash) files
-            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
-            if cmp(mime_type,''):
+            mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
+            if cmp(mime_type,""):
                 mime_type = self.type_syn(mime_type)
                 
-                if mime_type.count('javascript') \
-                or mime_type.count('text') \
-                or mime_type.count('html') \
-                or mime_type.count('xml') \
-                or mime_type.count('json'):
+                if mime_type.count("javascript") \
+                or mime_type.count("text") \
+                or mime_type.count("html") \
+                or mime_type.count("xml") \
+                or mime_type.count("json"):
                     self.text_size += size
-                elif mime_type.count('flash') or mime_type.count('image'):
+                elif mime_type.count("flash") or mime_type.count("image"):
                     self.media_size += size
             
             # Cached size
-            resp_headers = self.h2d(entry['response']['headers'])
+            resp_headers = self.h2d(entry["response"]["headers"])
             
             try:
-                if not resp_headers['Cache-Control'].count('no-cache') \
-                and not resp_headers['Cache-Control'].count('max-age=0'):
-                    date = time.mktime(
-                        time.strptime(
-                            resp_headers['Date'],
-                            "%a, %d %b %Y %H:%M:%S GMT"
-                        )
-                    )
+                if not resp_headers["Cache-Control"].count("no-cache") \
+                and not resp_headers["Cache-Control"].count("max-age=0"):
+                    date = time.mktime(time.strptime(
+                            resp_headers["Date"],
+                            "%a, %d %b %Y %H:%M:%S GMT"))
 
-                    expires = time.mktime(
-                        time.strptime(
-                            resp_headers['Expires'],
-                            "%a, %d %b %Y %H:%M:%S GMT"
-                        )
-                    )
+                    expires = time.mktime(time.strptime(
+                            resp_headers["Expires"],
+                            "%a, %d %b %Y %H:%M:%S GMT"))
 
                     if expires > date:
                         self.cache_size += size
@@ -214,15 +200,15 @@ class HAR():
                 pass
                     
             # Redirects and bad requests
-            if entry['response']['status'] >= 300 and entry['response']['status'] < 400:
+            if entry["response"]["status"] >= 300 and entry["response"]["status"] < 400:
                 self.redirects += 1
-            elif entry['response']['status'] >= 400:
+            elif entry["response"]["status"] >= 400:
                 self.bad_requests += 1
                 
             # List of hosts
-            hostname = entry['request']['url'].partition('//')[-1].partition('/')[0]
+            hostname = entry["request"]["url"].partition("//")[-1].partition("/")[0]
 
-            md_hostname = re.sub('\.','|', hostname)
+            md_hostname = re.sub("\.","|", hostname)
 
             self.domains[md_hostname] = [
                 self.domains.get(md_hostname, [0,0])[0] + 1,
@@ -230,54 +216,54 @@ class HAR():
             ]
 
         # Label
-        self.label = self.har['log']['pages'][0]['id']
+        self.label = self.har["log"]["pages"][0]["id"]
 
         # URL
-        self.url = self.har['log']['entries'][0]['request']['url']
+        self.url = self.har["log"]["entries"][0]["request"]["url"]
 
         # Requests
-        self.requests = len( self.har['log']['entries'] )
+        self.requests = len( self.har["log"]["entries"] )
 
         # Full load time
         try:
-            self.full_load_time = self.har['log']['pages'][0]['pageTimings']['_myTime']
+            self.full_load_time = self.har["log"]["pages"][0]["pageTimings"]["_myTime"]
         except:
-            self.full_load_time = int( (max_ts - min_ts)*1000 )
+            self.full_load_time = int((max_ts - min_ts)*1000)
 
         # onLoad envent time
         try:
-            self.onload_event = self.har['log']['pages'][0]['pageTimings']['onLoad']
+            self.onload_event = self.har["log"]["pages"][0]["pageTimings"]["onLoad"]
         except:
             try:
-                self.onload_event = self.har['log']['pages'][0]['pageTimings'][0]['onLoad'] # dynaTrace bug                
+                self.onload_event = self.har["log"]["pages"][0]["pageTimings"][0]["onLoad"] # dynaTrace bug
             except:                
-                self.onload_event = 'n/a'
+                self.onload_event = "n/a"
 
         # Render Start
         try:
-            self.start_render_time = self.har['log']['pages'][0]['pageTimings']['_renderStart']
+            self.start_render_time = self.har["log"]["pages"][0]["pageTimings"]["_renderStart"]
         except:
-            self.start_render_time = 'n/a'
+            self.start_render_time = "n/a"
 
         # Average values
-        self.avg_connecting_time = round(self.avg_connecting_time / self.requests,  0)
-        self.avg_blocking_time   = round(self.avg_blocking_time    / self.requests, 0)
+        self.avg_connecting_time = round(self.avg_connecting_time / self.requests, 0)
+        self.avg_blocking_time = round(self.avg_blocking_time / self.requests, 0)
         
         # From bytes to kilobytes
-        self.total_size = self.b2k( self.total_size )
-        self.text_size  = self.b2k( self.text_size  )
-        self.media_size = self.b2k( self.media_size )
-        self.cache_size = self.b2k( self.cache_size )
+        self.total_size = self.b2k(self.total_size)
+        self.text_size = self.b2k(self.text_size)
+        self.media_size = self.b2k(self.media_size)
+        self.cache_size = self.b2k(self.cache_size)
        
     def weight_ratio(self):
         """Breakdown by size of page objects"""
 
         resources = dict()        
-        for entry in self.har['log']['entries']:
-            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
-            if cmp(mime_type,''):
+        for entry in self.har["log"]["entries"]:
+            mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
+            if cmp(mime_type, ""):
                 mime_type = self.type_syn(mime_type)
-                size = entry['response']['content']['size']
+                size = entry["response"]["content"]["size"]
                 resources[mime_type] = resources.get(mime_type, 0) + self.b2k(size)
         return resources
         
@@ -285,9 +271,9 @@ class HAR():
         """Breakdown by number of page objects"""
         
         resources = dict()
-        for entry in self.har['log']['entries']:
-            mime_type = entry['response']['content']['mimeType'].partition(';')[0]
-            if cmp(mime_type, ''):
+        for entry in self.har["log"]["entries"]:
+            mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
+            if cmp(mime_type, ""):
                 mime_type = self.type_syn(mime_type)
                 resources[mime_type] = resources.get(mime_type, 0) + 1
         return resources
@@ -299,7 +285,7 @@ class HAR():
         @return - size in kilobytes
         """
 
-        return int( round( value/1024.0 ) )
+        return int(round(value/1024.0))
 
     def h2d(self, headers):
         """
@@ -310,7 +296,7 @@ class HAR():
 
         hd = dict()
         for header in headers:
-            hd[header['name']] = header['value']
+            hd[header["name"]] = header["value"]
         return hd
 
     def type_syn(self, string):
@@ -320,23 +306,23 @@ class HAR():
         @return - normilized MIME type
         """
 
-        if string.count('javascript'):
-            return 'javascript'
-        elif string.count('flash'):
-            return 'flash'
-        elif string.count('text/plain') or string.count('html'):
-            return 'text/html'
-        elif string.count('xml'):
-            return 'text/xml'
-        elif string.count('css'):
-            return 'text/css'
-        elif string.count('gif'):
-            return 'image/gif'
-        elif string.count('png'):
-            return 'image/png'
-        elif string.count('jpeg') or string.count('jpg'):
-            return 'image/jpeg'
-        elif string.count('json'):
-            return 'json'
+        if string.count("javascript"):
+            return "javascript"
+        elif string.count("flash"):
+            return "flash"
+        elif string.count("text/plain") or string.count("html"):
+            return "text/html"
+        elif string.count("xml"):
+            return "text/xml"
+        elif string.count("css"):
+            return "text/css"
+        elif string.count("gif"):
+            return "image/gif"
+        elif string.count("png"):
+            return "image/png"
+        elif string.count("jpeg") or string.count("jpg"):
+            return "image/jpeg"
+        elif string.count("json"):
+            return "json"
         else:
-            return 'other'
+            return "other"

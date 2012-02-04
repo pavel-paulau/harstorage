@@ -19,18 +19,18 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     app = PylonsApp(config=config)
 
     # Routing/Session Middleware
-    app = RoutesMiddleware(app, config['routes.map'])
+    app = RoutesMiddleware(app, config["routes.map"])
     app = SessionMiddleware(app, config)
 
     # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
 
     if asbool(full_stack):
         # Handle Python exceptions
-        app = ErrorHandler(app, global_conf, **config['pylons.errorware'])
+        app = ErrorHandler(app, global_conf, **config["pylons.errorware"])
 
         # Display error documents for 400, 403, 404, 405 status codes (and
         # 500, 503 when debug is disabled)
-        if asbool(config['debug']):
+        if asbool(config["debug"]):
             app = StatusCodeRedirect(app)
         else:
             app = StatusCodeRedirect(app, [400, 403, 404, 405, 500, 503])
@@ -40,7 +40,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
 
     if asbool(static_files):
         # Serve static files
-        static_app = StaticURLParser(config['pylons.paths']['static_files'])
+        static_app = StaticURLParser(config["pylons.paths"]["static_files"])
         app = Cascade([static_app, app])
 
     app.config = config

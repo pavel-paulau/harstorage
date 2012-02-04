@@ -11,104 +11,104 @@ var HARSTORAGE = HARSTORAGE || {};
  */
 Highcharts.darkGreen = {
     colors: [
-        '#DDDF0D',
-        '#55BF3B',
-        '#DF5353',
-        '#7798BF',
-        '#6AF9C4',
-        '#DB843D',
-        '#EEAAEE',
-        '#669933',
-        '#CC3333',
-        '#FF9944',
-        '#996633',
-        '#4572A7',
-        '#80699B',
-        '#92A8CD',
-        '#A47D7C',
-        '#9A48C9',
-        '#C99A48',
-        '#879D79'
+        "#DDDF0D",
+        "#55BF3B",
+        "#DF5353",
+        "#7798BF",
+        "#6AF9C4",
+        "#DB843D",
+        "#EEAAEE",
+        "#669933",
+        "#CC3333",
+        "#FF9944",
+        "#996633",
+        "#4572A7",
+        "#80699B",
+        "#92A8CD",
+        "#A47D7C",
+        "#9A48C9",
+        "#C99A48",
+        "#879D79"
     ],
     chart: {
         backgroundColor: {
             linearGradient: [0, 0, 0, 500],
             stops: [
-                [0, '#498A2D'],
-                [1, '#000000']
+                [0, "#498A2D"],
+                [1, "#000000"]
             ]
         },
         borderWidth: 0,
-        plotBackgroundColor: 'rgba(255, 255, 255, .1)',
-        plotBorderColor: '#CCCCCC',
+        plotBackgroundColor: "rgba(255, 255, 255, .1)",
+        plotBorderColor: "#CCCCCC",
         plotBorderWidth: 1
     },
     title: {
         style: {
-            color: '#FFFFFF',
-            fontWeight: 'bold',
+            color: "#FFFFFF",
+            fontWeight: "bold",
             font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
         }
     },
     xAxis: {
-        gridLineColor: '#333333',
+        gridLineColor: "#333333",
         gridLineWidth: 1,
         lineWidth: 0,
         labels: {
             style: {
-                color: '#FFFFFF',
+                color: "#FFFFFF",
                 font: '11px "Trebuchet MS", Verdana, sans-serif'
             }
         },
-        lineColor: '#FFFFFF',
-        tickColor: '#FFFFFF'
+        lineColor: "#FFFFFF",
+        tickColor: "#FFFFFF"
     },
     yAxis: {
-        gridLineColor: '#333333',
+        gridLineColor: "#333333",
         labels: {
             style: {
-                color: '#FFFFFF',
+                color: "#FFFFFF",
                 font: '11px "Trebuchet MS", Verdana, sans-serif'
             }
         },
-        lineColor: '#FFFFFF',
+        lineColor: "#FFFFFF",
         minorTickInterval: null,
-        tickColor: '#FFFFFF',
+        tickColor: "#FFFFFF",
         tickWidth: 1,
         title: {
             style: {
-                color: 'white',
+                color: "white",
                 font: 'bold 12px "Trebuchet MS", Verdana, sans-serif'
             }
         }
     },
     tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backgroundColor: "rgba(0, 0, 0, 0.75)",
         style: {
-            color: '#F0F0F0'
+            color: "#F0F0F0"
         }
     },
     toolbar: {
         itemStyle: {
-            color: 'silver'
+            color: "silver"
         }
     },
     plotOptions: {
         spline: {
             marker: {
-                lineColor: '#333333',
-                symbol: 'diamond'
+                lineColor: "#333333",
+                symbol: "diamond"
             }
         },
         pie: {
             allowPointSelect: true,
-            cursor: 'pointer',
-            size: '65%',
+            cursor: "pointer",
+            size: "65%",
             dataLabels: {
                 enabled: true,
-                color: '#FFFFFF',
+                color: "#FFFFFF",
                 distance: 25,
-                connectorColor: '#FFFFFF',
+                connectorColor: "#FFFFFF",
                 formatter: function() {
                     return this.point.name;
                 }
@@ -117,33 +117,33 @@ Highcharts.darkGreen = {
         column: {
             pointPadding: 0.1,
             borderWidth: 0,
-            borderColor: 'white',
+            borderColor: "white",
             dataLabels: {
                 enabled: true,
-                color: 'white',
-                align: 'left',
+                color: "white",
+                align: "left",
                 y: -5
             }
         },
         bar: {
             dataLabels: {
                 enabled: true,
-                color: '#DDDF0D'
+                color: "#DDDF0D"
             }
         }
     },
     legend: {
         itemStyle: {
             font: '9pt "Trebuchet MS", Verdana, sans-serif',
-            color: '#FFFFFF'
+            color: "#FFFFFF"
         },
         itemHoverStyle: {
-            color: '#A0A0A0'
+            color: "#A0A0A0"
         },
         itemHiddenStyle: {
-            color: '#444444'
+            color: "#444444"
         },
-        borderColor: '#FFFFFF'
+        borderColor: "#FFFFFF"
     }
 };
 
@@ -152,58 +152,58 @@ Highcharts.darkGreen = {
  */
 Highcharts.light = {
     colors: [
-        '#669933',
-        '#CC3333',
-        '#FF9944',
-        '#996633',
-        '#4572A7',
-        '#80699B',
-        '#92A8CD',
-        '#EEAAEE',
-        '#A47D7C',
-        '#DDDF0D',
-        '#55BF3B',
-        '#DF5353',
-        '#7798BF',
-        '#6AF9C4',
-        '#DB843D',
-        '#9A48C9',
-        '#C99A48',
-        '#879D79'
+        "#669933",
+        "#CC3333",
+        "#FF9944",
+        "#996633",
+        "#4572A7",
+        "#80699B",
+        "#92A8CD",
+        "#EEAAEE",
+        "#A47D7C",
+        "#DDDF0D",
+        "#55BF3B",
+        "#DF5353",
+        "#7798BF",
+        "#6AF9C4",
+        "#DB843D",
+        "#9A48C9",
+        "#C99A48",
+        "#879D79"
     ],
     chart: {
         borderWidth: 1,
-        borderColor: '#498A2D',
+        borderColor: "#498A2D",
         plotBorderWidth: 1,
-        plotBorderColor: '#498A2D'
+        plotBorderColor: "#498A2D"
     },
     title: {
         style: {
-            color: '#498A2D',
-            fontWeight: 'bold',
+            color: "#498A2D",
+            fontWeight: "bold",
             font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
         }
     },
     xAxis: {
         gridLineWidth: 1,
-        lineColor: '#498A2D',
-        tickColor: '#498A2D',
+        lineColor: "#498A2D",
+        tickColor: "#498A2D",
         lineWidth: 0,
         labels: {
             style: {
-                color: '#498A2D',
+                color: "#498A2D",
                 font: '11px "Trebuchet MS", Verdana, sans-serif'
             }
         }
     },
     yAxis: {
         gridLineWidth: 1,
-        lineColor: '#498A2D',
-        tickColor: '#498A2D',
+        lineColor: "#498A2D",
+        tickColor: "#498A2D",
         tickWidth: 1,
         labels: {
             style: {
-                color: '#498A2D',
+                color: "#498A2D",
                 font: '11px "Trebuchet MS", Verdana, sans-serif'
             }
         },
@@ -215,25 +215,25 @@ Highcharts.light = {
     },
     toolbar: {
         itemStyle: {
-            color: 'silver'
+            color: "silver"
         }
     },
     plotOptions: {
         spline: {
             marker: {
-                lineColor: '#FFFFFF',
-                symbol: 'diamond'
+                lineColor: "#FFFFFF",
+                symbol: "diamond"
             }
         },
         pie: {
             allowPointSelect: true,
-            cursor: 'pointer',
-            size: '65%',
+            cursor: "pointer",
+            size: "65%",
             dataLabels: {
                 enabled: true,
                 distance: 25,
-                connectorColor: '#498A2D',
-                color: '#498A2D',
+                connectorColor: "#498A2D",
+                color: "#498A2D",
                 formatter: function() {
                     return this.point.name;
                 }
@@ -242,35 +242,35 @@ Highcharts.light = {
         column: {
             pointPadding: 0.1,
             borderWidth: 0,
-            borderColor: 'white',
+            borderColor: "white",
             dataLabels: {
                 enabled: true,
-                color: '#498A2D',
-                align: 'left',
+                color: "#498A2D",
+                align: "left",
                 y: -5
             }
         },
         bar: {
             dataLabels: {
                 enabled: true,
-                color: '#669933'
+                color: "#669933"
             }
         }
     },
     legend: {
         itemStyle: {
             font: '9pt "Trebuchet MS", Verdana, sans-serif',
-            color: '#498A2D'
+            color: "#498A2D"
 
         },
         itemHoverStyle: {
-            color: '#A0A0A0'
+            color: "#A0A0A0"
         },
         itemHiddenStyle: {
-            color: 'gray'
+            color: "gray"
         },
         borderWidth: 1,
-        borderColor: '#498A2D'
+        borderColor: "#498A2D"
     }
 };
 
@@ -279,65 +279,65 @@ Highcharts.light = {
  */
 Highcharts.lightGreen = {
     colors: [
-        '#669933',
-        '#CC3333',
-        '#FF9944',
-        '#996633',
-        '#4572A7',
-        '#80699B',
-        '#92A8CD',
-        '#EEAAEE',
-        '#A47D7C',
-        '#DDDF0D',
-        '#55BF3B',
-        '#DF5353',
-        '#7798BF',
-        '#6AF9C4',
-        '#DB843D',
-        '#9A48C9',
-        '#C99A48',
-        '#879D79'
+        "#669933",
+        "#CC3333",
+        "#FF9944",
+        "#996633",
+        "#4572A7",
+        "#80699B",
+        "#92A8CD",
+        "#EEAAEE",
+        "#A47D7C",
+        "#DDDF0D",
+        "#55BF3B",
+        "#DF5353",
+        "#7798BF",
+        "#6AF9C4",
+        "#DB843D",
+        "#9A48C9",
+        "#C99A48",
+        "#879D79"
     ],
     chart: {
         backgroundColor: {
             linearGradient: [0, 0, 0, 500],
             stops: [
-                [0, '#FFFFFF'],
-                [1, '#99CC66']
+                [0, "#FFFFFF"],
+                [1, "#99CC66"]
             ]
         },
         borderWidth: 1,
-        borderColor: '#498A2D',
-        plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+        borderColor: "#498A2D",
+        plotBackgroundColor: "rgba(255, 255, 255, .9)",
         plotBorderWidth: 0
     },
     title: {
         style: {
-            color: '#498A2D',
-            fontWeight: 'bold',
+            color: "#498A2D",
+            fontWeight: "bold",
             font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
         }
     },
     xAxis: {
         gridLineWidth: 1,
-        lineColor: '#498A2D',
-        tickColor: '#498A2D',
+        lineColor: "#498A2D",
+        tickColor: "#498A2D",
         lineWidth: 0,
         labels: {
             style: {
-                color: '#498A2D',
+                color: "#498A2D",
                 font: '11px "Trebuchet MS", Verdana, sans-serif'
             }
         }
     },
     yAxis: {
         gridLineWidth: 1,
-        lineColor: '#498A2D',
-        tickColor: '#498A2D',
+        lineColor: "#498A2D",
+        tickColor: "#498A2D",
         tickWidth: 1,
         labels: {
             style: {
-                color: '#498A2D',
+                color: "#498A2D",
                 font: '11px "Trebuchet MS", Verdana, sans-serif'
             }
         },
@@ -349,25 +349,25 @@ Highcharts.lightGreen = {
     },
     toolbar: {
         itemStyle: {
-            color: 'silver'
+            color: "silver"
         }
     },
     plotOptions: {
         spline: {
             marker: {
-                lineColor: '#FFFFFF',
-                symbol: 'diamond'
+                lineColor: "#FFFFFF",
+                symbol: "diamond"
             }
         },
         pie: {
             allowPointSelect: true,
-            cursor: 'pointer',
-            size: '65%',
+            cursor: "pointer",
+            size: "65%",
             dataLabels: {
                 enabled: true,
                 distance: 25,
-                connectorColor: '#498A2D',
-                color: '#498A2D',
+                connectorColor: "#498A2D",
+                color: "#498A2D",
                 formatter: function() {
                     return this.point.name;
                 }
@@ -376,35 +376,35 @@ Highcharts.lightGreen = {
         column: {
             pointPadding: 0.1,
             borderWidth: 0,
-            borderColor: 'white',
+            borderColor: "white",
             dataLabels: {
                 enabled: true,
-                color: '#498A2D',
-                align: 'left',
+                color: "#498A2D",
+                align: "left",
                 y: -5
             }
         },
         bar: {
             dataLabels: {
                 enabled: true,
-                color: '#669933'
+                color: "#669933"
             }
         }
     },
     legend: {
         itemStyle: {
             font: '9pt "Trebuchet MS", Verdana, sans-serif',
-            color: '#498A2D'
+            color: "#498A2D"
 
         },
         itemHoverStyle: {
-            color: '#000000'
+            color: "#000000"
         },
         itemHiddenStyle: {
-            color: 'gray'
+            color: "gray"
         },
         borderWidth: 1,
-        borderColor: '#498A2D'
+        borderColor: "#498A2D"
     }
 };
 
@@ -415,7 +415,7 @@ HARSTORAGE.setTheme = function() {
     "use strict";
 
     // Read preference from Cookie
-    var theme = HARSTORAGE.read_cookie('chartTheme');
+    var theme = HARSTORAGE.read_cookie("chartTheme");
 
     if (theme) {
         switch (theme) {
