@@ -1,5 +1,70 @@
 import math
 
+class Aggregator():
+
+    """
+    Test results aggregation
+
+    """
+
+    def __init__(self):
+        None
+
+    def average(self, results):
+        """
+        @parameter results - a list of test results
+
+        @return - the average value
+        """
+
+        try:
+            num = len( results )
+            total_sum = sum(results)
+            return int(round(total_sum / num, 0))
+        except TypeError:
+            return "n/a"
+
+    def minimum(self, results):
+        """
+        @parameter results - a list of test results
+
+        @return - the minimum value
+        """
+
+        return min(results)
+
+    def maximum(self, results):
+        """
+        @parameter results - a list of test results
+
+        @return - the maximum value
+        """
+
+        return max(results)
+
+    def percentile(self, results, percent, key=lambda x:x):
+        """
+        @parameter results - a list of test results
+        @parameter percent - a float value from 0.0 to 1.0
+        @parameter key - optional key function to compute value from each element of N.
+
+        @return - the percentile
+        """
+
+        data = sorted(results)
+
+        k = (len(data) - 1) * percent
+        f = math.floor(k)
+        c = math.ceil(k)
+
+        if f == c:
+            return key(data[int(k)])
+        else:
+            try:
+                return key(data[int(f)]) * (c - k) + key(data[int(c)]) * (k - f)
+            except TypeError:
+                return "n/a"
+
 class Histogram():
 
     """

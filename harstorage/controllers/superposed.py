@@ -1,12 +1,10 @@
-import math
-
 from pylons import request, tmpl_context as c
 from pylons import config
 from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
-from harstorage.lib.Histogram import Histogram
+from harstorage.lib.Math import Histogram, Aggregator
 
 class SuperposedController(BaseController):
 
@@ -148,21 +146,23 @@ class SuperposedController(BaseController):
             c.points += data["label"][row] + "#"
 
         column = 1
+        agg_handler = Aggregator()
+
         for metric in metrics:
             c.metrics_table.append(list())
 
             c.points = c.points[:-1] + ";"
             for row in range(c.rowcount):
                 if c.metric == "Average":
-                    value = self._average(data[metric][row])
+                    value = agg_handler.average(data[metric][row])
                 elif c.metric == "Minimum":
-                    value = self._minimum(data[metric][row])
+                    value = agg_handler.minimum(data[metric][row])
                 elif c.metric == "Maximum":
-                    value = self._maximum(data[metric][row])
+                    value = agg_handler.maximum(data[metric][row])
                 elif c.metric == "90th Percentile":
-                    value = self._percentile(data[metric][row], 0.9)
+                    value = agg_handler.percentile(data[metric][row], 0.9)
                 elif c.metric == "Median":
-                    value = self._percentile(data[metric][row], 0.5)
+                    value = agg_handler.percentile(data[metric][row], 0.5)
 
                 c.points += str(value) + "#"
                 c.metrics_table[column].append(value)
@@ -239,58 +239,3 @@ class SuperposedController(BaseController):
         else:
             c.message = "Sorry! You haven't enough data."
             return render("/error.html")
-
-    def _average(self, results):
-        """
-        @parameter results - a list of test results
-
-        @return - the average value
-        """
-
-        try:
-            num = len( results )
-            total_sum = sum(results)
-            return int(round(total_sum / num, 0))
-        except TypeError:
-            return "n/a"
-
-    def _minimum(self, results):
-        """
-        @parameter results - a list of test results
-
-        @return - the minimum value
-        """
-
-        return min(results)
-
-    def _maximum(self, results):
-        """
-        @parameter results - a list of test results
-
-        @return - the maximum value
-        """
-
-        return max(results)
-
-    def _percentile(self, results, percent, key=lambda x:x):
-        """
-        @parameter results - a list of test results
-        @parameter percent - a float value from 0.0 to 1.0
-        @parameter key - optional key function to compute value from each element of N.
-
-        @return - the percentile
-        """
-
-        data = sorted(results)
-
-        k = (len(data) - 1) * percent
-        f = math.floor(k)
-        c = math.ceil(k)
-        
-        if f == c:
-            return key(data[int(k)])
-        else:
-            try:
-                return key(data[int(f)]) * (c - k) + key(data[int(c)]) * (k - f)
-            except TypeError:
-                return "n/a"
