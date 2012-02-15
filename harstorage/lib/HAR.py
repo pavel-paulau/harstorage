@@ -2,6 +2,26 @@ import json
 import time
 import re
 
+class bytes(float):
+
+    """
+    Extended integer
+    """
+
+    def __add__(self, other):
+        """
+        @return - result of addition
+        """
+
+        return bytes(self.__float__() + other)
+
+    def to_kilobytes(self):
+        """
+        @return - value in kilobytes
+        """
+
+        return int(round(self.__float__()/1024.0))
+
 class HAR():
 
     """
@@ -41,10 +61,10 @@ class HAR():
                 self.avg_connecting_time = 0.0
                 self.avg_blocking_time   = 0.0
 
-                self.total_size = 0.0
-                self.text_size  = 0.0
-                self.media_size = 0.0
-                self.cache_size = 0.0
+                self.total_size = bytes(0)
+                self.text_size  = bytes(0)
+                self.media_size = bytes(0)
+                self.cache_size = bytes(0)
 
                 self.redirects    = 0
                 self.bad_requests = 0
@@ -157,9 +177,9 @@ class HAR():
                 max_ts = end_time
 
             # Size of response body
-            compressed_size = max(entry["response"]["bodySize"], 0)
+            compressed_size = bytes(max(entry["response"]["bodySize"], 0))
             if compressed_size == 0:
-                size = entry["response"]["content"]["size"]
+                size = bytes(entry["response"]["content"]["size"])
             else:
                 size = compressed_size
 
@@ -212,7 +232,7 @@ class HAR():
 
             self.domains[md_hostname] = [
                 self.domains.get(md_hostname, [0,0])[0] + 1,
-                self.domains.get(md_hostname, [0,0])[1] + self.b2k(size)
+                self.domains.get(md_hostname, [0,0])[1] + size.to_kilobytes()
             ]
 
         # Label
@@ -250,10 +270,10 @@ class HAR():
         self.avg_blocking_time = round(self.avg_blocking_time / self.requests, 0)
         
         # From bytes to kilobytes
-        self.total_size = self.b2k(self.total_size)
-        self.text_size = self.b2k(self.text_size)
-        self.media_size = self.b2k(self.media_size)
-        self.cache_size = self.b2k(self.cache_size)
+        self.total_size = self.total_size.to_kilobytes()
+        self.text_size  = self.text_size.to_kilobytes()
+        self.media_size = self.media_size.to_kilobytes()
+        self.cache_size = self.cache_size.to_kilobytes()
        
     def weight_ratio(self):
         """Breakdown by size of page objects"""
@@ -263,8 +283,8 @@ class HAR():
             mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type, ""):
                 mime_type = self.type_syn(mime_type)
-                size = entry["response"]["content"]["size"]
-                resources[mime_type] = resources.get(mime_type, 0) + self.b2k(size)
+                size = bytes(entry["response"]["content"]["size"])
+                resources[mime_type] = resources.get(mime_type, 0) + size.to_kilobytes()
         return resources
         
     def req_ratio(self):
@@ -277,15 +297,6 @@ class HAR():
                 mime_type = self.type_syn(mime_type)
                 resources[mime_type] = resources.get(mime_type, 0) + 1
         return resources
-
-    def b2k(self, value):
-        """
-        @parameter vaule - size in bytes
-
-        @return - size in kilobytes
-        """
-
-        return int(round(value/1024.0))
 
     def h2d(self, headers):
         """
