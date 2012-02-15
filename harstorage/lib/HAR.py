@@ -2,6 +2,8 @@ import json
 import time
 import re
 
+DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+
 class bytes(float):
 
     """
@@ -21,6 +23,23 @@ class bytes(float):
         """
 
         return int(round(self.__float__()/1024.0))
+
+class Headers():
+
+    """
+    Manipulation with HTTP headers
+    """
+
+    def __init__(self, headers):
+        """
+        @parameter headers - list of headers
+
+        @as_dictionary - dictionary of headers
+        """
+
+        self.as_dict = dict()
+        for header in headers:
+            self.as_dict[header["name"]] = header["value"]
 
 class HAR():
 
@@ -199,26 +218,31 @@ class HAR():
                     self.text_size += size
                 elif mime_type.count("flash") or mime_type.count("image"):
                     self.media_size += size
-            
-            # Cached size
-            resp_headers = self.h2d(entry["response"]["headers"])
-            
-            try:
-                if not resp_headers["Cache-Control"].count("no-cache") \
-                and not resp_headers["Cache-Control"].count("max-age=0"):
-                    date = time.mktime(time.strptime(
-                            resp_headers["Date"],
-                            "%a, %d %b %Y %H:%M:%S GMT"))
 
-                    expires = time.mktime(time.strptime(
-                            resp_headers["Expires"],
-                            "%a, %d %b %Y %H:%M:%S GMT"))
+            # Cached size
+            headers = Headers(entry["response"]["headers"])
+
+            try:
+                cache_control = headers.as_dict["Cache-Control"]
+
+                if not cache_control.count("no-cache") \
+                and not cache_control.count("max-age=0"):
+
+                    # Extract DATE from HTTP header
+                    date = headers.as_dict["Date"]
+                    date = time.strptime(date, DATE_FORMAT)
+                    date = time.mktime(date)
+
+                    # Extract EXPIRES from HTTP header
+                    expires = headers.as_dict["Expires"]
+                    expires = time.strptime(expires, DATE_FORMAT)
+                    expires = time.mktime(expires)
 
                     if expires > date:
                         self.cache_size += size
             except:
                 pass
-                    
+
             # Redirects and bad requests
             if entry["response"]["status"] >= 300 and entry["response"]["status"] < 400:
                 self.redirects += 1
@@ -297,18 +321,6 @@ class HAR():
                 mime_type = self.get_normalized_value(mime_type)
                 resources[mime_type] = resources.get(mime_type, 0) + 1
         return resources
-
-    def h2d(self, headers):
-        """
-        @parameter headers - list of headers
-
-        @return - dictionary of headers
-        """
-
-        hd = dict()
-        for header in headers:
-            hd[header["name"]] = header["value"]
-        return hd
 
     def get_normalized_value(self, string):
         """
