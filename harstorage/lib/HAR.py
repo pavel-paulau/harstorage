@@ -189,7 +189,7 @@ class HAR():
             # and media (images, flash) files
             mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type,""):
-                mime_type = self.type_syn(mime_type)
+                mime_type = self.get_normalized_value(mime_type)
                 
                 if mime_type.count("javascript") \
                 or mime_type.count("text") \
@@ -282,7 +282,7 @@ class HAR():
         for entry in self.har["log"]["entries"]:
             mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type, ""):
-                mime_type = self.type_syn(mime_type)
+                mime_type = self.get_normalized_value(mime_type)
                 size = bytes(entry["response"]["content"]["size"])
                 resources[mime_type] = resources.get(mime_type, 0) + size.to_kilobytes()
         return resources
@@ -294,7 +294,7 @@ class HAR():
         for entry in self.har["log"]["entries"]:
             mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type, ""):
-                mime_type = self.type_syn(mime_type)
+                mime_type = self.get_normalized_value(mime_type)
                 resources[mime_type] = resources.get(mime_type, 0) + 1
         return resources
 
@@ -310,7 +310,7 @@ class HAR():
             hd[header["name"]] = header["value"]
         return hd
 
-    def type_syn(self, string):
+    def get_normalized_value(self, string):
         """
         @parameter string - MIME type
 
