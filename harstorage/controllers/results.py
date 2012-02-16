@@ -318,7 +318,7 @@ class ResultsController(BaseController):
             har = HAR(request.POST["file"])
         
         # Analysis of uploaded data
-        if har.status == "Successful":
+        if har.parsing_status == "Successful":
             # Parsing imported HAR file
             har.analyze()
             
@@ -400,7 +400,7 @@ class ResultsController(BaseController):
 
             return True, har.label
         else:
-            return False, har.status
+            return False, har.parsing_status
 
     @restrict("GET")
     def download(self):

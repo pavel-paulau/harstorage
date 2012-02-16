@@ -41,6 +41,83 @@ class Headers():
         for header in headers:
             self.as_dict[header["name"]] = header["value"]
 
+class Fixer():
+
+    """
+    Fix issues with broken HAR format
+    """
+
+    @staticmethod
+    def apply_workaround_for_httpwatch(har):
+        """HttpWatch workaround"""
+
+        return har.decode("latin-1").encode("utf-8")
+
+    @staticmethod
+    def apply_workaround_for_fiddler(har):
+        """Fiddler workaround"""
+
+        har = har.partition("{")[1] + har.partition("{")[-1]
+
+        return re.sub('"pages":null',
+                      '"pages":[{\
+                      "startedDateTime": "1970-01-01T00:00:00.000+00:00",\
+                      "id": "Undefined","title": "Undefined",\
+                      "pageTimings": {}}]',
+                      har)
+
+    @staticmethod
+    def apply_workaround_for_charles(har):
+        """Charles Proxy workaround"""
+
+        return re.sub('"log":{',
+                      '"log": {"pages": [{\
+                      "startedDateTime": "1970-01-01T00:00:00.000+00:00",\
+                      "id": "Undefined","title": "Undefined",\
+                      "pageTimings": {}}],',
+                      har)
+
+    @staticmethod
+    def fix_har(har):
+        """Choose workaround and apply it"""
+
+        if har.rfind('"name" : "HttpWatch') > 0:
+            har = Fixer().apply_workaround_for_httpwatch(har)
+        elif har.rfind('"name":"Fiddler"') > 0:
+            har = Fixer().apply_workaround_for_fiddler(har)
+        elif har.rfind('"name":"Charles Proxy"') > 0:
+            har = Fixer().apply_workaround_for_charles(har)
+
+        return har
+
+    @staticmethod
+    def fix_pagespeed(har):
+        """Page Speed workaround"""
+
+        # Entry level
+        for entry in har["log"]["entries"]:
+            if entry["startedDateTime"].rfind("+") != -1:
+                start_ts = entry["startedDateTime"].replace("+", "-")
+                entry["startedDateTime"] = start_ts
+
+            long_time, dot, seconds = entry["startedDateTime"].partition(".")
+            milliseconds, dash, timezone = seconds.partition("-")
+
+            entry["startedDateTime"] = long_time + dot + milliseconds + "+00:00"
+
+        # Page level
+        for page in har["log"]["pages"]:
+            if page["startedDateTime"].rfind("+") != -1:
+                start_ts = page["startedDateTime"].replace("+", "-")
+                page["startedDateTime"] = start_ts
+
+            long_time, dot, seconds = page["startedDateTime"].partition(".")
+            milliseconds, dash, timezone = seconds.partition("-")
+
+            page["startedDateTime"] = long_time + dot + milliseconds + "+00:00"
+
+        return har
+
 class HAR():
 
     """
@@ -52,26 +129,21 @@ class HAR():
 
         # Check file size
         if len(har) == 0:
-            self.status = "Empty file"
+            self.parsing_status = "Empty file"
         else:
             try:
                 if not fixed:
                     # Fix Fidler, HttpWatch and Charles Proxy issues
-                    if har.rfind('"name" : "HttpWatch') > 0:
-                        har = self.workaround_httpwatch(har)
-                    elif har.rfind('"name":"Fiddler"') > 0:
-                        har = self.workaround_fiddler(har)
-                    elif har.rfind('"name":"Charles Proxy"') > 0:
-                        har = self.workaround_charles(har)
+                    har = Fixer.fix_har(har)
 
                 # Deserialize HAR file            
                 self.har = json.loads(har)
                 self.origin = har
 
                 # Fix Page Speed issues with timezones
-                self.workaround_pagespeed()
+                self.har = Fixer.fix_pagespeed(self.har)
 
-                # Initial varaibles
+                # Initial varaibles and counters
                 self.full_load_time = 0
 
                 self.total_dns_time      = 0.0
@@ -91,62 +163,12 @@ class HAR():
                 self.domains = dict()
 
                 # Parsing status
-                self.status = "Successful"
+                self.parsing_status = "Successful"
                 
             except Exception as error:
-                self.status = error
+                self.parsing_status = error
     
-    def workaround_httpwatch(self, har):
-        """HttpWatch workaround"""
-
-        return har.decode("latin-1").encode("utf-8")
-
-    def workaround_fiddler(self, har):
-        """Fiddler workaround"""
-
-        har = har.partition("{")[1] + har.partition("{")[-1]
-
-        return re.sub('"pages":null',
-                      '"pages":[{\
-                      "startedDateTime": "1970-01-01T00:00:00.000+00:00",\
-                      "id": "Undefined","title": "Undefined",\
-                      "pageTimings": {}}]',
-                      har)
-
-    def workaround_charles(self, har):
-        """Charles Proxy workaround"""
-
-        return re.sub('"log":{',
-                      '"log": {"pages": [{\
-                      "startedDateTime": "1970-01-01T00:00:00.000+00:00",\
-                      "id": "Undefined","title": "Undefined",\
-                      "pageTimings": {}}],',
-                      har)
-
-    def workaround_pagespeed(self):
-        """Page Speed workaround"""
-
-        # Entry level
-        for entry in self.har["log"]["entries"]:
-            if entry["startedDateTime"].rfind("+") != -1:
-                start_ts = entry["startedDateTime"].replace("+", "-")
-                entry["startedDateTime"] = start_ts
-
-            long_time, dot, seconds = entry["startedDateTime"].partition(".")
-            milliseconds, dash, timezone = seconds.partition("-")
-
-            entry["startedDateTime"] = long_time + dot + milliseconds + "+00:00"
-
-        # Page level
-        for page in self.har["log"]["pages"]:
-            if page["startedDateTime"].rfind("+") != -1:
-                start_ts = page["startedDateTime"].replace("+", "-")
-                page["startedDateTime"] = start_ts
-
-            long_time, dot, seconds = page["startedDateTime"].partition(".")
-            milliseconds, dash, timezone = seconds.partition("-")
-
-            page["startedDateTime"] = long_time + dot + milliseconds + "+00:00"
+    
 
     def analyze(self):
         """Extract data from HAR container"""
@@ -292,7 +314,7 @@ class HAR():
         # Average values
         self.avg_connecting_time = round(self.avg_connecting_time / self.requests, 0)
         self.avg_blocking_time = round(self.avg_blocking_time / self.requests, 0)
-        
+
         # From bytes to kilobytes
         self.total_size = self.total_size.to_kilobytes()
         self.text_size  = self.text_size.to_kilobytes()
