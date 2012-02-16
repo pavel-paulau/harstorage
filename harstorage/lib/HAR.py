@@ -4,7 +4,7 @@ import re
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
-class bytes(float):
+class Bytes(float):
 
     """
     Extended integer
@@ -15,7 +15,7 @@ class bytes(float):
         @return - result of addition
         """
 
-        return bytes(self.__float__() + other)
+        return Bytes(self.__float__() + other)
 
     def to_kilobytes(self):
         """
@@ -92,7 +92,10 @@ class Fixer():
 
     @staticmethod
     def fix_pagespeed(har):
-        """Page Speed workaround"""
+        """
+        Page Speed requires strict date format for every entry and every page.
+        Therefor original dates must be modified
+        """
 
         # Entry level
         for entry in har["log"]["entries"]:
@@ -127,21 +130,24 @@ class HAR():
     def __init__(self, har, fixed=False):
         """Deserialize HAR file and initialize variables"""
 
-        # Check file size
+        # Check file size. If size is null it breaks parsing and return
+        # error status
         if len(har) == 0:
             self.parsing_status = "Empty file"
         else:
             try:
                 if not fixed:
-                    # Fix Fidler, HttpWatch and Charles Proxy issues
+                    # Unfortunately Fidler and Charles Proxy do not
+                    # strictly follow HAR 1.2 specification. HttpWatch uses
+                    # weird encoding. Trying to fix that when first time meet
+                    # the file.
                     har = Fixer.fix_har(har)
 
-                # Deserialize HAR file            
+                # Deserialize HAR file, fix issues related to Page Speed and
+                # store original file for HAR Viewer
                 self.har = json.loads(har)
-                self.origin = har
-
-                # Fix Page Speed issues with timezones
                 self.har = Fixer.fix_pagespeed(self.har)
+                self.origin = har
 
                 # Initial varaibles and counters
                 self.full_load_time = 0
@@ -152,30 +158,27 @@ class HAR():
                 self.avg_connecting_time = 0.0
                 self.avg_blocking_time   = 0.0
 
-                self.total_size = bytes(0)
-                self.text_size  = bytes(0)
-                self.media_size = bytes(0)
-                self.cache_size = bytes(0)
+                self.total_size = Bytes(0)
+                self.text_size  = Bytes(0)
+                self.media_size = Bytes(0)
+                self.cache_size = Bytes(0)
 
                 self.redirects    = 0
                 self.bad_requests = 0
 
                 self.domains = dict()
 
-                # Parsing status
                 self.parsing_status = "Successful"
-                
+
             except Exception as error:
                 self.parsing_status = error
-    
-    
 
     def analyze(self):
         """Extract data from HAR container"""
 
-        # Temporary variables
-        min_ts = 10 ** 14
-        max_ts = 0
+        # Temporary extremes
+        min_timestamp = 10 ** 14
+        max_timestamp = 0
 
         # Parse each entry of page
         for entry in self.har["log"]["entries"]:
@@ -193,53 +196,55 @@ class HAR():
             self.avg_connecting_time += connecting_time
             self.avg_blocking_time   += blocking_time
 
-            # Full load time and time to first byte
-            start_time = time.mktime(time.strptime(
-                    entry["startedDateTime"].partition(".")[0],
-                    "%Y-%m-%dT%H:%M:%S"))
-            
+            # Original time format: 2000-01-01T00:00:00.000+00:00
+            seconds, dot, milliseconds = entry["startedDateTime"].partition(".")
+            seconds = time.strptime(seconds, "%Y-%m-%dT%H:%M:%S")
+            seconds = time.mktime(seconds)
+
             try:
-                start_ts = entry["startedDateTime"].partition(".")[-1].partition("+")[0]
+                milliseconds = milliseconds.partition("+")[0]
             except:
-                start_ts = entry["startedDateTime"].partition(".")[-1].partition("-")[0]
-            start_time += float("0." + start_ts)
-            
-            end_time = start_time + entry["time"]/1000.0
+                milliseconds = milliseconds.partition("-")[0]
+
+            time_request_started = seconds + float("0." + milliseconds)
+            time_request_completed = time_request_started + entry["time"]/1000.0
     
-            if start_time < min_ts:
-                min_ts = start_time
+            if time_request_started < min_timestamp:
+                min_timestamp = time_request_started
+
                 self.time_to_first_byte = blocking_time + \
                                           dns_time + \
                                           connecting_time + \
                                           entry["timings"]["send"] + \
                                           server_time
 
-            if end_time > max_ts:
-                max_ts = end_time
+            if time_request_completed > max_timestamp:
+                max_timestamp = time_request_completed
 
             # Size of response body
-            compressed_size = bytes(max(entry["response"]["bodySize"], 0))
+            compressed_size = Bytes(max(entry["response"]["bodySize"], 0))
             if compressed_size == 0:
-                size = bytes(entry["response"]["content"]["size"])
+                response_size = Bytes(entry["response"]["content"]["size"])
             else:
-                size = compressed_size
+                response_size = compressed_size
 
-            self.total_size += size
-            
+            self.total_size += response_size
+
             # Size of text (JavaScript, CSS, HTML, XML, JSON, plain text)
             # and media (images, flash) files
             mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
-            if cmp(mime_type,""):
+
+            if cmp(mime_type, ""):
                 mime_type = self.get_normalized_value(mime_type)
-                
+
                 if mime_type.count("javascript") \
                 or mime_type.count("text") \
                 or mime_type.count("html") \
                 or mime_type.count("xml") \
                 or mime_type.count("json"):
-                    self.text_size += size
+                    self.text_size += response_size
                 elif mime_type.count("flash") or mime_type.count("image"):
-                    self.media_size += size
+                    self.media_size += response_size
 
             # Cached size
             headers = Headers(entry["response"]["headers"])
@@ -261,25 +266,30 @@ class HAR():
                     expires = time.mktime(expires)
 
                     if expires > date:
-                        self.cache_size += size
+                        self.cache_size += response_size
             except:
                 pass
 
-            # Redirects and bad requests
+            # Redirects (3xx) and bad requests (4xx, 5xx)
             if entry["response"]["status"] >= 300 and entry["response"]["status"] < 400:
                 self.redirects += 1
             elif entry["response"]["status"] >= 400:
                 self.bad_requests += 1
-                
-            # List of hosts
-            hostname = entry["request"]["url"].partition("//")[-1].partition("/")[0]
 
-            md_hostname = re.sub("\.","|", hostname)
+            # Current domain
+            domain = entry["request"]["url"].partition("//")[-1].partition("/")[0]
 
-            self.domains[md_hostname] = [
-                self.domains.get(md_hostname, [0,0])[0] + 1,
-                self.domains.get(md_hostname, [0,0])[1] + size.to_kilobytes()
-            ]
+            # WORKAROUND: Mongo prevents using dots in key names
+            mongo_domain = re.sub("\.","|", domain)
+
+            # {DOMAIN: [NUMBER OF REQUESTS, TOTAL DATA FROM HOST IN KB], ...}
+            domain_requests  = self.domains.get(mongo_domain, [0, 0])[0]
+            domain_data_size = self.domains.get(mongo_domain, [0, 0])[1]
+
+            domain_requests  += 1
+            domain_data_size += response_size.to_kilobytes()
+
+            self.domains[mongo_domain] = [domain_requests, domain_data_size]
 
         # Label
         self.label = self.har["log"]["pages"][0]["id"]
@@ -294,16 +304,15 @@ class HAR():
         try:
             self.full_load_time = self.har["log"]["pages"][0]["pageTimings"]["_myTime"]
         except:
-            self.full_load_time = int((max_ts - min_ts)*1000)
+            self.full_load_time = int((max_timestamp - min_timestamp) * 1000)
 
         # onLoad envent time
         try:
             self.onload_event = self.har["log"]["pages"][0]["pageTimings"]["onLoad"]
-        except:
-            try:
-                self.onload_event = self.har["log"]["pages"][0]["pageTimings"][0]["onLoad"] # dynaTrace bug
-            except:                
-                self.onload_event = "n/a"
+        except KeyError:
+            self.onload_event = "n/a"
+        except TypeError: # dynaTrace bug
+            self.onload_event = self.har["log"]["pages"][0]["pageTimings"][0]["onLoad"]
 
         # Render Start
         try:
@@ -329,10 +338,10 @@ class HAR():
             mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type, ""):
                 mime_type = self.get_normalized_value(mime_type)
-                size = bytes(entry["response"]["content"]["size"])
+                size = Bytes(entry["response"]["content"]["size"])
                 resources[mime_type] = resources.get(mime_type, 0) + size.to_kilobytes()
         return resources
-        
+
     def req_ratio(self):
         """Breakdown by number of page objects"""
         
