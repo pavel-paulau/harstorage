@@ -26,7 +26,7 @@ class MongoDB():
 
         database = config["app_conf"]["mongo_db"]
 
-        self.collection = pymongo.Connection(uri)[database][collection]
+        self.collection = pymongo.Connection(uri, safe=True)[database][collection]
 
         # Indecies
         self.collection.ensure_index([("label", 1), ("timestamp", -1)])
