@@ -145,7 +145,7 @@ class ResultsController(BaseController):
         output = str()
 
         # Metrics
-        metrics = ( "timestamp", "full_load_time", "requests", "total_size",
+        METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
                     "ps_scores", "onload_event", "start_render_time",
                     "time_to_first_byte", "total_dns_time",
                     "total_transfer_time", "total_server_time",
@@ -153,18 +153,18 @@ class ResultsController(BaseController):
                     "media_size", "cache_size", "redirects", "bad_requests",
                     "domains")
 
-        for index in range(len(metrics)):
+        for index in range(len(METRICS)):
             data.append(str())
 
         # Read data for timeline from database in custom format (hash separated)
         results = mdb_handler.collection.find(
             {mode: label},
-            fields = metrics,
+            fields = METRICS,
             sort = [("timestamp", 1)])
 
         for result in results:
             index = 0
-            for metric in metrics:
+            for metric in METRICS:
                 if metric != "ps_scores":
                     data[index] += str(result[metric]) + "#"
                 else:
