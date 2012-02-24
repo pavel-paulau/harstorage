@@ -340,7 +340,7 @@ class ResultsController(BaseController):
                 if os_type == "Linux":
                     std_out = " > /dev/null 2>&1"
                 elif os_type == "Windows":
-                    std_out = " > NUL 2>1"
+                    std_out = " > NUL 2>&1"
                 else:
                     std_out = ""
 
