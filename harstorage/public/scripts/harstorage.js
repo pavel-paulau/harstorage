@@ -139,7 +139,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
 
         for (var i2 = 0, l2 = dataArray[i1].length; i2 < l2; i2 += 1 ) {
             if (HARSTORAGE.times.indexOf(HARSTORAGE.labels[i1-1]) !== -1) {
-                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10)*10) / 10;
+                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10) * 1000) / 1000;
             } else {
                 dataArray[i1][i2] = parseInt(dataArray[i1][i2], 10);
             }
@@ -340,7 +340,6 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
 
     // Chart type
     chart_type = (typeof(chart_type) !== "undefined") ? chart_type : "column";
-
     
     // Series data
     var splitResults = points.split(";"),
@@ -353,7 +352,7 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
 
         for (var i2 = 0, l2 = dataArray[i1].length; i2 < l2; i2 += 1 ) {
             if (HARSTORAGE.times.indexOf(HARSTORAGE.labels[i1-1]) !== -1) {
-                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10)*10) / 10;
+                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10) * 1000) / 1000;
             } else {
                 dataArray[i1][i2] = parseInt(dataArray[i1][i2], 10);
             }
