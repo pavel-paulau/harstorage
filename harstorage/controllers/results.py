@@ -53,9 +53,8 @@ class ResultsController(BaseController):
                     }                                     \
                 }")
 
-        latest_results = sorted(latest_results,
-                                key = lambda timestamp: timestamp["timestamp"],
-                                reverse=True)
+        key = lambda timestamp: timestamp["timestamp"]
+        latest_results = sorted(latest_results, key = key, reverse = True)
 
         # Numner of records
         c.rowcount = len(latest_results)
@@ -139,7 +138,7 @@ class ResultsController(BaseController):
         # Parameters from GET request
         label = request.GET["label"]
         mode = request.GET["mode"]
-        
+
         # Data containers
         data = list()
         output = str()
@@ -152,6 +151,17 @@ class ResultsController(BaseController):
                     "avg_connecting_time", "avg_blocking_time", "text_size",
                     "media_size", "cache_size", "redirects", "bad_requests",
                     "domains")
+
+        TITLES = [ "Full Load Time", "Total Requests",
+                   "Total Size", "Page Speed Score", "onLoad Event",
+                   "Start Render Time", "Time to First Byte",
+                   "Total DNS Time", "Total Transfer Time", "Total Server Time",
+                   "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
+                   "Media Size", "Cache Size", "Redirects", "Bad Rquests",
+                   "Domains"]
+
+        # Set of metrics to exclude (due to missing data)
+        exclude = set()
 
         for index in range(len(METRICS)):
             data.append(str())
@@ -166,15 +176,31 @@ class ResultsController(BaseController):
             index = 0
             for metric in METRICS:
                 if metric != "ps_scores":
-                    data[index] += str(result[metric]) + "#"
+                    point = str(result[metric])
                 else:
-                    data[index] += str(result[metric]["Total Score"]) + "#"
+                    point = str(result[metric]["Total Score"])
+                if point == "n/a":
+                    exclude.add(metric)
+                data[index] += point + "#"
                 index += 1
 
-        for dataset in data:
-            output += dataset[:-1] + ";"
+        # Update list of titles
+        if "onload_event" in exclude:
+            TITLES.pop(TITLES.index("onLoad Event"))
+        if "start_render_time" in exclude:
+            TITLES.pop(TITLES.index("Start Render Time"))
 
-        return output
+        header = str()
+        for title in TITLES:
+            header += title + "#"
+
+        output = header[:-1] + ";"
+
+        for dataset in data:
+            if not dataset.count("n/a"):
+                output += dataset[:-1] + ";"
+
+        return output[:-1]
 
     @restrict("GET")
     def runinfo(self):
@@ -352,7 +378,7 @@ class ResultsController(BaseController):
 
                 # Output report (JSON)
                 filename = outfile
-                with open(filename,"r") as file:
+                with open(filename, "r") as file:
                     output = json.loads(file.read())
 
                 # Page Speed scores

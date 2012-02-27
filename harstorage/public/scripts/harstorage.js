@@ -33,30 +33,6 @@ if (!Array.prototype.indexOf) {
 var HARSTORAGE = HARSTORAGE || {};
 
 /*
- * Chart Labels
- */
-HARSTORAGE.labels = [
-    "Full Load Time",
-    "Total Requests",
-    "Total Size",
-    "Page Speed Score",
-    "onLoad Event",
-    "Start Render Time",
-    "Time to First Byte",
-    "Total DNS Time",
-    "Total Transfer Time",
-    "Total Server Time",
-    "Avg. Connecting Time",
-    "Avg. Blocking Time",
-    "Text Size",
-    "Media Size",
-    "Cache Size",
-    "Redirects",
-    "Bad Rquests",
-    "Domains"
-];
-
-/*
  * Time metrics
  */
 HARSTORAGE.times = [
@@ -91,6 +67,82 @@ HARSTORAGE.Units = {
 };
 
 /*
+ * Data Converter
+ */
+HARSTORAGE.Converter = function(points) {
+    "use strict";
+
+    // Series data
+    var splitResults = points.split(";"),
+        numberOfSets = splitResults.length - 2,
+        dataArray = [];
+
+    // Labels and Timestamps
+    var labels = splitResults[0].split("#"),
+        categories = splitResults[1].split("#"),
+        numberOfPoints = categories.length,
+        pointValue;
+
+    for (var dataSetIndex = 0; dataSetIndex < numberOfSets; dataSetIndex += 1 ) {
+        dataArray.push(splitResults[dataSetIndex + 2].split("#"));
+
+        // Convert string values to numbers
+        for (var pointIndex = 0; pointIndex < numberOfPoints; pointIndex += 1 ) {
+            // Original Value
+            pointValue = dataArray[dataSetIndex][pointIndex];
+
+            if (HARSTORAGE.times.indexOf(labels[dataSetIndex]) !== -1) {
+                // Parsed value
+                pointValue = parseFloat(pointValue / 1000, 10);
+                // Rounded value
+                if (pointValue > 1){
+                    pointValue = Math.round(pointValue * 10) / 10;
+                }
+            } else {
+                // Parsed value
+                pointValue = parseInt(pointValue, 10);
+            }
+
+            dataArray[dataSetIndex][pointIndex] = pointValue;
+        }
+    }
+
+    // Colors for Y Axis labels
+    var colors = HARSTORAGE.Colors();
+
+    // Y Axis and series
+    var yAxis = [],
+        series = [];
+
+    for (dataSetIndex = 0; dataSetIndex < numberOfSets; dataSetIndex += 1) {
+        yAxis.push({
+            title: {
+                text: labels[dataSetIndex],
+                style: {
+                    color: colors[dataSetIndex]
+                }
+            },
+            min: 0,
+            opposite: (dataSetIndex%2 === 0) ? false : true,
+            showEmpty: false
+        });
+
+        series.push({
+            name: labels[dataSetIndex],
+            yAxis: dataSetIndex,
+            data: dataArray[dataSetIndex],
+            visible: (dataSetIndex < 3) ? true : false
+        });
+    }
+
+    return {
+        "categories": categories,
+        "yAxis": yAxis,
+        "series": series
+    };
+};
+
+/*
  * Timeline chart
  */
 HARSTORAGE.Timeline = function(run_info) {
@@ -108,7 +160,7 @@ HARSTORAGE.Timeline.prototype.get = function(label, mode) {
 
     // Retrieve data for timeline via XHR call
     var xhr = new XMLHttpRequest();
-    
+
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             that.draw(this.responseText);
@@ -128,51 +180,12 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
     // Pointer
     var that = this;
 
-    // Series data
-    var splitResults = points.split(";"),
-        dataArray = [];
+    // Convert data from custom format to arrays for chart
+    var converter = HARSTORAGE.Converter(points);
 
-    dataArray.push(splitResults[0].split("#"));
-
-    for (var i1 = 1, l1 = splitResults.length; i1 < l1 ; i1 += 1 ) {
-        dataArray.push(splitResults[i1].split("#"));
-
-        for (var i2 = 0, l2 = dataArray[i1].length; i2 < l2; i2 += 1 ) {
-            if (HARSTORAGE.times.indexOf(HARSTORAGE.labels[i1-1]) !== -1) {
-                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10) * 1000) / 1000;
-            } else {
-                dataArray[i1][i2] = parseInt(dataArray[i1][i2], 10);
-            }
-        }
-    }
-
-    // Colors for Y Axis labels
-    var colors = HARSTORAGE.Colors();
-
-    // Y Axis and series
-    var yAxis = [],
-        series = [];
-
-    for (var i=0, l = HARSTORAGE.labels.length; i < l; i+=1) {
-        yAxis.push({
-            title: {
-                text: HARSTORAGE.labels[i],
-                style: {
-                    color : colors[i]
-                }
-            },
-            min: 0,
-            opposite: (i%2 === 0) ? false : true,
-            showEmpty: false
-        });
-
-        series.push({
-            name: HARSTORAGE.labels[i],
-            yAxis: i,
-            data: dataArray[i+1],
-            visible: (i < 3) ? true : false
-        });
-    }
+    var categories = converter.categories,
+        yAxis = converter.yAxis,
+        series = converter.series;
 
     new Highcharts.Chart({
         chart: {
@@ -205,8 +218,8 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
             text: "Performance Trends"
         },
         xAxis: [{
-            categories: dataArray[0],
-            tickInterval: Math.ceil(dataArray[0].length / 10),
+            categories: categories,
+            tickInterval: Math.ceil(categories.length / 10),
             tickmarkPlacement: "on"
         }],
         yAxis: yAxis,
@@ -341,51 +354,12 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
     // Chart type
     chart_type = (typeof(chart_type) !== "undefined") ? chart_type : "column";
     
-    // Series data
-    var splitResults = points.split(";"),
-        dataArray = [];
+    // Convert data from custom format to arrays for chart
+    var converter = HARSTORAGE.Converter(points);
 
-    dataArray.push(splitResults[0].split("#"));
-
-    for (var i1 = 1, l1 = splitResults.length; i1 < l1 ; i1 += 1 ) {
-        dataArray.push(splitResults[i1].split("#"));
-
-        for (var i2 = 0, l2 = dataArray[i1].length; i2 < l2; i2 += 1 ) {
-            if (HARSTORAGE.times.indexOf(HARSTORAGE.labels[i1-1]) !== -1) {
-                dataArray[i1][i2] = Math.round(parseFloat(dataArray[i1][i2] / 1000, 10) * 1000) / 1000;
-            } else {
-                dataArray[i1][i2] = parseInt(dataArray[i1][i2], 10);
-            }
-        }
-    }
-
-    // Colors for Y Axis labels
-    var colors = HARSTORAGE.Colors();
-
-    // Y Axis
-    var yAxis = [],
-        series = [];
-
-    for (var i=0, l = HARSTORAGE.labels.length; i < l; i+=1) {
-        yAxis.push({
-            title: {
-                text: HARSTORAGE.labels[i],
-                style: {
-                    color: colors[i]
-                }
-            },
-            min: 0,
-            opposite: (i%2 === 0) ? false : true,
-            showEmpty: false
-        });
-
-        series.push({
-            name: HARSTORAGE.labels[i],
-            yAxis: i,
-            data: dataArray[i+1],
-            visible: (i < 3) ? true : false
-        });
-    }
+    var categories = converter.categories,
+        yAxis = converter.yAxis,
+        series = converter.series;
 
     // Chart Object
     new Highcharts.Chart({
@@ -418,8 +392,8 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
             text: "Performance Trends"
         },
         xAxis: [{
-            categories: dataArray[0],
-            tickInterval: Math.ceil(dataArray[0].length / 10),
+            categories: categories,
+            tickInterval: Math.ceil(categories.length / 10),
             tickmarkPlacement: "on"
         }],
         yAxis: yAxis,

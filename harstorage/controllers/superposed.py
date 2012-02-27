@@ -81,13 +81,13 @@ class SuperposedController(BaseController):
             c.rowcount = len(request.GET) / 3
 
         # Data containers        
-        metrics = [ "full_load_time", "requests", "total_size",
+        METRICS = ( "full_load_time", "requests", "total_size",
                     "ps_scores", "onload_event", "start_render_time",
                     "time_to_first_byte", "total_dns_time",
                     "total_transfer_time", "total_server_time",
                     "avg_connecting_time", "avg_blocking_time", "text_size",
                     "media_size", "cache_size", "redirects", "bad_requests",
-                    "domains"]
+                    "domains")
 
         c.headers = [   "Label", "Full Load Time (ms)", "Total Requests",
                         "Total Size (kB)", "Page Speed Score",
@@ -98,9 +98,20 @@ class SuperposedController(BaseController):
                         "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
                         "Redirects", "Bad Rquests", "Domains"]
 
+        TITLES = [ "Full Load Time", "Total Requests",
+                   "Total Size", "Page Speed Score", "onLoad Event",
+                   "Start Render Time", "Time to First Byte",
+                   "Total DNS Time", "Total Transfer Time", "Total Server Time",
+                   "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
+                   "Media Size", "Cache Size", "Redirects", "Bad Rquests",
+                   "Domains"]
+
+        # Set of metrics to exclude (due to missing data)
+        exclude = set()
+
         data = dict()
         
-        for metric in metrics:
+        for metric in METRICS:
             data[metric] = list()
 
         data["label"] = list()
@@ -126,14 +137,14 @@ class SuperposedController(BaseController):
             condition = {"label": label,
                          "timestamp": {"$gte": start_ts, "$lte": end_ts}}
 
-            documents = md_handler.collection.find(condition, fields = metrics)
+            documents = md_handler.collection.find(condition, fields = METRICS)
 
-            for metric in metrics:
+            for metric in METRICS:
                 data[metric].append(row)
                 data[metric][row] = list()
 
             for document in documents:
-                for metric in metrics:
+                for metric in METRICS:
                     if metric != "ps_scores":
                         data[metric][row].append(document[metric])
                     else:
@@ -148,7 +159,7 @@ class SuperposedController(BaseController):
         column = 1
         agg_handler = Aggregator()
 
-        for metric in metrics:
+        for metric in METRICS:
             c.metrics_table.append(list())
 
             c.points = c.points[:-1] + ";"
@@ -164,12 +175,25 @@ class SuperposedController(BaseController):
                 elif c.metric == "Median":
                     value = agg_handler.percentile(data[metric][row], 0.5)
 
-                c.points += str(value) + "#"
+                if value == "n/a":
+                    exclude.add(metric)
+                else:
+                    c.points += str(value) + "#"
                 c.metrics_table[column].append(value)
 
             column += 1
 
-        c.points = c.points[:-1]
+        # Update list of titles
+        if "onload_event" in exclude:
+            TITLES.pop(TITLES.index("onLoad Event"))
+        if "start_render_time" in exclude:
+            TITLES.pop(TITLES.index("Start Render Time"))
+
+        header = str()
+        for title in TITLES:
+            header += title + "#"
+
+        c.points = header[:-1] + ";" + c.points[:-1]
 
         return render("/display/core.html")
 
@@ -184,7 +208,7 @@ class SuperposedController(BaseController):
         c.metric = request.GET["metric"]
 
         # Metrics
-        metrics = [ ("full_load_time", "Full Load Time"),
+        METRICS = [ ("full_load_time", "Full Load Time"),
                     ("onload_event", "onLoad Event"),
                     ("start_render_time", "Start Render Time"),
                     ("time_to_first_byte", "Time to First Byte"),
@@ -198,16 +222,16 @@ class SuperposedController(BaseController):
                         "time_to_first_byte"]
 
         c.metrics = list()
-        
+
         # Read data from database
         condition = {"label": c.label}
-        fields = (metric for metric, title in metrics)
+        fields = (metric for metric, title in METRICS)
 
         documents = md_handler.collection.find(condition, fields = fields)
 
         full_data = list(document for document in documents)
 
-        for metric, title in metrics:
+        for metric, title in METRICS:
             try:
                 data = (result[metric] for result in full_data)
                 my_histogram = Histogram(data)
