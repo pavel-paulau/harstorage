@@ -23,12 +23,14 @@ class ChartController(BaseController):
         type = request.POST["type"]
         svg = request.POST["svg"]
         filename = request.POST["filename"]
-        width = int( request.POST["width"] )
+        width = int(request.POST["width"])
 
         # Image size
-        if width == 960:
+        if filename == "timeline":
+            height = 450
+        elif filename == "histogram" or filename == "superposed":
             height = 400
-        elif width == 450 or width == 930:
+        elif filename == "resources" or filename == "domains-by-size":
             height = 300
 
         # Converting
