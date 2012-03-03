@@ -16,13 +16,14 @@ class MongoDB():
         port = config["app_conf"]["mongo_port"]
         auth = config["app_conf"]["mongo_auth"]
 
+        uri = "mongodb://"
+
         if auth == "true":
             user = config["app_conf"]["mongo_user"]
             pswd = config["app_conf"]["mongo_pswd"]
+            uri += user + ":" + pswd + "@"
 
-            uri = user + ":" + pswd + "@" + host + ":" + port
-        else:
-            uri = host + ":" + port
+        uri += host + ":" + port
 
         database = config["app_conf"]["mongo_db"]
 
