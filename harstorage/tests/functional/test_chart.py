@@ -15,7 +15,7 @@ class TestChartController(TestController):
             response = self.app.post(
                 url(controller="chart", action="export"),
                 params = {"svg": file.read(), "type": "image/svg+xml",
-                          "filename": "chart.svg", "width": 960},
+                          "filename": "timeline", "width": 960},
                 status = 200)
 
         # Response header
@@ -29,7 +29,7 @@ class TestChartController(TestController):
             response = self.app.post(
                 url(controller="chart", action="export"),
                 params = {"svg": file.read(), "type": "image/png",
-                          "filename": "chart.png", "width": 960},
+                          "filename": "timeline", "width": 960},
                 status = 200)
 
         # Response header

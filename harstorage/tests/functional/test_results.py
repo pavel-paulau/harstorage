@@ -173,8 +173,8 @@ class TestResultsController(TestController):
             status = 200)
 
         # Data validation
-        assert len(response.body.split("#")) == 20
-        assert len(response.body.split(";")) == 20
+        assert len(response.body.split("#")) == 35
+        assert len(response.body.split(";")) == 19
         
 
     def test_11_timeline_url(self):
@@ -188,8 +188,8 @@ class TestResultsController(TestController):
             status = 200)
 
         # Data validation
-        assert len(response.body.split("#")) == 20
-        assert len(response.body.split(";")) == 20
+        assert len(response.body.split("#")) == 35
+        assert len(response.body.split(";")) == 19
 
     def test_12_runinfo(self):
         """Runinfo"""
@@ -238,7 +238,9 @@ class TestResultsController(TestController):
         # Cookie
         cookie = response.response.headers.get("Set-Cookie")
 
-        assert "phaseInterval=-1; Max-Age=31536000; Path=/;" in cookie
+        assert "phaseInterval=-1;" in cookie
+        assert "Max-Age=31536000;" in cookie
+        assert "Path=/" in cookie
 
     def test_15_delete_label(self):
         """Delete - label"""
