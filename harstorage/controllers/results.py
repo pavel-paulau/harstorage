@@ -31,8 +31,11 @@ class ResultsController(BaseController):
     def index(self):
         """Home page with the latest test results"""
 
-        # Migration (harstorage v0.7)
-        self._migration()
+        # Migration (harstorage v1.0)
+        migration_handler = MongoDB(collection = "migration")
+        status = migration_handler.collection.find_one({"status": "ok"})
+        if status is None:
+            redirect("/migration/status")
 
         # MongoDB handler
         mdb_handler = MongoDB()
@@ -447,51 +450,3 @@ class ResultsController(BaseController):
         response.content_type = mimetypes.guess_type(filename)[0] or "text/plain"
 
         return data
-
-    def _migration(self):
-        # MongoDB handler
-        migration_handler = MongoDB(collection = "migration")
-
-        status = migration_handler.collection.find_one({"status": "ok"})
-
-        if status is None:
-            mdb_handler = MongoDB()
-
-            for document in mdb_handler.collection.find(fields=["_id", "har"]):
-                id = document["_id"]
-
-                har = HAR(document["har"], True)
-
-                har.analyze()
-
-                domains_req_ratio = dict()
-                domains_weight_ratio = dict()
-
-                for key, value in har.domains.items():
-                    domains_req_ratio[key] = value[0]
-                    domains_weight_ratio[key] = value[1]
-
-                data = {"full_load_time":       har.full_load_time,
-                        "onload_event":         har.onload_event,
-                        "start_render_time":    har.start_render_time,
-                        "time_to_first_byte":   har.time_to_first_byte,
-                        "total_dns_time":       har.total_dns_time,
-                        "total_transfer_time":  har.total_transfer_time,
-                        "total_server_time":    har.total_server_time,
-                        "avg_connecting_time":  har.avg_connecting_time,
-                        "avg_blocking_time":    har.avg_blocking_time,
-                        "total_size":           har.total_size,
-                        "text_size":            har.text_size,
-                        "media_size":           har.media_size,
-                        "cache_size":           har.cache_size,
-                        "requests":             har.requests,
-                        "redirects":            har.redirects,
-                        "bad_requests":         har.bad_requests,
-                        "domains":              len(har.domains),
-                        "weights_ratio":        har.weight_ratio(),
-                        "requests_ratio":       har.req_ratio(),
-                        "domains_ratio":        har.domains}
-
-                mdb_handler.collection.update({"_id": id}, {"$set": data})
-
-            migration_handler.collection.insert({"status": "ok"})

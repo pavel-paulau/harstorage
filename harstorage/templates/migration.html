@@ -1,0 +1,14 @@
+<%namespace name="dochead"  file="/common/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+
+${dochead.html("Data Migration")}
+${header.html()}
+<p style="text-align:center;margin-top:150px;margin-bottom:150px;font-size:28px;color:#498a2d">
+    Data migration started.<br />Please do not close browser window!
+</p>
+  
+<script type='text/javascript'>
+    setTimeout(function() {window.location = "/migration/migration";}, 4000);
+</script>
+${footer.html()}
