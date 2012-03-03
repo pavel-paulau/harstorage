@@ -875,7 +875,7 @@ HARSTORAGE.autoHeight = function() {
 /*
  * Aggregated Statistics
  */
-HARSTORAGE.AggregatedStatistics = function() {
+HARSTORAGE.AggregatedStatistics = function(id) {
     "use strict";
 
     // Determine metric type from Query string
@@ -895,12 +895,12 @@ HARSTORAGE.AggregatedStatistics = function() {
     }
 
     // Update selector box active option
-    var selector = document.getElementById("metrics");
+    var selector = document.getElementById(id);
 
     for (var i = 0, len = selector.options.length; i < len; i += 1 ) {
         if (selector.options[i].value === metric) {
             selector.selectedIndex = i;
-            $("#metrics").trigger("liszt:updated");
+            $("#" + id).trigger("liszt:updated");
             break;
         }
     }

@@ -22,7 +22,7 @@
         columns.draw("${c.points}", "${c.chart_type}");
         % endif
 
-        HARSTORAGE.AggregatedStatistics();
+        HARSTORAGE.AggregatedStatistics("metrics");
 
         % if c.table == "true":
         $(document).ready(function() {

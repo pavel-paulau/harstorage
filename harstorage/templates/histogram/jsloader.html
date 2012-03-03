@@ -9,7 +9,7 @@
     .script("/scripts/chosen.jquery.js?ver=0.9.5")
     .script("/scripts/harstorage.js?ver=${c.rev}").wait()
     .wait(function(){
-        HARSTORAGE.AggregatedStatistics();
+        HARSTORAGE.AggregatedStatistics("timings");
 
         var chart = new HARSTORAGE.Histogram();
         chart.draw("${c.data}","${c.title}");

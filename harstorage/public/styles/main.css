@@ -185,9 +185,14 @@ body a:hover {
     float: left;
     text-align: left;
 }
-.sp-display select {
-    width: 165px;
+.sp-display #metrics, .sp-display #timings {
     display: none;
+}
+.sp-display #metrics {
+    width: 155px;
+}
+.sp-display #timings {
+    width: 200px;
 }
 .sp-display .selector {
     text-align: right;
