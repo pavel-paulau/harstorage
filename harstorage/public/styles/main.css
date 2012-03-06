@@ -186,7 +186,7 @@ body a:hover {
     text-align: left;
 }
 .sp-display #metrics, .sp-display #timings {
-    display: none;
+    visibility: hidden;
 }
 .sp-display #metrics {
     width: 155px;
