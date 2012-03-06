@@ -356,16 +356,14 @@ class ResultsController(BaseController):
             except Exception as error:
                 return False, ": ".join([type(error).__name__, error.message])
             
-            # MongoDB handler
-            mdb_handler = MongoDB()
-            if hasattr(c, "message"): return render("/error.html")
-            
+            # Evaluate Page Speed score
+            scores = dict()
             if config["app_conf"]["ps_enabled"] == "true":
-                #Store HAR for Page Speed
-                filename = os.path.join(config["app_conf"]["temp_store"], hashlib.md5().hexdigest())
-                pagespeed_bin = os.path.join(config["app_conf"]["bin_store"], "pagespeed_bin")
-                outfile = filename + ".out"
-                
+                #Store HAR for Page Speed binary
+                hashname = hashlib.md5().hexdigest()
+                temp_store = config["app_conf"]["temp_store"]
+                filename = os.path.join(temp_store, hashname)
+
                 with open(filename, "w") as file:
                     file.write(json.dumps(har.har))
                 
@@ -379,6 +377,11 @@ class ResultsController(BaseController):
                 else:
                     std_out = ""
 
+                bin_store = config["app_conf"]["bin_store"]
+                pagespeed_bin = os.path.join(bin_store, "pagespeed_bin")
+
+                outfile = filename + ".out"
+
                 os.system(pagespeed_bin + \
                     " -input_file " + filename + \
                     " -output_format formatted_json" + \
@@ -386,20 +389,15 @@ class ResultsController(BaseController):
                     std_out)
 
                 # Output report (JSON)
-                filename = outfile
-                with open(filename, "r") as file:
+                with open(outfile, "r") as file:
                     output = json.loads(file.read())
 
                 # Page Speed scores
-                scores = dict()
-                
                 scores["Total Score"] = int(output["score"])
-                
                 for rule in output["rule_results"]:
                     scores[rule["localized_rule_name"]] = int(rule["rule_score"])
-            
+
             else:
-                scores = dict()                
                 scores["Total Score"] = 100
             
             # Add document to collection
@@ -431,7 +429,12 @@ class ResultsController(BaseController):
                         "requests_ratio":       har.req_ratio(),
                         "domains_ratio":        har.domains}
 
-            mdb_handler.collection.insert(result)
+            # MongoDB handler
+            mdb_handler = MongoDB()
+            if hasattr(c, "message"):
+                return False, c.message
+            else:
+                mdb_handler.collection.insert(result)
 
             return True, har.label
         else:
