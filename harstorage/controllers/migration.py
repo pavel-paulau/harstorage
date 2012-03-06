@@ -19,6 +19,7 @@ class MigrationController(BaseController):
     def migration(self):
         # MongoDB handler
         mdb_handler = MongoDB()
+        if hasattr(c, "message"): return render("/error.html")
 
         for document in mdb_handler.collection.find(fields=["_id", "har"]):
             id = document["_id"]

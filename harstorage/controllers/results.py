@@ -33,13 +33,15 @@ class ResultsController(BaseController):
 
         # Migration (harstorage v1.0)
         migration_handler = MongoDB(collection = "migration")
+        if hasattr(c, "message"): return render("/error.html")
+
         status = migration_handler.collection.find_one({"status": "ok"})
-        if status is None:
-            redirect("/migration/status")
+        if status is None: redirect("/migration/status")
 
         # MongoDB handler
         mdb_handler = MongoDB()
-        
+        if hasattr(c, "message"): return render("/error.html")
+
         # Data table
         c.metrics_table = [[], [], [], [], [], []]
 
@@ -108,7 +110,7 @@ class ResultsController(BaseController):
 
         # MongoDB handler
         mdb_handler = MongoDB()
-        
+
         # Read data for selector box from database
         c.timestamp = list()
 
@@ -210,7 +212,7 @@ class ResultsController(BaseController):
         """Generate detailed data for each test run"""
 
         # MongoDB handler
-        mdb_handler = MongoDB()
+        mdb_handler = MongoDB()        
         
         # Parameters from GET request
         timestamp = request.GET["timestamp"]
@@ -284,7 +286,7 @@ class ResultsController(BaseController):
 
         # MongoDB handler
         mdb_handler = MongoDB()
-        
+
         # Parameters from GET request
         label = request.GET["label"]
         timestamp = request.GET["timestamp"]
@@ -349,10 +351,14 @@ class ResultsController(BaseController):
         # Analysis of uploaded data
         if har.parsing_status == "Successful":
             # Parsing imported HAR file
-            har.analyze()
+            try:
+                har.analyze()
+            except Exception as error:
+                return False, ": ".join([type(error).__name__, error.message])
             
             # MongoDB handler
             mdb_handler = MongoDB()
+            if hasattr(c, "message"): return render("/error.html")
             
             if config["app_conf"]["ps_enabled"] == "true":
                 #Store HAR for Page Speed

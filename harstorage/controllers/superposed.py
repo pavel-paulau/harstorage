@@ -24,6 +24,7 @@ class SuperposedController(BaseController):
 
         # MongoDB handler
         md_handler = MongoDB()
+        if hasattr(c, "message"): return render("/error.html")
         
         # List of labels
         c.labels = list()
@@ -38,7 +39,7 @@ class SuperposedController(BaseController):
         """Return a list of timestamps for selected label"""
 
         # MongoDB handler
-        md_handler = MongoDB()
+        md_handler = MongoDB()        
 
         # Read label from GET request
         label = request.GET["label"]
@@ -63,6 +64,7 @@ class SuperposedController(BaseController):
 
         # MongoDB handler
         md_handler = MongoDB()
+        if hasattr(c, "message"): return render("/error.html")
 
         # Checkbox options
         c.chart_type = request.GET.get("chart", None)
@@ -202,6 +204,7 @@ class SuperposedController(BaseController):
         
         # MongoDB handler
         md_handler = MongoDB()
+        if hasattr(c, "message"): return render("/error.html")
 
         # Option
         c.label = request.GET["label"]
