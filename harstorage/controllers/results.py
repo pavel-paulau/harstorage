@@ -356,49 +356,11 @@ class ResultsController(BaseController):
             except Exception as error:
                 return False, ": ".join([type(error).__name__, error.message])
             
-            # Evaluate Page Speed score
-            scores = dict()
+            # Evaluate Page Speed scores
             if config["app_conf"]["ps_enabled"] == "true":
-                #Store HAR for Page Speed binary
-                hashname = hashlib.md5().hexdigest()
-                temp_store = config["app_conf"]["temp_store"]
-                filename = os.path.join(temp_store, hashname)
-
-                with open(filename, "w") as file:
-                    file.write(json.dumps(har.har))
-                
-                # Run pagespeed_bin
-                os_type = platform.system()
-
-                if os_type == "Linux":
-                    std_out = " > /dev/null 2>&1"
-                elif os_type == "Windows":
-                    std_out = " > NUL 2>&1"
-                else:
-                    std_out = ""
-
-                bin_store = config["app_conf"]["bin_store"]
-                pagespeed_bin = os.path.join(bin_store, "pagespeed_bin")
-
-                outfile = filename + ".out"
-
-                os.system(pagespeed_bin + \
-                    " -input_file " + filename + \
-                    " -output_format formatted_json" + \
-                    " -output_file " + outfile + \
-                    std_out)
-
-                # Output report (JSON)
-                with open(outfile, "r") as file:
-                    output = json.loads(file.read())
-
-                # Page Speed scores
-                scores["Total Score"] = int(output["score"])
-                for rule in output["rule_results"]:
-                    scores[rule["localized_rule_name"]] = int(rule["rule_score"])
-
+                scores = self._get_pagespeed_scores(har.har)
             else:
-                scores["Total Score"] = 100
+                scores = dict([("Total Score", 100)])
             
             # Add document to collection
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -439,6 +401,49 @@ class ResultsController(BaseController):
             return True, har.label
         else:
             return False, har.parsing_status
+
+    def _get_pagespeed_scores(self, har):
+        #Store HAR for Page Speed binary
+        hashname = hashlib.md5().hexdigest()
+        temp_store = config["app_conf"]["temp_store"]
+        filename = os.path.join(temp_store, hashname)
+
+        with open(filename, "w") as file:
+            file.write(json.dumps(har))
+
+        # STDOUT,STDERR
+        os_type = platform.system()
+
+        if os_type == "Linux":
+            std_out = " > /dev/null 2>&1"
+        elif os_type == "Windows":
+            std_out = " > NUL 2>&1"
+        else:
+            std_out = ""
+
+        # Run pagespeed_bin
+        bin_store = config["app_conf"]["bin_store"]
+        pagespeed_bin = os.path.join(bin_store, "pagespeed_bin")
+
+        outfile = filename + ".out"
+
+        os.system(pagespeed_bin + \
+            " -input_file " + filename + \
+            " -output_format formatted_json" + \
+            " -output_file " + outfile + \
+            std_out)
+
+        # Output report (JSON)
+        with open(outfile, "r") as file:
+            output = json.loads(file.read())
+
+        # Final scores
+        scores = dict()
+        scores["Total Score"] = int(output["score"])
+        for rule in output["rule_results"]:
+            scores[rule["localized_rule_name"]] = int(rule["rule_score"])
+
+        return scores
 
     @restrict("GET")
     def download(self):
