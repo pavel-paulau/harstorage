@@ -42,11 +42,8 @@ class ResultsController(BaseController):
         mdb_handler = MongoDB()
         if hasattr(c, "message"): return render("/error.html")
 
-        # Data table
-        c.metrics_table = [[], [], [], [], [], []]
-
         # Read aggregated data from database
-        # Aggregation is based on unique labels and latest timestamps
+        # Aggregation is based on unique labels, urls and latest timestamps
         latest_results = mdb_handler.collection.group(
             key = ["label", "url"],
             condition = None,
@@ -65,6 +62,8 @@ class ResultsController(BaseController):
         c.rowcount = len(latest_results)
 
         # Populate data table with the latest test results
+        c.metrics_table = [[], [], [], [], [], []]
+
         fields = ["timestamp", "label", "url", "total_size", "requests",
                     "full_load_time"]
 
@@ -95,58 +94,49 @@ class ResultsController(BaseController):
             c.label = request.GET["label"]
             c.mode = "label"
 
-        self._selectors(c.mode, c.label)
- 
-        return render("/details/core.html")
-    
-    def _selectors(self, mode, label):
-        """
-        Create context data - a list of timestamps.
-        Additionally generate URL for aggregation of test results
-
-        @parameter label - label of set with test results
-        @parameter url   - URL of set with test results
-        """
-
-        # MongoDB handler
-        mdb_handler = MongoDB()
-
-        # Read data for selector box from database
-        c.timestamp = list()
-
-        results = mdb_handler.collection.find(
-            {mode: label},
-            fields = ["timestamp"],
-            sort = [("timestamp", -1)])
-        
-        for result in results:
-            c.timestamp.append(result["timestamp"])
+        # Generate context for selector
+        self._set_options_in_selector(c.mode, c.label)
 
         # Define url for data aggregation
-        if mode == "label":
+        if c.mode == "label":
             c.query = "/superposed/display?" + \
-                      "step_1_label=" + label + \
+                      "step_1_label=" + c.label + \
                       "&step_1_start_ts=" + min(c.timestamp) + \
                       "&step_1_end_ts=" + max(c.timestamp)
             c.histo = "true"
         else:
             c.histo = "false"
             c.query = "None"
+ 
+        return render("/details/core.html")
+    
+    def _set_options_in_selector(self, mode, label):
+        """
+        Create context data - a list of timestamps.
+
+        @parameter label - label of set with test results
+        @parameter url   - URL of set with test results
+        """
+
+        # Read data for selector box from database
+        results = MongoDB().collection.find(
+            {mode: label},
+            fields = ["timestamp"],
+            sort = [("timestamp", -1)])
+
+        c.timestamp = list()
+
+        for result in results:
+            c.timestamp.append(result["timestamp"])
+
 
     @restrict("GET")
     def timeline(self):
         """Generate data for timeline chart"""
 
-        # MongoDB handler
-        mdb_handler = MongoDB()
-
         # Parameters from GET request
         label = request.GET["label"]
         mode = request.GET["mode"]
-
-        # Data containers
-        data = list()
-        output = str()
 
         # Metrics
         METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
@@ -167,12 +157,12 @@ class ResultsController(BaseController):
 
         # Set of metrics to exclude (due to missing data)
         exclude = set()
-
+        data = list()
         for index in range(len(METRICS)):
             data.append(str())
 
         # Read data for timeline from database in custom format (hash separated)
-        results = mdb_handler.collection.find(
+        results = MongoDB().collection.find(
             {mode: label},
             fields = METRICS,
             sort = [("timestamp", 1)])
@@ -211,16 +201,12 @@ class ResultsController(BaseController):
     def runinfo(self):
         """Generate detailed data for each test run"""
 
-        # MongoDB handler
-        mdb_handler = MongoDB()        
-        
         # Parameters from GET request
         timestamp = request.GET["timestamp"]
 
-        # MongoDB query
-        test_results = mdb_handler.collection.find_one(
-            {"timestamp": timestamp})
-        
+        # DB query
+        test_results = MongoDB().collection.find_one({"timestamp": timestamp})
+
         # Domains breakdown
         domains_req_ratio = dict()
         domains_weight_ratio = dict()
@@ -251,16 +237,15 @@ class ResultsController(BaseController):
 
         # Page Speed Scores
         scores = dict()
-        
         for rule, score in test_results["ps_scores"].items():
             scores[rule] = score
-        
+
         # Data for HAR Viewer
         har_id = str(test_results["_id"])
 
         filename = os.path.join(config["app_conf"]["temp_store"], har_id)
         with open(filename, "w") as file:
-            file.write( test_results["har"].encode("utf-8") )
+            file.write(test_results["har"].encode("utf-8"))
 
         # Final JSON
         return json.dumps({"summary":       summary,
