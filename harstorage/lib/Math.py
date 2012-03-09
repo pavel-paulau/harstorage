@@ -8,7 +8,85 @@ class Aggregator():
     """
 
     def __init__(self):
-        None
+
+        self.METRICS = ( "full_load_time", "requests", "total_size",
+                    "ps_scores", "onload_event", "start_render_time",
+                    "time_to_first_byte", "total_dns_time",
+                    "total_transfer_time", "total_server_time",
+                    "avg_connecting_time", "avg_blocking_time", "text_size",
+                    "media_size", "cache_size", "redirects", "bad_requests",
+                    "domains")
+
+        self.TITLES = [ "Full Load Time", "Total Requests", "Total Size",
+                        "Page Speed Score", "onLoad Event", "Start Render Time",
+                        "Time to First Byte", "Total DNS Time",
+                        "Total Transfer Time", "Total Server Time",
+                        "Avg. Connecting Time", "Avg. Blocking Time",
+                        "Text Size", "Media Size", "Cache Size", "Redirects",
+                        "Bad Rquests", "Domains"]
+
+        self.data = self.data_container()        
+
+    def data_container(self):
+        """Common data container"""
+
+        data = dict()
+        for metric in self.METRICS:
+            data[metric] = list()
+
+        data["label"] = list()
+
+        return data
+
+    def add_row(self, label, row_index, documents):
+        """Extract metrics from set of documents"""
+
+        self.data["label"].append(row_index)
+        self.data["label"][row_index] = label
+
+        for metric in self.METRICS:
+            self.data[metric].append(row_index)
+            self.data[metric][row_index] = list()
+
+        for document in documents:
+            for metric in self.METRICS:
+                if metric != "ps_scores":
+                    self.data[metric][row_index].append(document[metric])
+                else:
+                    self.data[metric][row_index].append(document[metric]["Total Score"])
+
+    def get_aggregated_value(self, list, agg_type, metric):
+        """Return aggregated value in accordance with context(metric)"""
+
+        if agg_type == "Average":
+            return self.average(list)
+        elif agg_type == "Minimum":
+            return self.minimum(list)
+        elif agg_type == "Maximum":
+            return self.maximum(list)
+        elif agg_type == "90th Percentile":
+            return self.percentile(list, 0.9)
+        elif agg_type == "Median":
+            return self.percentile(list, 0.5)
+
+    def exclude_missing(self, points):
+        """Remove points missing in all subsets"""
+
+        index_oe  = self.METRICS.index("onload_event")
+        index_srt = self.METRICS.index("start_render_time")
+
+        onload_event      = points.split(";")[index_oe + 2]
+        start_render_time = points.split(";")[index_srt + 2]
+
+        number_of_values = onload_event.count("#") + 1
+        broken_string = "#".join(["n/a"] * number_of_values)
+
+        if onload_event == broken_string:
+            points = points.replace("onLoad Event#", "")
+        if start_render_time == broken_string:
+            points = points.replace("Start Render Time#", "")
+
+        return points.replace(broken_string + ";", "")        
 
     def average(self, results):
         """

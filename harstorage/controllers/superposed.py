@@ -38,23 +38,18 @@ class SuperposedController(BaseController):
     def dates(self):
         """Return a list of timestamps for selected label"""
 
-        # MongoDB handler
-        md_handler = MongoDB()        
-
         # Read label from GET request
         label = request.GET["label"]
 
         # Read data from database
-        documents = md_handler.collection.find(
+        documents = MongoDB().collection.find(
             {"label": label},
             fields = ["timestamp"],
             sort = [("timestamp", 1)])
-        
+
+        dates = str()
         for document in documents:
-            try:
-                dates = dates + document["timestamp"] + ";"
-            except:
-                dates = document["timestamp"] + ";"
+            dates += document["timestamp"] + ";"
 
         return dates[:-1]
 
@@ -73,8 +68,8 @@ class SuperposedController(BaseController):
 
         c.chart = "true" if c.chart_type else "false"
 
-        # Metric option
-        c.metric = request.GET.get("metric", "Average")
+        # Aggregation option
+        c.agg_type = request.GET.get("metric", "Average")
 
         # Number of records
         if c.chart == "true" and c.table == "true" and init != "true":
@@ -82,15 +77,7 @@ class SuperposedController(BaseController):
         else:
             c.rowcount = len(request.GET) / 3
 
-        # Data containers        
-        METRICS = ( "full_load_time", "requests", "total_size",
-                    "ps_scores", "onload_event", "start_render_time",
-                    "time_to_first_byte", "total_dns_time",
-                    "total_transfer_time", "total_server_time",
-                    "avg_connecting_time", "avg_blocking_time", "text_size",
-                    "media_size", "cache_size", "redirects", "bad_requests",
-                    "domains")
-
+        # Data table
         c.headers = [   "Label", "Full Load Time (ms)", "Total Requests",
                         "Total Size (kB)", "Page Speed Score",
                         "onLoad Event (ms)", "Start Render Time (ms)",
@@ -99,103 +86,56 @@ class SuperposedController(BaseController):
                         "Avg. Connecting Time (ms)", "Avg. Blocking Time (ms)",
                         "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
                         "Redirects", "Bad Rquests", "Domains"]
-
-        TITLES = [ "Full Load Time", "Total Requests",
-                   "Total Size", "Page Speed Score", "onLoad Event",
-                   "Start Render Time", "Time to First Byte",
-                   "Total DNS Time", "Total Transfer Time", "Total Server Time",
-                   "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
-                   "Media Size", "Cache Size", "Redirects", "Bad Rquests",
-                   "Domains"]
-
-        # Set of metrics to exclude (due to missing data)
-        exclude = set()
-
-        data = dict()
-        
-        for metric in METRICS:
-            data[metric] = list()
-
-        data["label"] = list()
-
-        # Data table
         c.metrics_table = list()
         c.metrics_table.append(list())
 
-        # Test results from database
-        for row in range(c.rowcount):
-            # Parameters from GET request
-            label = request.GET["step_" + str(row+1) + "_label"]
-            start_ts = request.GET["step_" + str(row+1) + "_start_ts"]
-            end_ts = request.GET["step_" + str(row+1) + "_end_ts"]
-
-            # Label
-            c.metrics_table[0].append(label)
-
-            data["label"].append(row)
-            data["label"][row] = label
-
-            # Fetch test results
-            condition = {"label": label,
-                         "timestamp": {"$gte": start_ts, "$lte": end_ts}}
-
-            documents = md_handler.collection.find(condition, fields = METRICS)
-
-            for metric in METRICS:
-                data[metric].append(row)
-                data[metric][row] = list()
-
-            for document in documents:
-                for metric in METRICS:
-                    if metric != "ps_scores":
-                        data[metric][row].append(document[metric])
-                    else:
-                        data[metric][row].append(document[metric]["Total Score"])
-
-        # Aggregation
+        # Chart points
         c.points = str()
 
-        for row in range(c.rowcount):
-            c.points += data["label"][row] + "#"
+        # Aggregator
+        aggregator = Aggregator()        
 
+        # Test results from database
+        for row_index in range(c.rowcount):
+            # Parameters from GET request
+            label    = request.GET["step_" + str(row_index + 1) + "_label"]
+            start_ts = request.GET["step_" + str(row_index + 1) + "_start_ts"]
+            end_ts   = request.GET["step_" + str(row_index + 1) + "_end_ts"]
+
+            # Add label
+            c.metrics_table[0].append(label)
+            c.points += label + "#"
+
+            # Fetch test results
+            condition = {"label": label, "timestamp": {"$gte": start_ts, "$lte": end_ts}}
+            documents = md_handler.collection.find(condition, fields = aggregator.METRICS)
+
+            # Add data row to aggregator
+            aggregator.add_row(label, row_index, documents)            
+
+        # Aggregated data per column
         column = 1
-        agg_handler = Aggregator()
-
-        for metric in METRICS:
+        for metric in aggregator.METRICS:
             c.metrics_table.append(list())
-
             c.points = c.points[:-1] + ";"
-            for row in range(c.rowcount):
-                if c.metric == "Average":
-                    value = agg_handler.average(data[metric][row])
-                elif c.metric == "Minimum":
-                    value = agg_handler.minimum(data[metric][row])
-                elif c.metric == "Maximum":
-                    value = agg_handler.maximum(data[metric][row])
-                elif c.metric == "90th Percentile":
-                    value = agg_handler.percentile(data[metric][row], 0.9)
-                elif c.metric == "Median":
-                    value = agg_handler.percentile(data[metric][row], 0.5)
 
-                if value == "n/a":
-                    exclude.add(metric)
-                else:
-                    c.points += str(value) + "#"
+            for row_index in range(c.rowcount):
+                data_list = aggregator.data[metric][row_index]
+                value = aggregator.get_aggregated_value(data_list, c.agg_type, metric)
+
+                c.points += str(value) + "#"
                 c.metrics_table[column].append(value)
 
             column += 1
 
-        # Update list of titles
-        if "onload_event" in exclude:
-            TITLES.pop(TITLES.index("onLoad Event"))
-        if "start_render_time" in exclude:
-            TITLES.pop(TITLES.index("Start Render Time"))
+        # Names of series
+        titles = str()
+        for title in aggregator.TITLES:
+            titles += title + "#"
 
-        header = str()
-        for title in TITLES:
-            header += title + "#"
-
-        c.points = header[:-1] + ";" + c.points[:-1]
+        # Final chart points
+        c.points = titles[:-1] + ";" + c.points[:-1]
+        c.points = aggregator.exclude_missing(c.points)
 
         return render("/display/core.html")
 
@@ -206,7 +146,7 @@ class SuperposedController(BaseController):
         md_handler = MongoDB()
         if hasattr(c, "message"): return render("/error.html")
 
-        # Option
+        # Options
         c.label = request.GET["label"]
         c.metric = request.GET["metric"]
 
@@ -229,7 +169,6 @@ class SuperposedController(BaseController):
         # Read data from database
         condition = {"label": c.label}
         fields = (metric for metric, title in METRICS)
-
         documents = md_handler.collection.find(condition, fields = fields)
 
         full_data = list(document for document in documents)
@@ -237,14 +176,14 @@ class SuperposedController(BaseController):
         for metric, title in METRICS:
             try:
                 data = (result[metric] for result in full_data)
-                my_histogram = Histogram(data)
+                histogram = Histogram(data)
 
                 if metric in time_metrics:
-                    ranges = my_histogram.ranges(True)
+                    ranges = histogram.ranges(True)
                 else:
-                    ranges = my_histogram.ranges()
+                    ranges = histogram.ranges()
 
-                frequencies = my_histogram.frequencies()
+                frequencies = histogram.frequencies()
 
                 if metric == c.metric:
                     c.data = ""
