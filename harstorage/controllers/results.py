@@ -15,6 +15,7 @@ from pylons.decorators.rest import restrict
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoDB
+import harstorage.lib.helpers as h
 
 class ResultsController(BaseController):
 
@@ -135,7 +136,7 @@ class ResultsController(BaseController):
         """Generate data for timeline chart"""
 
         # Parameters from GET request
-        label = request.GET["label"]
+        label = h.decode_uri(request.GET["label"])
         mode = request.GET["mode"]
 
         # Metrics

@@ -167,7 +167,7 @@ HARSTORAGE.Timeline.prototype.get = function(label, mode) {
         }
     };
 
-    var URI = "timeline?label=" + label + "&mode=" + mode;
+    var URI = "timeline?label=" + encodeURIComponent(label) + "&mode=" + mode;
 
     xhr.open("GET", URI, true);
     xhr.send();
