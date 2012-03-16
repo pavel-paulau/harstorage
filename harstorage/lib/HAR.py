@@ -201,10 +201,12 @@ class HAR():
             seconds = time.strptime(seconds, "%Y-%m-%dT%H:%M:%S")
             seconds = time.mktime(seconds)
 
+            # Exclude timezone
             try:
                 milliseconds = milliseconds.partition("+")[0]
             except:
                 milliseconds = milliseconds.partition("-")[0]
+            milliseconds = milliseconds.replace("Z", "")
 
             time_request_started = seconds + float("0." + milliseconds)
             time_request_completed = time_request_started + entry["time"]/1000.0
