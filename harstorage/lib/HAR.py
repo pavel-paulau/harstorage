@@ -155,7 +155,7 @@ class HAR():
                 self.parsing_status = "Successful"
 
             except Exception as error:
-                self.parsing_status = error
+                self.parsing_status = ": ".join([type(error).__name__, error.message])
 
     def init_variables(self):
         self.full_load_time = 0
