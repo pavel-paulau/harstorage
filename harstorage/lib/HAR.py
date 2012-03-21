@@ -305,9 +305,9 @@ class HAR():
         return max(dns_time, 0)
 
     def get_transfer_time(self):
-        transfer_time = self.entry["timings"]["receive"] + \
-                        self.entry["timings"]["send"]
-        return max(transfer_time, 0)
+        receive_time = max(self.entry["timings"]["receive"], 0)
+        send_time = max(self.entry["timings"]["send"], 0)
+        return receive_time + send_time
 
     def get_send_time(self):
         send_time = self.entry["timings"]["send"]
