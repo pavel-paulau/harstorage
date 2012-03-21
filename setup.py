@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='harstorage',
-    version='1.0b',
+    version='1.0',
     description='Free repository for performance measurements',
     long_description="HAR Storage is repository for automated client-side performance testing. It's built on MongoDB and Pylons.",
     author='Pavel Paulau',
