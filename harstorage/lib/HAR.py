@@ -430,7 +430,7 @@ class HAR():
         return self.har["log"]["pages"][0]["id"]
 
     def get_url(self):
-        return self.har["log"]["entries"][0]["request"]["url"]
+        return self.har["log"]["entries"][0]["request"]["url"][:512]
 
     def get_number_of_requests(self):
         return len(self.har["log"]["entries"])
