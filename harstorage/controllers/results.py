@@ -138,6 +138,7 @@ class ResultsController(BaseController):
         # Parameters from GET request
         label = h.decode_uri(request.GET["label"])
         mode = request.GET["mode"]
+        limit = int(config["app_conf"].get("limit", 0))
 
         # Metrics
         METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
@@ -166,6 +167,7 @@ class ResultsController(BaseController):
         results = MongoDB().collection.find(
             {mode: label},
             fields = METRICS,
+            limit = limit,
             sort = [("timestamp", 1)])
 
         for result in results:
