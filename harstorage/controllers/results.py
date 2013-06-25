@@ -70,7 +70,6 @@ class ResultsController(BaseController):
             c.metrics_table[4].append(result["requests"])
             c.metrics_table[5].append(round(result["full_load_time"]/1000.0, 1))
 
-        print c.metrics_table
         return render("/home/core.html")
 
     @restrict("GET")
