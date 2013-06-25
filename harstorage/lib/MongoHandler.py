@@ -19,7 +19,8 @@ class MongoDB():
             database = config["app_conf"]["mongo_db"]
 
             # Collection
-            self.collection = pymongo.Connection(uri, safe=True)[database][collection]
+            #self.collection = pymongo.Connection(uri, safe=True)[database][collection]
+            self.collection = pymongo.mongo_client.MongoClient(host=uri, port=int(config["app_conf"]["mongo_port"]))[database][collection]
 
             # Indecies
             self.ensure_index()
@@ -40,7 +41,8 @@ class MongoDB():
             pswd = config["app_conf"]["mongo_pswd"]
             uri += user + ":" + pswd + "@"
 
-        return uri + host + ":" + port
+        #return uri + host + ":" + port
+        return uri + host
 
     def ensure_index(self):
         self.collection.ensure_index([("label", 1), ("timestamp", -1)])

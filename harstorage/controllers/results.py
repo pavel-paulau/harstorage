@@ -6,6 +6,7 @@ import time
 import re
 import functools
 import platform
+import urllib
 
 from pylons import request, response, tmpl_context as c
 from pylons import config
@@ -45,31 +46,20 @@ class ResultsController(BaseController):
 
         # Read aggregated data from database
         # Aggregation is based on unique labels, urls and latest timestamps
-        latest_results = mdb_handler.collection.group(
-            key = ["label", "url"],
-            condition = None,
-            initial = {"timestamp": "1970-01-01 01:00:00"},
-            reduce = "\
-                function(doc, prev) {                     \
-                    if (doc.timestamp > prev.timestamp) { \
-                        prev.timestamp = doc.timestamp;   \
-                    }                                     \
-                }")
-
-        key = lambda timestamp: timestamp["timestamp"]
-        latest_results = sorted(latest_results, key = key, reverse = True)
+        latest_results = mdb_handler.collection.aggregate(
+                                                [{"$group":{"_id":{"label":"$label","url":"$url"}, "timestamp":{"$max":"$timestamp"}}},
+                                                 {"$sort":{"timestamp": -1}}])
 
         # Numner of records
-        c.rowcount = len(latest_results)
+        c.rowcount = len(latest_results["result"])
 
-        # Populate data table with the latest test results
         c.metrics_table = [[], [], [], [], [], []]
 
         fields = ["timestamp", "label", "url", "total_size", "requests",
                     "full_load_time"]
 
-        for group in latest_results:
-            condition = {"label": group["label"], "timestamp": group["timestamp"]}
+        for group in latest_results["result"]:
+            condition = {"label": group["_id"]["label"], "timestamp": group["timestamp"]}
 
             result = mdb_handler.collection.find_one(condition, fields = fields)
 
@@ -138,7 +128,6 @@ class ResultsController(BaseController):
         # Parameters from GET request
         label = h.decode_uri(request.GET["label"])
         mode = request.GET["mode"]
-        limit = int(config["app_conf"].get("limit", 0))
 
         # Metrics
         METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
@@ -167,7 +156,6 @@ class ResultsController(BaseController):
         results = MongoDB().collection.find(
             {mode: label},
             fields = METRICS,
-            limit = limit,
             sort = [("timestamp", 1)])
 
         for result in results:
@@ -276,7 +264,7 @@ class ResultsController(BaseController):
         mdb_handler = MongoDB()
 
         # Parameters from GET request
-        label = request.GET["label"]
+        label = h.decode_uri(request.GET["label"])
         timestamp = request.GET["timestamp"]
         mode = request.GET["mode"]
 
@@ -300,7 +288,7 @@ class ResultsController(BaseController):
             count = mdb_handler.collection.find({"url": label}).count()
 
         if count:
-            return ("details?" + mode + "=" + label)
+            return ("details?" + mode + "=" + urllib.quote(label))
         else:
             return ("/")
 
