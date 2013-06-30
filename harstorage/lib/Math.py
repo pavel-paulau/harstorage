@@ -1,5 +1,6 @@
 import math
 
+
 class Aggregator():
 
     """
@@ -9,23 +10,23 @@ class Aggregator():
 
     def __init__(self):
 
-        self.METRICS = ( "full_load_time", "requests", "total_size",
-                    "ps_scores", "onload_event", "start_render_time",
-                    "time_to_first_byte", "total_dns_time",
-                    "total_transfer_time", "total_server_time",
-                    "avg_connecting_time", "avg_blocking_time", "text_size",
-                    "media_size", "cache_size", "redirects", "bad_requests",
-                    "domains")
+        self.METRICS = ("full_load_time", "requests", "total_size",
+                        "ps_scores", "onload_event", "start_render_time",
+                        "time_to_first_byte", "total_dns_time",
+                        "total_transfer_time", "total_server_time",
+                        "avg_connecting_time", "avg_blocking_time", "text_size",
+                        "media_size", "cache_size", "redirects", "bad_requests",
+                        "domains")
 
-        self.TITLES = [ "Full Load Time", "Total Requests", "Total Size",
-                        "Page Speed Score", "onLoad Event", "Start Render Time",
-                        "Time to First Byte", "Total DNS Time",
-                        "Total Transfer Time", "Total Server Time",
-                        "Avg. Connecting Time", "Avg. Blocking Time",
-                        "Text Size", "Media Size", "Cache Size", "Redirects",
-                        "Bad Rquests", "Domains"]
+        self.TITLES = ["Full Load Time", "Total Requests", "Total Size",
+                       "Page Speed Score", "onLoad Event", "Start Render Time",
+                       "Time to First Byte", "Total DNS Time",
+                       "Total Transfer Time", "Total Server Time",
+                       "Avg. Connecting Time", "Avg. Blocking Time",
+                       "Text Size", "Media Size", "Cache Size", "Redirects",
+                       "Bad Rquests", "Domains"]
 
-        self.data = self.data_container()        
+        self.data = self.data_container()
 
     def data_container(self):
         """Common data container"""
@@ -51,9 +52,13 @@ class Aggregator():
         for document in documents:
             for metric in self.METRICS:
                 if metric != "ps_scores":
-                    self.data[metric][row_index].append(document[metric])
+                    self.data[metric][row_index].append(
+                        document[metric]
+                    )
                 else:
-                    self.data[metric][row_index].append(document[metric]["Total Score"])
+                    self.data[metric][row_index].append(
+                        document[metric]["Total Score"]
+                    )
 
     def get_aggregated_value(self, list, agg_type, metric):
         """Return aggregated value in accordance with context(metric)"""
@@ -72,10 +77,10 @@ class Aggregator():
     def exclude_missing(self, points):
         """Remove points missing in all subsets"""
 
-        index_oe  = self.METRICS.index("onload_event")
+        index_oe = self.METRICS.index("onload_event")
         index_srt = self.METRICS.index("start_render_time")
 
-        onload_event      = points.split(";")[index_oe + 2]
+        onload_event = points.split(";")[index_oe + 2]
         start_render_time = points.split(";")[index_srt + 2]
 
         number_of_values = onload_event.count("#") + 1
@@ -86,7 +91,7 @@ class Aggregator():
         if start_render_time == broken_string:
             points = points.replace("Start Render Time#", "")
 
-        return points.replace(broken_string + ";", "")        
+        return points.replace(broken_string + ";", "")
 
     def average(self, results):
         """
@@ -96,7 +101,7 @@ class Aggregator():
         """
 
         try:
-            num = len( results )
+            num = len(results)
             total_sum = sum(results)
             return int(round(total_sum / num, 0))
         except TypeError:
@@ -120,11 +125,12 @@ class Aggregator():
 
         return max(results)
 
-    def percentile(self, results, percent, key=lambda x:x):
+    def percentile(self, results, percent, key=lambda x: x):
         """
         @parameter results - a list of test results
         @parameter percent - a float value from 0.0 to 1.0
-        @parameter key - optional key function to compute value from each element of N.
+        @parameter key - optional key function to compute value from each
+        element of N.
 
         @return - the percentile
         """
@@ -143,6 +149,7 @@ class Aggregator():
             except TypeError:
                 return "n/a"
 
+
 class Histogram():
 
     """
@@ -159,7 +166,7 @@ class Histogram():
         self.size = len(self.data)
         self.max_value = max(self.data)
         self.min_value = min(self.data)
-        
+
         if self.min_value != self.max_value:
             self.classes = round(1.0 + 3.32 * math.log10(self.size))
         else:
@@ -208,11 +215,12 @@ class Histogram():
                     step += self.step
                     index += 1
                 try:
-                    frequencies[index+1] += 1
+                    frequencies[index + 1] += 1
                 except:
                     frequencies[index] += 1
- 
+
         for index in range(int(self.classes)):
-            frequencies[index] = round(frequencies[index] * 100.0 / self.size, 1)
+            frequencies[index] = round(frequencies[index] * 100.0 / self.size,
+                                       1)
 
         return frequencies

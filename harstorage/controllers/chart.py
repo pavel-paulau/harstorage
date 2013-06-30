@@ -9,6 +9,7 @@ from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController
 
+
 class ChartController(BaseController):
 
     """
@@ -41,7 +42,7 @@ class ChartController(BaseController):
             # Image name
             image_name = os.path.join(config["app_conf"]["temp_store"],
                                       hashlib.md5().hexdigest() + ext)
-            
+
             # Create PNG file
             self._render_png(svg, image_name, width, height)
         elif type == "image/svg+xml":
@@ -51,23 +52,24 @@ class ChartController(BaseController):
             # Image name
             image_name = os.path.join(config["app_conf"]["temp_store"],
                                       hashlib.md5().hexdigest() + ext)
-            
+
             # Create SVG file
             self._render_svg(svg, image_name)
-        
+
         # Response headers
-        response.headers["Content-Disposition"] = "attachment; filename=" + filename + ext
+        response.headers["Content-Disposition"] = \
+            "attachment; filename=" + filename + ext
         response.headers["Content-type"] = type
-        
+
         # Return chuncked response
         return self._stream_image(image_name)
-        
+
     def _render_svg(self, svg, filename):
         """Create SVG file"""
-        
+
         with open(filename, "w") as svg_file:
             svg_file.write(svg)
-        
+
     def _render_png(self, svg, filename, width, height):
         """Create PNG file"""
 

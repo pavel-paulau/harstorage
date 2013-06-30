@@ -2,6 +2,7 @@ import pymongo
 
 from pylons import config, tmpl_context as c
 
+
 class MongoDB():
 
     """
@@ -19,7 +20,8 @@ class MongoDB():
             database = config["app_conf"]["mongo_db"]
 
             # Collection
-            self.collection = pymongo.Connection(uri, safe=True)[database][collection]
+            self.collection = \
+                pymongo.Connection(uri, safe=True)[database][collection]
 
             # Indecies
             self.ensure_index()

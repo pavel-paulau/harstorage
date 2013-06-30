@@ -1,5 +1,6 @@
 from routes import Mapper
 
+
 def make_map(config):
     """Create, configure and return the routes Mapper"""
 

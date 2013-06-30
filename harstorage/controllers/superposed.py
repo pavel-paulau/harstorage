@@ -6,6 +6,7 @@ from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
 from harstorage.lib.Math import Histogram, Aggregator
 
+
 class SuperposedController(BaseController):
 
     """
@@ -24,16 +25,17 @@ class SuperposedController(BaseController):
 
         # MongoDB handler
         md_handler = MongoDB()
-        if hasattr(c, "message"): return render("/error.html")
-        
+        if hasattr(c, "message"):
+            return render("/error.html")
+
         # List of labels
         c.labels = list()
-        
+
         for label in md_handler.collection.distinct("label"):
             c.labels.append(label)
-        
+
         return render("/create/core.html")
-    
+
     @restrict("GET")
     def dates(self):
         """Return a list of timestamps for selected label"""
@@ -44,8 +46,8 @@ class SuperposedController(BaseController):
         # Read data from database
         documents = MongoDB().collection.find(
             {"label": label},
-            fields = ["timestamp"],
-            sort = [("timestamp", 1)])
+            fields=["timestamp"],
+            sort=[("timestamp", 1)])
 
         dates = str()
         for document in documents:
@@ -59,7 +61,8 @@ class SuperposedController(BaseController):
 
         # MongoDB handler
         md_handler = MongoDB()
-        if hasattr(c, "message"): return render("/error.html")
+        if hasattr(c, "message"):
+            return render("/error.html")
 
         # Checkbox options
         c.chart_type = request.GET.get("chart", None)
@@ -78,14 +81,14 @@ class SuperposedController(BaseController):
             c.rowcount = len(request.GET) / 3
 
         # Data table
-        c.headers = [   "Label", "Full Load Time (ms)", "Total Requests",
-                        "Total Size (kB)", "Page Speed Score",
-                        "onLoad Event (ms)", "Start Render Time (ms)",
-                        "Time to First Byte (ms)", "Total DNS Time (ms)",
-                        "Total Transfer Time (ms)", "Total Server Time (ms)",
-                        "Avg. Connecting Time (ms)", "Avg. Blocking Time (ms)",
-                        "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
-                        "Redirects", "Bad Rquests", "Domains"]
+        c.headers = ["Label", "Full Load Time (ms)", "Total Requests",
+                     "Total Size (kB)", "Page Speed Score",
+                     "onLoad Event (ms)", "Start Render Time (ms)",
+                     "Time to First Byte (ms)", "Total DNS Time (ms)",
+                     "Total Transfer Time (ms)", "Total Server Time (ms)",
+                     "Avg. Connecting Time (ms)", "Avg. Blocking Time (ms)",
+                     "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
+                     "Redirects", "Bad Rquests", "Domains"]
         c.metrics_table = list()
         c.metrics_table.append(list())
 
@@ -93,25 +96,29 @@ class SuperposedController(BaseController):
         c.points = str()
 
         # Aggregator
-        aggregator = Aggregator()        
+        aggregator = Aggregator()
 
         # Test results from database
         for row_index in range(c.rowcount):
             # Parameters from GET request
-            label    = request.GET["step_" + str(row_index + 1) + "_label"]
+            label = request.GET["step_" + str(row_index + 1) + "_label"]
             start_ts = request.GET["step_" + str(row_index + 1) + "_start_ts"]
-            end_ts   = request.GET["step_" + str(row_index + 1) + "_end_ts"]
+            end_ts = request.GET["step_" + str(row_index + 1) + "_end_ts"]
 
             # Add label
             c.metrics_table[0].append(label)
             c.points += label + "#"
 
             # Fetch test results
-            condition = {"label": label, "timestamp": {"$gte": start_ts, "$lte": end_ts}}
-            documents = md_handler.collection.find(condition, fields = aggregator.METRICS)
+            condition = {
+                "label": label,
+                "timestamp": {"$gte": start_ts, "$lte": end_ts}
+            }
+            documents = md_handler.collection.find(condition,
+                                                   fields=aggregator.METRICS)
 
             # Add data row to aggregator
-            aggregator.add_row(label, row_index, documents)            
+            aggregator.add_row(label, row_index, documents)
 
         # Aggregated data per column
         column = 1
@@ -121,7 +128,8 @@ class SuperposedController(BaseController):
 
             for row_index in range(c.rowcount):
                 data_list = aggregator.data[metric][row_index]
-                value = aggregator.get_aggregated_value(data_list, c.agg_type, metric)
+                value = aggregator.get_aggregated_value(data_list, c.agg_type,
+                                                        metric)
 
                 c.points += str(value) + "#"
                 c.metrics_table[column].append(value)
@@ -141,25 +149,26 @@ class SuperposedController(BaseController):
 
     def histogram(self):
         """Render chart with histograms"""
-        
+
         # MongoDB handler
         md_handler = MongoDB()
-        if hasattr(c, "message"): return render("/error.html")
+        if hasattr(c, "message"):
+            return render("/error.html")
 
         # Options
         c.label = request.GET["label"]
         c.metric = request.GET["metric"]
 
         # Metrics
-        METRICS = [ ("full_load_time", "Full Load Time"),
-                    ("onload_event", "onLoad Event"),
-                    ("start_render_time", "Start Render Time"),
-                    ("time_to_first_byte", "Time to First Byte"),
-                    ("total_dns_time", "Total DNS Time"),
-                    ("total_transfer_time", "Total Transfer Time"),
-                    ("total_server_time", "Total Server Time"),
-                    ("avg_connecting_time", "Avg. Connecting Time"),
-                    ("avg_blocking_time", "Avg. Blocking Time")]
+        METRICS = [("full_load_time", "Full Load Time"),
+                   ("onload_event", "onLoad Event"),
+                   ("start_render_time", "Start Render Time"),
+                   ("time_to_first_byte", "Time to First Byte"),
+                   ("total_dns_time", "Total DNS Time"),
+                   ("total_transfer_time", "Total Transfer Time"),
+                   ("total_server_time", "Total Server Time"),
+                   ("avg_connecting_time", "Avg. Connecting Time"),
+                   ("avg_blocking_time", "Avg. Blocking Time")]
 
         time_metrics = ["full_load_time", "onload_event", "start_render_time",
                         "time_to_first_byte"]
@@ -169,7 +178,7 @@ class SuperposedController(BaseController):
         # Read data from database
         condition = {"label": c.label}
         fields = (metric for metric, title in METRICS)
-        documents = md_handler.collection.find(condition, fields = fields)
+        documents = md_handler.collection.find(condition, fields=fields)
 
         full_data = list(document for document in documents)
 

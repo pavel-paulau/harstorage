@@ -3,6 +3,7 @@ import time
 
 from harstorage.tests import *
 
+
 class TestTestflowController(TestController):
 
     """
@@ -17,8 +18,8 @@ class TestTestflowController(TestController):
         with open("harstorage/tests/functional/testdata/validfile.har") as file:
             self.app.post(
                 url(controller="results", action="upload"),
-                params = {"file": file.read()},
-                status = 302)
+                params={"file": file.read()},
+                status=302)
 
         time.sleep(1)
 
@@ -28,12 +29,12 @@ class TestTestflowController(TestController):
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="create"),
-            status = 200)
+            status=200)
 
         # Template context
         assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
 
-        assert type(response.tmpl_context.labels) == type([])
+        assert isinstance(response.tmpl_context.labels, list)
 
     def test_03_dates(self):
         """Dates for label"""
@@ -41,8 +42,8 @@ class TestTestflowController(TestController):
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="dates"),
-            params = {"label": "validfile",},
-            status = 200)
+            params={"label": "validfile"},
+            status=200)
 
         # Template context
         assert response.body.find(";") == -1
@@ -51,18 +52,19 @@ class TestTestflowController(TestController):
         """Display superposed - Average"""
 
         # Fetch data from database
-        collection = pymongo.Connection("localhost:27017")["harstorage"]["results"]
+        collection = \
+            pymongo.Connection("localhost:27017")["harstorage"]["results"]
 
         timestamp = collection.find_one({"label": "validfile"})["timestamp"]
 
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="display"),
-            params = {"step_1_label": "validfile",
-                      "step_1_start_ts": timestamp,
-                      "step_1_end_ts": timestamp,
-                      "metric": "Average"},
-            status = 200)
+            params={"step_1_label": "validfile",
+                    "step_1_start_ts": timestamp,
+                    "step_1_end_ts": timestamp,
+                    "metric": "Average"},
+            status=200)
 
         # Template context
         assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
@@ -80,11 +82,11 @@ class TestTestflowController(TestController):
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="display"),
-            params = {"step_1_label": "validfile",
-                      "step_1_start_ts": timestamp,
-                      "step_1_end_ts": timestamp,
-                      "metric": "Median"},
-            status = 200)
+            params={"step_1_label": "validfile",
+                    "step_1_start_ts": timestamp,
+                    "step_1_end_ts": timestamp,
+                    "metric": "Median"},
+            status=200)
 
         # Template context
         assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
@@ -102,11 +104,11 @@ class TestTestflowController(TestController):
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="display"),
-            params = {"step_1_label": "validfile",
-                      "step_1_start_ts": timestamp,
-                      "step_1_end_ts": timestamp,
-                      "metric": "Minimum"},
-            status = 200)
+            params={"step_1_label": "validfile",
+                    "step_1_start_ts": timestamp,
+                    "step_1_end_ts": timestamp,
+                    "metric": "Minimum"},
+            status=200)
 
         # Template context
         assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
@@ -124,11 +126,11 @@ class TestTestflowController(TestController):
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="display"),
-            params = {"step_1_label": "validfile",
-                      "step_1_start_ts": timestamp,
-                      "step_1_end_ts": timestamp,
-                      "metric": "Maximum"},
-            status = 200)
+            params={"step_1_label": "validfile",
+                    "step_1_start_ts": timestamp,
+                    "step_1_end_ts": timestamp,
+                    "metric": "Maximum"},
+            status=200)
 
         # Template context
         assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
@@ -146,11 +148,11 @@ class TestTestflowController(TestController):
         # Successful response
         response = self.app.get(
             url(controller="superposed", action="display"),
-            params = {"step_1_label": "validfile",
-                      "step_1_start_ts": timestamp,
-                      "step_1_end_ts": timestamp,
-                      "metric": "90th Percentile"},
-            status = 200)
+            params={"step_1_label": "validfile",
+                    "step_1_start_ts": timestamp,
+                    "step_1_end_ts": timestamp,
+                    "metric": "90th Percentile"},
+            status=200)
 
         # Template context
         assert response.tmpl_context.rev == response.config["app_conf"]["static_version"]
@@ -168,6 +170,6 @@ class TestTestflowController(TestController):
         # Successful response
         self.app.get(
             url(controller="results", action="deleterun"),
-            params = {"label": "validfile", "timestamp": timestamp,
-                      "mode": "label", "all": "true"},
-            status = 200)
+            params={"label": "validfile", "timestamp": timestamp,
+                    "mode": "label", "all": "true"},
+            status=200)

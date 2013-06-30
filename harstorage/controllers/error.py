@@ -4,6 +4,7 @@ from webhelpers.html.builder import literal
 
 from harstorage.lib.base import BaseController, render
 
+
 class ErrorController(BaseController):
 
     """Generates error documents as and when they are required.

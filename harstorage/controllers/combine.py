@@ -4,6 +4,7 @@ from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController
 
+
 class CombineController(BaseController):
 
     """

@@ -6,6 +6,7 @@ from harstorage.config.environment import load_environment
 
 log = logging.getLogger(__name__)
 
+
 def setup_app(command, conf, vars):
     """harstorage setup"""
 

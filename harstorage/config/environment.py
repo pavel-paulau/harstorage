@@ -8,11 +8,12 @@ import harstorage.lib.app_globals as app_globals
 import harstorage.lib.helpers
 from harstorage.config.routing import make_map
 
+
 def load_environment(global_conf, app_conf):
     """Configure the Pylons environment via the ``pylons.config`` object"""
 
     config = PylonsConfig()
-    
+
     # Pylons paths
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     paths = dict(root=root,
@@ -26,18 +27,18 @@ def load_environment(global_conf, app_conf):
     config["routes.map"] = make_map(config)
     config["pylons.app_globals"] = app_globals.Globals(config)
     config["pylons.h"] = harstorage.lib.helpers
-    
+
     # Setup cache object as early as possible
     import pylons
     pylons.cache._push_object(config["pylons.app_globals"].cache)
-    
+
     # Create the Mako TemplateLookup, with the default auto-escaping
     config["pylons.app_globals"].mako_lookup = TemplateLookup(
-        directories = paths["templates"],
-        error_handler = handle_mako_error,
-        module_directory = os.path.join(app_conf["cache_dir"], "templates"),
-        input_encoding = "utf-8",
-        default_filters = ["escape"],
-        imports = ["from webhelpers.html import escape"])
+        directories=paths["templates"],
+        error_handler=handle_mako_error,
+        module_directory=os.path.join(app_conf["cache_dir"], "templates"),
+        input_encoding="utf-8",
+        default_filters=["escape"],
+        imports=["from webhelpers.html import escape"])
 
     return config
