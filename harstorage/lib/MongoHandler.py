@@ -20,8 +20,14 @@ class MongoDB():
             database = config["app_conf"]["mongo_db"]
 
             # Collection
-            self.collection = \
-                pymongo.Connection(uri, safe=True)[database][collection]
+            # Updated the mongo client connection for the collection
+            # We could also use MongoReplicaSetClient for dealing with replica sets.
+            replicate = config["app_conf"]["mongo_replicate"]
+
+            if replicate == "true":
+                self.collection = pymongo.MongoReplicaSetClient(host=uri,port=int(config["app_conf"]["mongo_port"]),replicaSet=(config["app_conf"]["mongo_replset"]))[database][collection]
+            else:
+                self.collection = pymongo.mongo_client.MongoClient(host=uri,port=int(config["app_conf"]["mongo_port"]))[database][collection]
 
             # Indecies
             self.ensure_index()

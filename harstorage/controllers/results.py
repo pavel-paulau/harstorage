@@ -49,34 +49,36 @@ class ResultsController(BaseController):
 
         # Read aggregated data from database
         # Aggregation is based on unique labels, urls and latest timestamps
-        latest_results = mdb_handler.collection.group(
-            key=["label", "url"],
-            condition=None,
-            initial={"timestamp": "1970-01-01 01:00:00"},
-            reduce="\
-                function(doc, prev) {                     \
-                    if (doc.timestamp > prev.timestamp) { \
-                        prev.timestamp = doc.timestamp;   \
-                    }                                     \
-                }")
+        
+        
+        '''
+        Replaced the original grouping with an aggregate function.  This function
+        actually returns all of the fields needed such that we also do not needed
+        to make any subsequent requests back to MongoDB to retrieve details on 
+        the list
+        '''
+        latest_results = mdb_handler.collection.aggregate(
+            [{"$group":{"_id": {"label":"$label", "url":"$url"},
+            "timestamp":{"$last":"$timestamp"},
+            "total_size":{"$last":"$total_size"},
+            "requests":{"$last":"$requests"},
+            "full_load_time": {"$last":"$full_load_time"}}},
+            {"$sort":{"timestamp" : -1}}])
 
-        key = lambda timestamp: timestamp["timestamp"]
-        latest_results = sorted(latest_results, key=key, reverse=True)
-
-        # Numner of records
-        c.rowcount = len(latest_results)
+        '''
+        Get the number of records
+        
+        Since we changed the initial request, we need to deal with the json array
+        differently as well.
+        '''
+        c.rowcount = len(latest_results["result"])
 
         # Populate data table with the latest test results
         c.metrics_table = [[], [], [], [], [], []]
 
-        fields = ["timestamp", "label", "url", "total_size", "requests",
-                  "full_load_time"]
-
-        for group in latest_results:
-            condition = {
-                "label": group["label"],
-                "timestamp": group["timestamp"]
-            }
+        '''
+        for group in latest_results["result"]:
+            condition = {"label": group["_id"]["label"], "timestamp": group["timestamp"]}
 
             result = mdb_handler.collection.find_one(condition, fields=fields)
 
@@ -86,7 +88,18 @@ class ResultsController(BaseController):
             c.metrics_table[3].append(result["total_size"])
             c.metrics_table[4].append(result["requests"])
             c.metrics_table[5].append(round(result["full_load_time"] / 1000.0, 1))
+        '''
 
+        # loop through our results and return them
+        for result in latest_results["result"]:
+            c.metrics_table[0].append(result["timestamp"])
+            c.metrics_table[1].append(result["_id"]["label"])
+            c.metrics_table[2].append(result["_id"]["url"])
+            c.metrics_table[3].append(result["total_size"])
+            c.metrics_table[4].append(result["requests"])
+            c.metrics_table[5].append(round(result["full_load_time"] / 1000.0, 1))
+        
+        
         return render("/home/core.html")
 
     @restrict("GET")
