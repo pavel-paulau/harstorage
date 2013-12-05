@@ -5,6 +5,8 @@ from pylons.controllers.util import redirect
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
 from harstorage.lib.HAR import HAR
+import harstorage.lib.helpers as h
+
 
 
 class MigrationController(BaseController):
@@ -63,4 +65,4 @@ class MigrationController(BaseController):
         migration_handler = MongoDB(collection="migration")
         migration_handler.collection.insert({"status": "ok"})
 
-        redirect("/")
+        redirect(${h.url_for('/'))

@@ -40,7 +40,7 @@ class ResultsController(BaseController):
 
         status = migration_handler.collection.find_one({"status": "ok"})
         if status is None:
-            redirect("/migration/status")
+            redirect(h.url_for('/migration/status'))
 
         # MongoDB handler
         mdb_handler = MongoDB()
@@ -334,7 +334,7 @@ class ResultsController(BaseController):
                     if request.headers["automated"] == "true":
                         return "Successful"
                 except KeyError:
-                    redirect("/results/details?label=" + ext)
+                    redirect(h.url_for('/results/details') + "?label=" + ext)
             else:
                 try:
                     if request.headers["automated"] == "true":
