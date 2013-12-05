@@ -1,13 +1,13 @@
 <%def name="html()">
 <script type="text/javascript">
     $LAB
-    .script("/scripts/jquery-1.7.min.js").wait()
-    .script("/combine/scripts" +
+    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
+    .script("${h.url_for('/combine/scripts')}" +
             "?highcharts/highcharts.js&ver=2.2.0" +
             "&highcharts/themes.js&ver=${c.rev}" +
             "&highcharts/exporting.js&ver=2.2.0").wait()
-    .script("/scripts/chosen.jquery.js?ver=0.9.5")
-    .script("/scripts/harstorage.js?ver=${c.rev}").wait()
+    .script("${h.url_for('/scripts/chosen.jquery.js')}?ver=0.9.5")
+    .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
     .wait(function(){
         HARSTORAGE.AggregatedStatistics("timings");
 

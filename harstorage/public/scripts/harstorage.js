@@ -32,6 +32,14 @@ if (!Array.prototype.indexOf) {
  */
 var HARSTORAGE = HARSTORAGE || {};
 
+
+/*
+ * Base url to be used when generating urls
+ */
+var base_url = $('#base-url').text();
+HARSTORAGE.base_url = base_url
+
+
 /*
  * Time metrics
  */
@@ -210,7 +218,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
                     ]
                 }
             },
-            url: "/chart/export",
+            url: HARSTORAGE.base_url + "/chart/export",
             filename: "timeline",
             width: 960
         },
@@ -302,7 +310,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
                     ]
                 }
             },
-            url: "/chart/export",
+            url: HARSTORAGE.base_url + "/chart/export",
             filename: "histogram",
             width: 960
         },
@@ -384,7 +392,7 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
                     ]
                 }
             },
-            url: "/chart/export",
+            url: HARSTORAGE.base_url + "/chart/export",
             filename: "superposed",
             width: 960            
         },
@@ -459,7 +467,7 @@ HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     if (query !== "None") {
         agg_btn.style.display = "inline";
         agg_btn.onclick = function() {
-            location.href = query.replace(/amp;/g,"") + "&chart=column&table=true";
+            location.href = HARSTORAGE.base_url + query.replace(/amp;/g,"") + "&chart=column&table=true";
         };
     }
 
@@ -469,7 +477,7 @@ HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     if (histo === "true") {
         histo_btn.style.display = "inline";
         histo_btn.onclick = function() {
-            location.href = "/superposed/histogram?label=" + label + "&metric=full_load_time";
+            location.href = HARSTORAGE.base_url + "/superposed/histogram?label=" + label + "&metric=full_load_time";
         };
     }
 };
@@ -515,7 +523,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
                     ]
                 }
             },
-            url:"/chart/export",
+            url: HARSTORAGE.base_url + "/chart/export",
             filename: "resources",
             width: width
         },
@@ -702,7 +710,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
         // HAR Viewer
         var iframe  = document.createElement("iframe");
-        var url = "/results/harviewer?inputUrl=/results/download%3Fid%3D";
+        var url = HARSTORAGE.base_url + "/results/harviewer?inputUrl=" + HARSTORAGE.base_url + "/results/download%3Fid%3D";
             url += that.json.har;
             url += "&expand=true";
 

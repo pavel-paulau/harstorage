@@ -7,7 +7,7 @@ ${dochead.html("HAR Storage")}
 ${header.html()}
 <center>
     <div class="uploader">
-        <form action="/results/upload" enctype="multipart/form-data" method="post">
+        <form action="${h.url_for('/results/upload')}" enctype="multipart/form-data" method="post">
             <fieldset>
                 <legend>New File</legend>
                 <input class="file"     id="file"   name="file"     type="file"     size="25" />
@@ -44,7 +44,7 @@ ${header.html()}
             </tbody>
         </table>
         
-        <button type="button" onclick="window.location.href='/superposed/create';">Aggregate and Compare</button>
+        <button type="button" onclick="window.location.href='${h.url_for('/superposed/create')}';">Aggregate and Compare</button>
     </div>
 </center>
 ${jsloader.html()}
