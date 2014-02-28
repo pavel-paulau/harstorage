@@ -65,4 +65,4 @@ class MigrationController(BaseController):
         migration_handler = MongoDB(collection="migration")
         migration_handler.collection.insert({"status": "ok"})
 
-        redirect(${h.url_for('/'))
+        redirect(h.url_for('/'))
