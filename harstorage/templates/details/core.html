@@ -1,0 +1,89 @@
+<%namespace name="jsloader" file="/details/jsloader.html"/>
+<%namespace name="dochead"  file="/details/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+
+${dochead.html("Details | " + c.label)}
+${header.html()}
+<center>
+    <div class="results">
+        <div id="timeline"></div>
+
+        <p class="title">Run Info</p>
+
+        <div class="selector">
+            <select id="run_timestamp" class="chosen-select">
+                % for timestamp in c.timestamp:
+                <option value="${timestamp}"> ${timestamp}</option>
+                % endfor
+            </select>
+        </div>
+
+        <div class="spinner" id="spinner"></div>
+
+        <div class="tabber">
+            <div class="tabbertab" title="Summary">                
+                <div class="container-max">
+                    <div class="title-umax">Full Load Time:</div>       <div class="value" id="full-load-time">n/a</div>
+                    <div class="title-umax">onLoad Event:</div>         <div class="value" id="onload-event">n/a</div>
+                    <div class="title-umax">Start Render Time:</div>    <div class="value" id="start-render-time">n/a</div>
+                    <div class="title-umax">Time to First Byte:</div>   <div class="value" id="time-to-first-byte">n/a</div>
+                </div>
+                
+                <div class="container-max">
+                    <div class="title-max">Total DNS Time:</div>        <div class="value" id="total-dns-time">n/a</div>
+                    <div class="title-max">Total Transfer Time:</div>   <div class="value" id="total-transfer-time">n/a</div>
+                    <div class="title-max">Total Server Time:</div>     <div class="value" id="total-server-time">n/a</div>
+                    <div class="title-max">Avg. Connecting Time:</div>  <div class="value" id="avg-connecting-time">n/a</div>
+                    <div class="title-max">Avg. Blocking Time:</div>    <div class="value" id="avg-blocking-time">n/a</div>
+                </div>
+                <div class="container-min">
+                    <div class="title-min">Total Size:</div>           <div class="value" id="total-size">n/a</div>
+                    <div class="title-min">Text Files:</div>           <div class="value" id="text-size">n/a</div>
+                    <div class="title-min">Media Files:</div>          <div class="value" id="media-size">n/a</div>
+                    <div class="title-min">Cache Size:</div>           <div class="value" id="cache-size"></div>
+                </div>
+                <div class="container-umin">
+                    <div class="title-min">Requests:</div>             <div class="value-min" id="requests">n/a</div>
+                    <div class="title-min">Redirects:</div>            <div class="value-min" id="redirects">n/a</div>
+                    <div class="title-min">Bad Requests:</div>         <div class="value-min" id="bad-requests">n/a</div>
+                    <div class="title-min">Domains:</div>              <div class="value-min" id="domains">n/a</div>
+
+                    <div><input type="image" src="${h.url_for('/images/help_button.png')}" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
+                </div>
+            </div>
+
+            <div class="tabbertab" title="Resources">
+                <div id="by-size"></div>
+                <div id="by-req"></div>
+            </div>
+
+            <div class="tabbertab" title="Domains">
+                <div id="domains-by-size"></div>
+                <div id="domains-by-req"></div>
+            </div>
+
+            <div class="tabbertab" title="Page Speed Details">
+                <div id="pagespeed"></div>
+            </div>
+
+            <div class="tabbertab" title="HAR Viewer">
+                <div id="harviewer"></div>
+                <div class="newtab">
+                    <button id="newtab">View in New Tab</button>
+                </div>
+            </div>
+
+            <div class="tabbertab" title="Manage Data">
+                <div id="manager">
+                    <button id="histo">View Histogram</button>
+                    <button id="agg-btn">Aggregate Tests</button>
+                    <button id="del-btn">Delete Current Test</button>
+                    <button id="del-all-btn">Delete All Tests</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</center>
+${jsloader.html()}
+${footer.html()}

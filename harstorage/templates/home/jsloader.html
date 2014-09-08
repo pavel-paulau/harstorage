@@ -1,0 +1,23 @@
+<%def name="html()">
+<script type='text/javascript'>
+    $LAB
+    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
+    .script("${h.url_for('/combine/scripts')}" +
+            "?datatables/jquery.dataTables.min.js&ver=1.8.2" +
+            "&datatables/ColReorder.min.js&ver=1.0.4").wait()
+    .wait(function(){
+        $(document).ready(function() {
+            $('#stats_table').dataTable({
+                "bJQueryUI": true,
+                "sPaginationType": "full_numbers",
+                "sDom": 'R<"H"lfr>t<"F"ip<',
+                "bAutoWidth": false,
+                "iDisplayLength": 10,
+                "aaSorting": [[ 0, "desc" ]]
+            });
+
+            $('#summary-table').css('visibility', 'visible');
+        });
+    })
+</script>
+</%def>

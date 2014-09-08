@@ -1,0 +1,47 @@
+<%def name="html()">
+<script type="text/javascript">
+    $LAB
+    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
+    % if c.table == "true":
+    .script("${h.url_for('/combine/scripts')}" +
+            "?datatables/jquery.dataTables.min.js&ver=1.8.2" +
+            "&datatables/ColReorder.min.js&ver=1.0.4" +
+            "&datatables/TableTools.min.js&ver=1.0.4").wait()
+    % endif
+    % if c.chart == "true":
+    .script("${h.url_for('/combine/scripts')}" +
+            "?highcharts/highcharts.js&ver=2.2.0" +
+            "&highcharts/themes.js&ver=${c.rev}" +
+            "&highcharts/exporting.js&ver=2.2.0").wait()
+    % endif
+    .script("${h.url_for('/scripts/chosen.jquery.js')}?ver=0.9.5")
+    .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
+    .wait(function(){
+        % if c.chart == "true":
+        var columns = new HARSTORAGE.Columns();
+        columns.draw("${c.points}", "${c.chart_type}");
+        % endif
+
+        HARSTORAGE.AggregatedStatistics("metrics");
+
+        % if c.table == "true":
+        $(document).ready(function() {
+            $("#stats_table").dataTable({
+                "bJQueryUI": true,
+                "sPaginationType": "full_numbers",
+                "sDom": 'R<"H"Tfr>t<"F"ip>',
+                "oTableTools": {
+                        "sSwfPath": "${h.url_for('/swf/copy_cvs_xls.swf')}",
+                        "aButtons": ["copy", "csv", "xls"]
+                },
+                "bAutoWidth": false,
+                "iDisplayLength": 100,
+                "sScrollX": "4270px"
+            });
+
+            $("#summary-table").css("visibility", "visible");
+        });
+        % endif
+    })
+</script>
+</%def>

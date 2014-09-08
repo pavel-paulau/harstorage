@@ -1,0 +1,10 @@
+<%def name="html()">
+<div class="footer">
+    <div class="hr"></div>
+    ## This base-url will be used by javascript to prevent using hardcoded urls
+    ## So do not delete it or something will be broken.
+    <div id="base-url" style="display:none;">${h.url_for('/')}</div>
+</div>
+</body>
+</html>
+</%def>

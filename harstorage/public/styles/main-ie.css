@@ -1,0 +1,12 @@
+.header #preferences {
+    height: 178px;
+}
+.sp-create .howto {
+    width: 960px;
+}
+.sp-create .spinner {
+    left: 470px;
+}
+.results .spinner {
+    margin: 12px 0 -12px 0;
+}
