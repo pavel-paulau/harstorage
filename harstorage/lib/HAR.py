@@ -4,7 +4,6 @@ import re
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
-
 class Bytes(float):
 
     """
@@ -15,14 +14,15 @@ class Bytes(float):
         """
         @return - result of addition
         """
+
         return Bytes(self.__float__() + other)
 
     def to_kilobytes(self):
         """
         @return - value in kilobytes
         """
-        return int(round(self.__float__() / 1024.0))
 
+        return int(round(self.__float__()/1024.0))
 
 class Headers():
 
@@ -36,10 +36,10 @@ class Headers():
 
         @as_dictionary - dictionary of headers
         """
+
         self.as_dict = dict()
         for header in headers:
             self.as_dict[header["name"]] = header["value"]
-
 
 class Fixer():
 
@@ -123,7 +123,6 @@ class Fixer():
 
         return har
 
-
 class HAR():
 
     """
@@ -158,24 +157,25 @@ class HAR():
                 self.parsing_status = "Successful"
 
             except Exception as error:
-                self.parsing_status = "{0}: {1}".format(type(error).__name__,
-                                                        error.message)
+                self.parsing_status = ": ".join([type(error).__name__, error.message])
 
     def init_variables(self):
         self.full_load_time = 0
 
-        self.total_dns_time = 0.0
+        self.total_dns_time      = 0.0
         self.total_transfer_time = 0.0
-        self.total_server_time = 0.0
+        self.total_server_time   = 0.0
+	self.total_download_time = 0.0
         self.avg_connecting_time = 0.0
-        self.avg_blocking_time = 0.0
+        self.avg_blocking_time   = 0.0
+	self.throughput = 0.0
 
         self.total_size = Bytes(0)
-        self.text_size = Bytes(0)
+        self.text_size  = Bytes(0)
         self.media_size = Bytes(0)
         self.cache_size = Bytes(0)
 
-        self.redirects = 0
+        self.redirects    = 0
         self.bad_requests = 0
 
         self.domains = dict()
@@ -190,11 +190,12 @@ class HAR():
         # Parse each entry of page
         for self.entry in self.har["log"]["entries"]:
             # Micro timgings
-            self.total_dns_time += self.get_dns_time()
+            self.total_dns_time      += self.get_dns_time()
             self.total_transfer_time += self.get_transfer_time()
-            self.total_server_time += self.get_server_time()
+            self.total_server_time   += self.get_server_time()
             self.avg_connecting_time += self.get_connecting_time()
-            self.avg_blocking_time += self.get_blocking_time()
+            self.avg_blocking_time   += self.get_blocking_time()
+	    self.total_download_time += self.get_download_time();
 
             # Update Request/Page time frame
             self.update_timeframe()
@@ -224,6 +225,9 @@ class HAR():
 
             # Update domain info
             self.update_domain_info()
+          
+	    # Calculate thoughput 
+	    self.throughput = round(self.total_download_time / self.total_size, 0)
 
         # Label
         self.label = self.get_label()
@@ -249,31 +253,29 @@ class HAR():
 
         # From bytes to kilobytes
         self.total_size = self.total_size.to_kilobytes()
-        self.text_size = self.text_size.to_kilobytes()
+        self.text_size  = self.text_size.to_kilobytes()
         self.media_size = self.media_size.to_kilobytes()
         self.cache_size = self.cache_size.to_kilobytes()
-
+      
+	self.throughput = round((self.total_size - self.cache_size) / (self.total_download_time / 1000), 0) 
     def weight_ratio(self):
         """Breakdown by size of page objects"""
 
-        resources = dict()
+        resources = dict()        
         for entry in self.har["log"]["entries"]:
-            mime_type = \
-                entry["response"]["content"]["mimeType"].partition(";")[0]
+            mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type, ""):
                 mime_type = self.get_normalized_value(mime_type)
                 size = Bytes(entry["response"]["content"]["size"])
-                resources[mime_type] = resources.get(mime_type, 0) + \
-                    size.to_kilobytes()
+                resources[mime_type] = resources.get(mime_type, 0) + size.to_kilobytes()
         return resources
 
     def req_ratio(self):
         """Breakdown by number of page objects"""
-
+        
         resources = dict()
         for entry in self.har["log"]["entries"]:
-            mime_type = \
-                entry["response"]["content"]["mimeType"].partition(";")[0]
+            mime_type = entry["response"]["content"]["mimeType"].partition(";")[0]
             if cmp(mime_type, ""):
                 mime_type = self.get_normalized_value(mime_type)
                 resources[mime_type] = resources.get(mime_type, 0) + 1
@@ -320,22 +322,25 @@ class HAR():
         send_time = self.entry["timings"]["send"]
         return max(send_time, 0)
 
+    def get_download_time(self):
+	download_time = max( self.entry['timings']['receive'], 0)
+	return download_time
+
     def get_server_time(self):
         server_time = self.entry["timings"]["wait"]
         return max(server_time, 0)
-
+    
     def get_connecting_time(self):
         connecting_time = self.entry["timings"]["connect"]
         return max(connecting_time, 0)
-
+    
     def get_blocking_time(self):
         blocking_time = self.entry["timings"]["blocked"]
         return max(blocking_time, 0)
 
     def update_timeframe(self):
         # Original time format: 2000-01-01T00:00:00.000+00:00
-        seconds, dot, milliseconds = \
-            self.entry["startedDateTime"].partition(".")
+        seconds, dot, milliseconds = self.entry["startedDateTime"].partition(".")
         seconds = time.strptime(seconds, "%Y-%m-%dT%H:%M:%S")
         seconds = time.mktime(seconds)
 
@@ -347,8 +352,7 @@ class HAR():
         milliseconds = milliseconds.replace("Z", "")
 
         time_request_started = seconds + float("0." + milliseconds)
-        time_request_completed = time_request_started + \
-            self.entry["time"] / 1000.0
+        time_request_completed = time_request_started + self.entry["time"]/1000.0
 
         if time_request_completed > self.max_timestamp:
             self.max_timestamp = time_request_completed
@@ -358,14 +362,15 @@ class HAR():
             self.is_first = True
         else:
             self.is_first = False
+            
 
     def get_time_to_first_byte(self):
         if self.is_first:
             return self.get_blocking_time() + \
-                self.get_dns_time() + \
-                self.get_connecting_time() + \
-                self.get_send_time() + \
-                self.get_server_time()
+                   self.get_dns_time() + \
+                   self.get_connecting_time() + \
+                   self.get_send_time() + \
+                   self.get_server_time()
         else:
             return self.time_to_first_byte
 
@@ -377,22 +382,20 @@ class HAR():
             return compressed_size
 
     def is_text(self):
-        mime_type = \
-            self.entry["response"]["content"]["mimeType"].partition(";")[0]
+        mime_type = self.entry["response"]["content"]["mimeType"].partition(";")[0]
         if cmp(mime_type, ""):
             mime_type = self.get_normalized_value(mime_type)
 
             if mime_type.count("javascript") \
-                    or mime_type.count("text") \
-                    or mime_type.count("html") \
-                    or mime_type.count("xml") \
-                    or mime_type.count("json"):
+            or mime_type.count("text") \
+            or mime_type.count("html") \
+            or mime_type.count("xml") \
+            or mime_type.count("json"):
                 return True
         return False
 
     def is_media(self):
-        mime_type = \
-            self.entry["response"]["content"]["mimeType"].partition(";")[0]
+        mime_type = self.entry["response"]["content"]["mimeType"].partition(";")[0]
 
         if cmp(mime_type, ""):
             mime_type = self.get_normalized_value(mime_type)
@@ -407,7 +410,8 @@ class HAR():
             cache_control = headers.as_dict["Cache-Control"]
 
             if not cache_control.count("no-cache") \
-                    and not cache_control.count("max-age=0"):
+            and not cache_control.count("max-age=0"):
+
                 # Extract DATE from HTTP header
                 date = headers.as_dict["Date"]
                 date = time.strptime(date, DATE_FORMAT)
@@ -425,7 +429,8 @@ class HAR():
         return False
 
     def is_redirect(self):
-        if 300 <= self.entry["response"]["status"] < 400:
+        if self.entry["response"]["status"] >= 300 \
+        and self.entry["response"]["status"] < 400:
             return True
 
     def is_bad_request(self):
@@ -451,11 +456,11 @@ class HAR():
         try:
             onload_event = self.har["log"]["pages"][0]["pageTimings"]["onLoad"]
             if onload_event > 0:
-                return onload_event
-        except TypeError:  # dynaTrace bug
+                return onload_event                
+        except TypeError: # dynaTrace bug
             return self.har["log"]["pages"][0]["pageTimings"][0]["onLoad"]
         except KeyError:
-            pass
+            pass        
         return "n/a"
 
     def get_start_render_time(self):
@@ -465,23 +470,22 @@ class HAR():
             return "n/a"
 
     def get_avg_connecting_time(self):
-        return round(self.avg_connecting_time / self.requests, 0)
+        return round(self.avg_connecting_time / self.requests, 0)        
 
     def get_avg_blocking_time(self):
         return round(self.avg_blocking_time / self.requests, 0)
 
     def update_domain_info(self):
-        domain = \
-            self.entry["request"]["url"].partition("//")[-1].partition("/")[0]
+        domain = self.entry["request"]["url"].partition("//")[-1].partition("/")[0]
 
         # WORKAROUND: Mongo prevents using dots in key names
-        mongo_domain = re.sub("\.", "|", domain)
+        mongo_domain = re.sub("\.","|", domain)
 
         # {DOMAIN: [NUMBER OF REQUESTS, TOTAL DATA FROM HOST IN KB], ...}
-        domain_requests = self.domains.get(mongo_domain, [0, 0])[0]
+        domain_requests  = self.domains.get(mongo_domain, [0, 0])[0]
         domain_data_size = self.domains.get(mongo_domain, [0, 0])[1]
 
-        domain_requests += 1
+        domain_requests  += 1
         domain_data_size += self.get_response_size().to_kilobytes()
 
         self.domains[mongo_domain] = [domain_requests, domain_data_size]
