@@ -17,7 +17,6 @@ from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoDB
 import harstorage.lib.helpers as h
 
-
 class ResultsController(BaseController):
 
     """
@@ -34,72 +33,53 @@ class ResultsController(BaseController):
         """Home page with the latest test results"""
 
         # Migration (harstorage v1.0)
-        migration_handler = MongoDB(collection="migration")
-        if hasattr(c, "message"):
-            return render("/error.html")
+        migration_handler = MongoDB(collection = "migration")
+        if hasattr(c, "message"): return render("/error.html")
 
         status = migration_handler.collection.find_one({"status": "ok"})
-        if status is None:
-            redirect(h.url_for('/migration/status'))
+        if status is None: redirect("/migration/status")
 
         # MongoDB handler
         mdb_handler = MongoDB()
-        if hasattr(c, "message"):
-            return render("/error.html")
+        if hasattr(c, "message"): return render("/error.html")
 
         # Read aggregated data from database
         # Aggregation is based on unique labels, urls and latest timestamps
-        
-        
-        '''
-        Replaced the original grouping with an aggregate function.  This function
-        actually returns all of the fields needed such that we also do not needed
-        to make any subsequent requests back to MongoDB to retrieve details on 
-        the list
-        '''
-        latest_results = mdb_handler.collection.aggregate(
-            [{"$group":{"_id": {"label":"$label", "url":"$url"},
-            "timestamp":{"$last":"$timestamp"},
-            "total_size":{"$last":"$total_size"},
-            "requests":{"$last":"$requests"},
-            "full_load_time": {"$last":"$full_load_time"}}},
-            {"$sort":{"timestamp" : -1}}])
+        latest_results = mdb_handler.collection.group(
+            key = ["label", "url"],
+            condition = None,
+            initial = {"timestamp": "1970-01-01 01:00:00"},
+            reduce = "\
+                function(doc, prev) {                     \
+                    if (doc.timestamp > prev.timestamp) { \
+                        prev.timestamp = doc.timestamp;   \
+                    }                                     \
+                }")
 
-        '''
-        Get the number of records
-        
-        Since we changed the initial request, we need to deal with the json array
-        differently as well.
-        '''
-        c.rowcount = len(latest_results["result"])
+        key = lambda timestamp: timestamp["timestamp"]
+        latest_results = sorted(latest_results, key = key, reverse = True)
+
+        # Numner of records
+        c.rowcount = len(latest_results)
 
         # Populate data table with the latest test results
         c.metrics_table = [[], [], [], [], [], []]
 
-        '''
-        for group in latest_results["result"]:
-            condition = {"label": group["_id"]["label"], "timestamp": group["timestamp"]}
+        fields = ["timestamp", "label", "url", "total_size", "requests",
+                    "full_load_time"]
 
-            result = mdb_handler.collection.find_one(condition, fields=fields)
+        for group in latest_results:
+            condition = {"label": group["label"], "timestamp": group["timestamp"]}
+
+            result = mdb_handler.collection.find_one(condition, fields = fields)
 
             c.metrics_table[0].append(result["timestamp"])
             c.metrics_table[1].append(result["label"])
             c.metrics_table[2].append(result["url"])
             c.metrics_table[3].append(result["total_size"])
             c.metrics_table[4].append(result["requests"])
-            c.metrics_table[5].append(round(result["full_load_time"] / 1000.0, 1))
-        '''
+            c.metrics_table[5].append(round(result["full_load_time"]/1000.0, 1))
 
-        # loop through our results and return them
-        for result in latest_results["result"]:
-            c.metrics_table[0].append(result["timestamp"])
-            c.metrics_table[1].append(result["_id"]["label"])
-            c.metrics_table[2].append(result["_id"]["url"])
-            c.metrics_table[3].append(result["total_size"])
-            c.metrics_table[4].append(result["requests"])
-            c.metrics_table[5].append(round(result["full_load_time"] / 1000.0, 1))
-        
-        
         return render("/home/core.html")
 
     @restrict("GET")
@@ -128,26 +108,28 @@ class ResultsController(BaseController):
         else:
             c.histo = "false"
             c.query = "None"
-
+ 
         return render("/details/core.html")
-
+    
     def _set_options_in_selector(self, mode, label):
         """
         Create context data - a list of timestamps.
 
         @parameter label - label of set with test results
+        @parameter url   - URL of set with test results
         """
 
         # Read data for selector box from database
         results = MongoDB().collection.find(
             {mode: label},
-            fields=["timestamp"],
-            sort=[("timestamp", -1)])
+            fields = ["timestamp"],
+            sort = [("timestamp", -1)])
 
         c.timestamp = list()
 
         for result in results:
             c.timestamp.append(result["timestamp"])
+
 
     @restrict("GET")
     def timeline(self):
@@ -156,24 +138,23 @@ class ResultsController(BaseController):
         # Parameters from GET request
         label = h.decode_uri(request.GET["label"])
         mode = request.GET["mode"]
-        limit = int(config["app_conf"].get("limit", 0))
 
         # Metrics
-        METRICS = ("timestamp", "full_load_time", "requests", "total_size",
-                   "ps_scores", "onload_event", "start_render_time",
-                   "time_to_first_byte", "total_dns_time",
-                   "total_transfer_time", "total_server_time",
-                   "avg_connecting_time", "avg_blocking_time", "text_size",
-                   "media_size", "cache_size", "redirects", "bad_requests",
-                   "domains")
+        METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
+                    "ps_scores", "onload_event", "start_render_time",
+                    "time_to_first_byte", "total_dns_time",
+                    "total_transfer_time", "total_server_time",
+                    "avg_connecting_time", "avg_blocking_time", "text_size",
+                    "media_size", "cache_size", "redirects", "bad_requests",
+                    "domains")
 
-        TITLES = ["Full Load Time", "Total Requests",
-                  "Total Size", "Page Speed Score", "onLoad Event",
-                  "Start Render Time", "Time to First Byte",
-                  "Total DNS Time", "Total Transfer Time", "Total Server Time",
-                  "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
-                  "Media Size", "Cache Size", "Redirects", "Bad Rquests",
-                  "Domains"]
+        TITLES = [ "Full Load Time", "Total Requests",
+                   "Total Size", "Page Speed Score", "onLoad Event",
+                   "Start Render Time", "Time to First Byte",
+                   "Total DNS Time", "Total Transfer Time", "Total Server Time",
+                   "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
+                   "Media Size", "Cache Size", "Redirects", "Bad Rquests",
+                   "Domains"]
 
         # Set of metrics to exclude (due to missing data)
         exclude = set()
@@ -184,9 +165,8 @@ class ResultsController(BaseController):
         # Read data for timeline from database in custom format (hash separated)
         results = MongoDB().collection.find(
             {mode: label},
-            fields=METRICS,
-            limit=limit,
-            sort=[("timestamp", 1)])
+            fields = METRICS,
+            sort = [("timestamp", 1)])
 
         for result in results:
             index = 0
@@ -238,23 +218,24 @@ class ResultsController(BaseController):
             domains_weight_ratio[hostname] = value[1]
 
         # Summary stats
-        summary = {"full_load_time": test_results["full_load_time"],
-                   "onload_event": test_results["onload_event"],
-                   "start_render_time": test_results["start_render_time"],
-                   "time_to_first_byte": test_results["time_to_first_byte"],
-                   "total_dns_time": test_results["total_dns_time"],
-                   "total_transfer_time": test_results["total_transfer_time"],
-                   "total_server_time": test_results["total_server_time"],
-                   "avg_connecting_time": test_results["avg_connecting_time"],
-                   "avg_blocking_time": test_results["avg_blocking_time"],
-                   "total_size": test_results["total_size"],
-                   "text_size": test_results["text_size"],
-                   "media_size": test_results["media_size"],
-                   "cache_size": test_results["cache_size"],
-                   "requests": test_results["requests"],
-                   "redirects": test_results["redirects"],
-                   "bad_requests": test_results["bad_requests"],
-                   "domains": test_results["domains"]}
+        summary = { "full_load_time":       test_results["full_load_time"],
+                    "onload_event":         test_results["onload_event"],
+                    "start_render_time":    test_results["start_render_time"],
+                    "time_to_first_byte":   test_results["time_to_first_byte"],
+                    "total_dns_time":       test_results["total_dns_time"],
+                    "total_transfer_time":  test_results["total_transfer_time"],
+                    "total_server_time":    test_results["total_server_time"],
+		            "total_download_time":  test_results["total_download_time"],
+                    "avg_connecting_time":  test_results["avg_connecting_time"],
+                    "avg_blocking_time":    test_results["avg_blocking_time"],
+                    "total_size":           test_results["total_size"],
+                    "text_size":            test_results["text_size"],
+                    "media_size":           test_results["media_size"],
+                    "cache_size":           test_results["cache_size"],
+                    "requests":             test_results["requests"],
+                    "redirects":            test_results["redirects"],
+                    "bad_requests":         test_results["bad_requests"],
+                    "domains":              test_results["domains"]}
 
         # Page Speed Scores
         scores = dict()
@@ -264,28 +245,33 @@ class ResultsController(BaseController):
         # Data for HAR Viewer
         har_id = str(test_results["_id"])
 
+        currentHar = test_results["har"]
+
+        source = str(currentHar['log']['creator']['source'])
+
         filename = os.path.join(config["app_conf"]["temp_store"], har_id)
-        with open(filename, "w") as fh:
-            fh.write(test_results["har"].encode("utf-8"))
+        with open(filename, "w") as file:
+            file.write(test_results["har"].encode("utf-8"))
 
         # Final JSON
-        return json.dumps({"summary": summary,
-                           "pagespeed": scores,
-                           "weights": test_results["weights_ratio"],
-                           "requests": test_results["requests_ratio"],
-                           "d_weights": domains_weight_ratio,
-                           "d_requests": domains_req_ratio,
-                           "har": har_id})
+        return json.dumps({"summary":       summary,
+                           "pagespeed":     scores,
+                           "weights":       test_results["weights_ratio"],
+                           "requests":      test_results["requests_ratio"],
+                           "d_weights":     domains_weight_ratio,
+                           "d_requests":    domains_req_ratio,
+                           "har":           har_id, 
+                           "source":        source})
 
     @restrict("GET")
     def harviewer(self):
         """HAR Viewer iframe"""
 
         # HAR Viewer customization via cookie
-        response.set_cookie("phaseInterval", "-1", max_age=365 * 24 * 3600)
+        response.set_cookie("phaseInterval", "-1", max_age=365*24*3600 )
 
         return render("/harviewer.html")
-
+    
     @restrict("GET")
     def deleterun(self):
         """Controller for deletion of tests"""
@@ -299,42 +285,40 @@ class ResultsController(BaseController):
         mode = request.GET["mode"]
 
         if request.GET["all"] == "true":
-            del_all = True
+            all = True
         else:
-            del_all = False
-
+            all = False
+            
         # Remove document from collection
         if mode == "label":
-            if del_all:
+            if all:
                 mdb_handler.collection.remove({"label": label})
             else:
-                mdb_handler.collection.remove({"label": label,
-                                               "timestamp": timestamp})
+                mdb_handler.collection.remove({"label": label, "timestamp": timestamp})
             count = mdb_handler.collection.find({"label": label}).count()
         else:
-            if del_all:
+            if all:
                 mdb_handler.collection.remove({"url": label})
             else:
-                mdb_handler.collection.remove({"url": label,
-                                               "timestamp": timestamp})
+                mdb_handler.collection.remove({"url": label, "timestamp":timestamp})
             count = mdb_handler.collection.find({"url": label}).count()
 
         if count:
-            return "details?" + mode + "=" + label
+            return ("details?" + mode + "=" + label)
         else:
-            return "/"
+            return ("/")
 
     def upload_rest(function):
         @functools.wraps(function)
         def wrapper(*args):
             result, ext = function(*args)
 
-            if result:
+            if result == True:
                 try:
                     if request.headers["automated"] == "true":
                         return "Successful"
                 except KeyError:
-                    redirect(h.url_for('/results/details') + "?label=" + ext)
+                    redirect("/results/details?label=" + ext)
             else:
                 try:
                     if request.headers["automated"] == "true":
@@ -355,7 +339,7 @@ class ResultsController(BaseController):
             har = HAR(request.POST["file"].value)
         except:
             har = HAR(request.POST["file"])
-
+        
         # Analysis of uploaded data
         if har.parsing_status == "Successful":
             # Parsing imported HAR file
@@ -363,41 +347,45 @@ class ResultsController(BaseController):
                 har.analyze()
             except Exception as error:
                 return False, ": ".join([type(error).__name__, error.message])
-
+            
             # Evaluate Page Speed scores
             if config["app_conf"]["ps_enabled"] == "true":
                 scores = self._get_pagespeed_scores(har.har)
             else:
                 scores = dict([("Total Score", 100)])
-
+            
             # Add document to collection
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            result = {"label": har.label,
-                      "url": har.url,
-                      "timestamp": timestamp,
-                      "full_load_time": har.full_load_time,
-                      "onload_event": har.onload_event,
-                      "start_render_time": har.start_render_time,
-                      "time_to_first_byte": har.time_to_first_byte,
-                      "total_dns_time": har.total_dns_time,
-                      "total_transfer_time": har.total_transfer_time,
-                      "total_server_time": har.total_server_time,
-                      "avg_connecting_time": har.avg_connecting_time,
-                      "avg_blocking_time": har.avg_blocking_time,
-                      "total_size": har.total_size,
-                      "text_size": har.text_size,
-                      "media_size": har.media_size,
-                      "cache_size": har.cache_size,
-                      "requests": har.requests,
-                      "redirects": har.redirects,
-                      "bad_requests": har.bad_requests,
-                      "domains": len(har.domains),
-                      "ps_scores": scores,
-                      "har": har.origin,
-                      "weights_ratio": har.weight_ratio(),
-                      "requests_ratio": har.req_ratio(),
-                      "domains_ratio": har.domains}
+	    timestamp = har.har['log']['pages'][0]['startedDateTime'][0:19]
+	    timestamp = timestamp.replace("T", " ")
+
+            result = {  "label":                har.label,
+                        "url":                  har.url,
+                        "timestamp":            timestamp,
+                        "full_load_time":       har.full_load_time,
+                        "onload_event":         har.onload_event,
+                        "start_render_time":    har.start_render_time,
+                        "time_to_first_byte":   har.time_to_first_byte,
+                        "total_dns_time":       har.total_dns_time,
+                        "total_transfer_time":  har.total_transfer_time,
+                        "total_server_time":    har.total_server_time,
+                        "total_download_time":  har.total_download_time,
+                        "avg_connecting_time":  har.avg_connecting_time,
+                        "avg_blocking_time":    har.avg_blocking_time,
+			            "throughput":		har.throughput,
+                        "total_size":           har.total_size,
+                        "text_size":            har.text_size,
+                        "media_size":           har.media_size,
+                        "cache_size":           har.cache_size,
+                        "requests":             har.requests,
+                        "redirects":            har.redirects,
+                        "bad_requests":         har.bad_requests,
+                        "domains":              len(har.domains),
+                        "ps_scores":            scores,
+                        "har":                  har.origin,
+                        "weights_ratio":        har.weight_ratio(),
+                        "requests_ratio":       har.req_ratio(),
+                        "domains_ratio":        har.domains}
 
             # MongoDB handler
             mdb_handler = MongoDB()
@@ -416,8 +404,8 @@ class ResultsController(BaseController):
         temp_store = config["app_conf"]["temp_store"]
         filename = os.path.join(temp_store, hashname)
 
-        with open(filename, "w") as fh:
-            fh.write(json.dumps(har))
+        with open(filename, "w") as file:
+            file.write(json.dumps(har))
 
         # STDOUT,STDERR
         os_type = platform.system()
@@ -435,15 +423,15 @@ class ResultsController(BaseController):
 
         outfile = filename + ".out"
 
-        os.system(pagespeed_bin +
-                  " -input_file " + filename +
-                  " -output_format formatted_json" +
-                  " -output_file " + outfile +
-                  std_out)
+        os.system(pagespeed_bin + \
+            " -input_file " + filename + \
+            " -output_format formatted_json" + \
+            " -output_file " + outfile + \
+            std_out)
 
         # Output report (JSON)
-        with open(outfile, "r") as fh:
-            output = json.loads(fh.read())
+        with open(outfile, "r") as file:
+            output = json.loads(file.read())
 
         # Final scores
         scores = dict()
@@ -458,18 +446,17 @@ class ResultsController(BaseController):
         """Return serialized HAR file"""
 
         # Parameters from GET request
-        har_id = request.GET["id"]
+        id = request.GET["id"]
 
         # Read HAR file from disk
-        filename = os.path.join(config["app_conf"]["temp_store"], har_id)
-        with open(filename, "r") as fh:
-            data = fh.read()
+        filename = os.path.join(config["app_conf"]["temp_store"], id)
+        with open(filename, "r") as file:
+            data = file.read()
 
         # JSON to JSON-P
         data = "onInputData(" + data + ");"
 
         # Add content type header
-        response.content_type = mimetypes.guess_type(filename)[0] or \
-            "text/plain"
+        response.content_type = mimetypes.guess_type(filename)[0] or "text/plain"
 
         return data
