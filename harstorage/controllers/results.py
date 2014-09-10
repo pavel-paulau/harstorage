@@ -6,7 +6,9 @@ import time
 import re
 import functools
 import platform
-
+import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 from pylons import request, response, tmpl_context as c
 from pylons import config
 from pylons.controllers.util import redirect
@@ -22,6 +24,7 @@ class ResultsController(BaseController):
     """
     Core controller of repository
     """
+    logger = logging.getLogger('logger_root')
 
     def __before__(self):
         """Define version of static content"""
@@ -217,6 +220,16 @@ class ResultsController(BaseController):
             domains_req_ratio[hostname] = value[0]
             domains_weight_ratio[hostname] = value[1]
 
+        har = json.loads(test_results["har"])
+        source = ''
+        total_download_time = 0
+
+        if 'total_download_time' in test_results:
+            total_download_time = test_results["total_download_time"]
+
+        if 'source' in har["log"]["creator"]:
+            source = har["log"]["creator"]["source"]
+
         # Summary stats
         summary = { "full_load_time":       test_results["full_load_time"],
                     "onload_event":         test_results["onload_event"],
@@ -225,7 +238,7 @@ class ResultsController(BaseController):
                     "total_dns_time":       test_results["total_dns_time"],
                     "total_transfer_time":  test_results["total_transfer_time"],
                     "total_server_time":    test_results["total_server_time"],
-		            "total_download_time":  test_results["total_download_time"],
+		            "total_download_time":  total_download_time,
                     "avg_connecting_time":  test_results["avg_connecting_time"],
                     "avg_blocking_time":    test_results["avg_blocking_time"],
                     "total_size":           test_results["total_size"],
@@ -244,10 +257,6 @@ class ResultsController(BaseController):
 
         # Data for HAR Viewer
         har_id = str(test_results["_id"])
-
-        currentHar = test_results["har"]
-
-        source = str(currentHar['log']['creator']['source'])
 
         filename = os.path.join(config["app_conf"]["temp_store"], har_id)
         with open(filename, "w") as file:

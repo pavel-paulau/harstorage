@@ -32,14 +32,6 @@ if (!Array.prototype.indexOf) {
  */
 var HARSTORAGE = HARSTORAGE || {};
 
-
-/*
- * Base url to be used when generating urls
- */
-var base_url = $('#base-url').text();
-HARSTORAGE.base_url = base_url
-
-
 /*
  * Time metrics
  */
@@ -218,7 +210,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url: "/chart/export",
             filename: "timeline",
             width: 960
         },
@@ -310,7 +302,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url: "/chart/export",
             filename: "histogram",
             width: 960
         },
@@ -392,7 +384,7 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url: "/chart/export",
             filename: "superposed",
             width: 960            
         },
@@ -467,7 +459,7 @@ HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     if (query !== "None") {
         agg_btn.style.display = "inline";
         agg_btn.onclick = function() {
-            location.href = HARSTORAGE.base_url + query.replace(/amp;/g,"") + "&chart=column&table=true";
+            location.href = query.replace(/amp;/g,"") + "&chart=column&table=true";
         };
     }
 
@@ -477,7 +469,7 @@ HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     if (histo === "true") {
         histo_btn.style.display = "inline";
         histo_btn.onclick = function() {
-            location.href = HARSTORAGE.base_url + "/superposed/histogram?label=" + label + "&metric=full_load_time";
+            location.href = "/superposed/histogram?label=" + label + "&metric=full_load_time";
         };
     }
 };
@@ -523,7 +515,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url:"/chart/export",
             filename: "resources",
             width: width
         },
@@ -642,7 +634,6 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
     // Dynamic data
     this.json = [];
-
     // Show Ajax spinner
     this.spinner.style.display = "block";
 
@@ -685,6 +676,9 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
             that.json = JSON.parse(that.xhr.responseText);
             that.cache[that.URI] = that.json;
         }
+        
+        var sourceUrl = that.formatter(that.json.source, "string");
+        var source = '<a href="'+sourceUrl+'" target="_blank">'+sourceUrl+'</a>';
 
         // Summary
         $("#full-load-time").html(that.formatter(that.json.summary.full_load_time, "ms"));
@@ -697,6 +691,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         $("#total-server-time").html(that.formatter(that.json.summary.total_server_time, "ms"));
         $("#avg-connecting-time").html(that.formatter(that.json.summary.avg_connecting_time, "ms"));
         $("#avg-blocking-time").html(that.formatter(that.json.summary.avg_blocking_time, "ms"));
+        $("#source-url").html(source);
 
         $("#total-size").html(that.formatter(that.json.summary.total_size, "kB"));
         $("#text-size").html(that.formatter(that.json.summary.text_size, "kB"));
@@ -710,7 +705,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
         // HAR Viewer
         var iframe  = document.createElement("iframe");
-        var url = HARSTORAGE.base_url + "/results/harviewer?inputUrl=" + HARSTORAGE.base_url + "/results/download%3Fid%3D";
+        var url = "/results/harviewer?inputUrl=/results/download%3Fid%3D";
             url += that.json.har;
             url += "&expand=true";
 
