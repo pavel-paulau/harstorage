@@ -446,7 +446,7 @@ class ResultsController(BaseController):
         scores = dict()
         scores["Total Score"] = int(output["score"])
         for rule in output["rule_results"]:
-            scores[rule["localized_rule_name"]] = int(rule["rule_score"])
+            scores[rule["localized_rule_name"]] = int(rule["rule_impact"])
 
         return scores
 
