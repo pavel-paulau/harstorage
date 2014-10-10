@@ -226,8 +226,11 @@ class HAR():
             # Update domain info
             self.update_domain_info()
           
-	    # Calculate thoughput 
-	    self.throughput = round(self.total_download_time / self.total_size, 0)
+	    # Calculate thoughput
+	    if self.total_size > 0:
+	    	self.throughput = round(self.total_download_time / self.total_size, 0)
+	    else:
+		self.throughput = 0.0
 
         # Label
         self.label = self.get_label()
@@ -258,6 +261,7 @@ class HAR():
         self.cache_size = self.cache_size.to_kilobytes()
       
 	self.throughput = round((self.total_size - self.cache_size) / (self.total_download_time / 1000), 0) 
+
     def weight_ratio(self):
         """Breakdown by size of page objects"""
 
