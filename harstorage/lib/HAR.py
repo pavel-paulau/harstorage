@@ -195,7 +195,7 @@ class HAR():
             self.total_server_time   += self.get_server_time()
             self.avg_connecting_time += self.get_connecting_time()
             self.avg_blocking_time   += self.get_blocking_time()
-	    self.total_download_time += self.get_download_time();
+	        self.total_download_time += self.get_download_time();
 
             # Update Request/Page time frame
             self.update_timeframe()
@@ -225,7 +225,10 @@ class HAR():
 
             # Update domain info
             self.update_domain_info()
-          
+        
+        if self.total_size == 0:
+            self.total_size = self.get_page_size()
+
 	    # Calculate thoughput
 	    if self.total_size > 0:
 	    	self.throughput = round(self.total_download_time / self.total_size, 0)
@@ -381,9 +384,11 @@ class HAR():
     def get_response_size(self):
         compressed_size = Bytes(max(self.entry["response"]["bodySize"], 0))
         if compressed_size == 0:
-            return Bytes(self.entry["response"]["content"]["size"])
-        else:
-            return compressed_size
+            compressed_size = Bytes(self.entry["response"]["content"]["size"])
+        return compressed_size
+
+    def get_page_size(self):
+        return Bytes(self.har["log"]["pages"][0]["_bytesIn"])
 
     def is_text(self):
         mime_type = self.entry["response"]["content"]["mimeType"].partition(";")[0]
@@ -445,7 +450,7 @@ class HAR():
         return self.har["log"]["pages"][0]["id"]
 
     def get_url(self):
-        return self.har["log"]["entries"][0]["request"]["url"][:512]
+        return self.har["log"]["pages"][0]["_URL"][:512].replace("&amp;", "&")
 
     def get_number_of_requests(self):
         return len(self.har["log"]["entries"])
