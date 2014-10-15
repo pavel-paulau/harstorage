@@ -165,10 +165,10 @@ class HAR():
         self.total_dns_time      = 0.0
         self.total_transfer_time = 0.0
         self.total_server_time   = 0.0
-	self.total_download_time = 0.0
+        self.total_download_time = 0.0
         self.avg_connecting_time = 0.0
         self.avg_blocking_time   = 0.0
-	self.throughput = 0.0
+        self.throughput = 0.0
 
         self.total_size = Bytes(0)
         self.text_size  = Bytes(0)
@@ -195,7 +195,7 @@ class HAR():
             self.total_server_time   += self.get_server_time()
             self.avg_connecting_time += self.get_connecting_time()
             self.avg_blocking_time   += self.get_blocking_time()
-	        self.total_download_time += self.get_download_time();
+            self.total_download_time += self.get_download_time();
 
             # Update Request/Page time frame
             self.update_timeframe()
