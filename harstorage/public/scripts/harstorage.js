@@ -36,7 +36,7 @@ var HARSTORAGE = HARSTORAGE || {};
 /*
  * Base url to be used when generating urls
  */
-var base_url = $('#base-url').text();
+var base_url = window.location.protocol+"//"+window.location.host;
 HARSTORAGE.base_url = base_url
 
 
