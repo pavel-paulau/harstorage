@@ -447,7 +447,10 @@ class HAR():
             return True
 
     def get_label(self):
-        return self.har["log"]["pages"][0]["id"]
+        if 'label' in self.har["log"]["pages"][0]:
+            return self.har["log"]["pages"][0]["label"]
+        else:
+            return self.har["log"]["pages"][0]["id"]
 
     def get_url(self):
         return self.har["log"]["pages"][0]["_URL"][:512].replace("&amp;", "&")

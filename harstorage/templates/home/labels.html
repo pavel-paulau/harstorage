@@ -1,0 +1,11 @@
+<%def name="html()">
+<div>
+	<p>Filter Results by: </p>
+	<button type="button" style="width: 100px" onclick="filterTable('(hp)|(homepage)', true, false);">Home</button>
+	<button type="button" style="width: 100px" onclick="filterTable('event', false, true);">Event</button>
+	<button type="button" style="width: 100px" onclick="filterTable('artist', false, true);">Artist/Performer</button>
+	<button type="button" style="width: 100px" onclick="filterTable('searchResults', false, true);">Search Results</button>
+	<button type="button" style="width: 100px" onclick="filterTable('venue', false, true);">Venue</button>
+	<button type="button" style="width: 100px" onclick="filterTable('xo', false, true);">Checkout</button>	
+</div>
+</%def>
