@@ -22,6 +22,10 @@
                 statsTable.fnFilter(keyword, null, regex, smart, false, false);
             }
 
+            fnResetAllFilters = function() {
+                statsTable.fnFilter('', null, true, false, false, false);
+            }
+
         });
     })
 </script>

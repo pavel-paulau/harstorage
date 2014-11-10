@@ -1,6 +1,8 @@
 <%def name="html()">
 <div>
 	<p>Filter Results by: </p>
+	<button type="button" style="width: 100px" onclick="filterTable('', true, false);">Reset Filters</button>
+
 	<button type="button" style="width: 100px" onclick="filterTable('(hp)|(homepage)', true, false);">Home</button>
 	<button type="button" style="width: 100px" onclick="filterTable('event', false, true);">Event</button>
 	<button type="button" style="width: 100px" onclick="filterTable('artist', false, true);">Artist/Performer</button>
