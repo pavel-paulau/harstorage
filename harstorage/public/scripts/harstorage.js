@@ -691,6 +691,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         $("#total-server-time").html(that.formatter(that.json.summary.total_server_time, "ms"));
         $("#avg-connecting-time").html(that.formatter(that.json.summary.avg_connecting_time, "ms"));
         $("#avg-blocking-time").html(that.formatter(that.json.summary.avg_blocking_time, "ms"));
+        $("#throughput").html(that.formatter(that.json.throughput, "kB/s"));
         $("#source-url").html(source);
 
         $("#total-size").html(that.formatter(that.json.summary.total_size, "kB"));

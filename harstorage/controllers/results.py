@@ -230,6 +230,8 @@ class ResultsController(BaseController):
         if 'source' in har["log"]["creator"]:
             source = har["log"]["creator"]["source"]
 
+        throughput = test_results["throughput"]
+
         # Summary stats
         summary = { "full_load_time":       test_results["full_load_time"],
                     "onload_event":         test_results["onload_event"],
@@ -270,7 +272,8 @@ class ResultsController(BaseController):
                            "d_weights":     domains_weight_ratio,
                            "d_requests":    domains_req_ratio,
                            "har":           har_id, 
-                           "source":        source})
+                           "source":        source,
+                           "throughput":    throughput})
 
     @restrict("GET")
     def harviewer(self):
@@ -381,7 +384,7 @@ class ResultsController(BaseController):
                         "total_download_time":  har.total_download_time,
                         "avg_connecting_time":  har.avg_connecting_time,
                         "avg_blocking_time":    har.avg_blocking_time,
-			            "throughput":		har.throughput,
+			            "throughput":		    har.throughput,
                         "total_size":           har.total_size,
                         "text_size":            har.text_size,
                         "media_size":           har.media_size,
