@@ -2,12 +2,26 @@
 <script type="text/javascript">
     $LAB
     .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
+    .script("${h.url_for('/scripts/jquery-ui.min.js')}").wait()
     .script("${h.url_for('/combine/scripts?spin.js')}&ver=1.2.1").wait()
     .script("${h.url_for('/combine/scripts?harstorage.js')}&ver=${c.rev}").wait()
     .wait(function(){
         var superpose_form = new HARSTORAGE.SuperposeForm();
         superpose_form.addSpinner();
-        superpose_form.setTimestamps("step_1_label");
+         $( "#step_1_start_ts" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            onSelect: function(datetext) {
+                datetext=datetext+" 00:00:00";
+                $('#step_1_start_ts').val(datetext);
+            }
+         });
+         $( "#step_1_end_ts" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            onSelect: function(datetext) {
+                datetext=datetext+" 00:00:00";
+                $('#step_1_end_ts').val(datetext);
+            }
+         });
     })
 </script>
 </%def>

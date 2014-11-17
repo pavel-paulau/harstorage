@@ -75,10 +75,9 @@ class SuperposedController(BaseController):
         c.agg_type = request.GET.get("metric", "Average")
 
         # Number of records
-        if c.chart == "true" and c.table == "true" and init != "true":
-            c.rowcount = len(request.GET) / 3 - 1
-        else:
-            c.rowcount = len(request.GET) / 3
+        rows = [x for x in request.GET if "_label_hidden" in x]
+        c.rowcount = len(rows)
+
 
         # Data table
         c.headers = ["Label", "Full Load Time (ms)", "Total Requests",
@@ -101,7 +100,7 @@ class SuperposedController(BaseController):
         # Test results from database
         for row_index in range(c.rowcount):
             # Parameters from GET request
-            label = request.GET["step_" + str(row_index + 1) + "_label"]
+            label  = request.GET[ 'step_' + str(row_index+1) + '_label_hidden' ]
             start_ts = request.GET["step_" + str(row_index + 1) + "_start_ts"]
             end_ts = request.GET["step_" + str(row_index + 1) + "_end_ts"]
 
@@ -110,8 +109,9 @@ class SuperposedController(BaseController):
             c.points += label + "#"
 
             # Fetch test results
+            labels = label.split(",")
             condition = {
-                "label": label,
+                "label": { '$in': labels},
                 "timestamp": {"$gte": start_ts, "$lte": end_ts}
             }
             documents = md_handler.collection.find(condition,

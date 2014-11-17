@@ -257,7 +257,8 @@ body a:hover {
 }
 .sp-create .container {
     text-align: left;
-    margin: 20px 0 0 0;
+    margin: 50px 0 0 0;
+    float: left;
 }
 .sp-create .title,.sp-create .text {
     float: left;
@@ -289,6 +290,7 @@ body a:hover {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     cursor: pointer;
+    float: right;
 }
 .sp-create .checkbox {
     margin: 25px 5px 0 20px;

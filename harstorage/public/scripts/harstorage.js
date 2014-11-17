@@ -927,12 +927,6 @@ HARSTORAGE.SuperposeForm = function() {
     // Initialize cache
     this.cache = {};
 
-    // Select box event handler
-    var selector = document.getElementById("step_1_label");
-    selector.onchange = function() {
-        that.setTimestamps(this.name);
-    };
-
     // Submit button event handler
     var submit = document.getElementById("submit");
     submit.onclick = function() {
@@ -968,17 +962,37 @@ HARSTORAGE.SuperposeForm = function() {
 HARSTORAGE.SuperposeForm.prototype.submit = function() {
     "use strict";
 
-    var selectors = document.getElementsByTagName("select");
+    var that = this;
 
-    for (var i = 0, len = selectors.length/3; i < len; i += 1) {
-        var id = 1 + i*3;
+    var datepickers = document.getElementsByClassName('datepicker');
 
-        var start_ts    = selectors.item(id).options[ selectors.item(id).options.selectedIndex ].value;
-        var end_ts      = selectors.item(id+1).options[ selectors.item(id+1).options.selectedIndex ].value;
+    for(var i = 0, len = datepickers.length/2; i < len; i += 2) {
+
+        var start_ts    = datepickers.item(i).value;
+        var end_ts      = datepickers.item(i+1).value;
 
         if (end_ts < start_ts) {
-            window.alert("Invalid timestamps!");
+            window.alert('Invalid timestamps!');
             return false;
+        }
+    }
+
+    var selectors = document.getElementsByTagName('select');
+    for(var i = 0, len = selectors.length; i < len; i += 1) {
+
+        var selector   = selectors.item(i);
+        var selectedValue   = selector.value;
+
+        if (selectedValue === "") {
+            window.alert('Invalid test selected!');
+            return false;
+        } else {
+            // get all the selected values
+            var values = that.getSelectValues(selector);
+            //Set the hidden input field
+            var id = selector.id + "_hidden";
+            document.getElementById(id).value = values;
+
         }
     }
 
@@ -1013,28 +1027,34 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
 
     // Update name and id of selectors
     var selectors = new_div.getElementsByTagName("select");
+    var datepickers = new_div.getElementsByClassName('datepicker');
 
     for (i = selectors.length; i -- ; ) {
         switch (selectors.item(i).name) {
         case prev_id + "_label":
             selectors.item(i).name  = new_id + "_label";
             selectors.item(i).id    = new_id + "_label";
-            selectors.item(i).onchange = function() {
-                that.setTimestamps(this.name);
-            };
-            break;
-        case prev_id + "_start_ts":
-            selectors.item(i).name  = new_id + "_start_ts";
-            selectors.item(i).id    = new_id + "_start_ts";
-            break;
-        case prev_id + "_end_ts":
-            selectors.item(i).name  = new_id + "_end_ts";
-            selectors.item(i).id    = new_id + "_end_ts";
             break;
         default:
             break;
         }
     }
+    for(i = datepickers.length; i -- ; ) {
+        switch (datepickers.item(i).name) {
+        case prev_id + '_start_ts':
+            datepickers.item(i).name  = new_id + '_start_ts';
+            datepickers.item(i).id    = new_id + '_start_ts';
+            break;
+        case prev_id + '_end_ts':
+            datepickers.item(i).name  = new_id + '_end_ts';
+            datepickers.item(i).id    = new_id + '_end_ts';
+            break;
+        default:
+            break;
+        }
+    }
+
+    that.initializeDatePickers();
 
     // Update inputs
     var inputs = new_div.getElementsByTagName("input");
@@ -1070,6 +1090,11 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
                 that.del(this);
             };
             break;
+        case prev_id + '_label_hidden':
+            // Set new id
+            inputs.item(i).id = new_id + '_label_hidden';
+            inputs.item(i).name = new_id + '_label_hidden';
+            break;
         default:
             break;
         }
@@ -1087,8 +1112,6 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
         }
     }
 
-    // Update timestamp
-    this.setTimestamps(new_id + "_label");
 };
 
 // Delete selected step
@@ -1119,6 +1142,7 @@ HARSTORAGE.SuperposeForm.prototype.del = function(button) {
 };
 
 // Set timelines for selected label
+/*
 HARSTORAGE.SuperposeForm.prototype.setTimestamps = function(id) {
     "use strict";
 
@@ -1192,6 +1216,8 @@ HARSTORAGE.SuperposeForm.prototype.setTimestamps = function(id) {
         set_data();
     }
 };
+*/
+
 // Add Ajax spinner
 HARSTORAGE.SuperposeForm.prototype.addSpinner = function() {
     "use strict";
@@ -1214,3 +1240,33 @@ HARSTORAGE.SuperposeForm.prototype.checkbox = function(input) {
         checkbox.checked = false;
     }
 };
+
+// Return an array of the selected opion values
+// select is an HTML select element
+HARSTORAGE.SuperposeForm.prototype.getSelectValues = function(select) {
+  var result = [];
+  var options = select && select.options;
+  var opt;
+
+  for (var i=0, iLen=options.length; i<iLen; i++) {
+    opt = options[i];
+
+    if (opt.selected) {
+      result.push(opt.value || opt.text);
+    }
+  }
+  return result;
+}
+
+HARSTORAGE.SuperposeForm.prototype.initializeDatePickers = function() { 
+    $('.datepicker').each(function () { 
+        $(this).removeClass('hasDatepicker').removeData('datepicker').unbind();
+        $(this).datepicker({
+            dateFormat: 'yy-mm-dd',
+            onSelect: function(datetext) {
+                datetext=datetext+" 00:00:00";
+                $(this).val(datetext);
+            }
+        });
+    });
+}
