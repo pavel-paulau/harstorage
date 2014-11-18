@@ -105,8 +105,8 @@ class SuperposedController(BaseController):
             end_ts = request.GET["step_" + str(row_index + 1) + "_end_ts"]
 
             # Add label
-            c.metrics_table[0].append(label)
-            c.points += label + "#"
+            c.metrics_table[0].append(label[:40])
+            c.points += label[:40] + "#"
 
             # Fetch test results
             labels = label.split(",")
@@ -118,7 +118,7 @@ class SuperposedController(BaseController):
                                                    fields=aggregator.METRICS)
 
             # Add data row to aggregator
-            aggregator.add_row(label, row_index, documents)
+            aggregator.add_row(label[:40], row_index, documents)
 
         # Aggregated data per column
         column = 1
