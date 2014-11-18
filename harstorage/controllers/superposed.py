@@ -4,7 +4,7 @@ from pylons.decorators.rest import restrict
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.MongoHandler import MongoDB
-from harstorage.lib.Math import Histogram, Aggregator
+from harstorage.lib.math_helpers import Histogram, Aggregator
 
 
 class SuperposedController(BaseController):

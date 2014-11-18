@@ -900,6 +900,14 @@ HARSTORAGE.AggregatedStatistics = function(id) {
         if (metric === "90th%20Percentile") {
             metric = "90th Percentile";
         }
+
+        if (metric === "95th%20Percentile") {
+            metric = "95th Percentile";
+        }
+
+        if (metric === "99th%20Percentile") {
+            metric = "99th Percentile";
+        }
     }
 
     // Update selector box active option
