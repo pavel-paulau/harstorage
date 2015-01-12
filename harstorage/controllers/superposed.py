@@ -128,7 +128,10 @@ class SuperposedController(BaseController):
 
             for row_index in range(c.rowcount):
                 data_list = aggregator.data[metric][row_index]
-                value = aggregator.get_aggregated_value(data_list, c.agg_type,
+                if len(data_list) <= 0:
+                    value = 0
+                else:
+                    value = aggregator.get_aggregated_value(data_list, c.agg_type,
                                                         metric)
 
                 c.points += str(value) + "#"
