@@ -13,11 +13,13 @@ from pylons import request, response, tmpl_context as c
 from pylons import config
 from pylons.controllers.util import redirect
 from pylons.decorators.rest import restrict
+from time import gmtime, strftime
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoDB
 import harstorage.lib.helpers as h
+
 
 class ResultsController(BaseController):
 
@@ -48,9 +50,12 @@ class ResultsController(BaseController):
 
         # Read aggregated data from database
         # Aggregation is based on unique labels, urls and latest timestamps
+        
+        #Performance fix, home page will only load the labels/tests for the last 30 days
+        condTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-720*60*60))
         latest_results = mdb_handler.collection.group(
             key = ["label", "url"],
-            condition = None,
+            condition = {"timestamp": {"$gte": condTs}},
             initial = {"timestamp": "1970-01-01 01:00:00"},
             reduce = "\
                 function(doc, prev) {                     \
@@ -58,6 +63,7 @@ class ResultsController(BaseController):
                         prev.timestamp = doc.timestamp;   \
                     }                                     \
                 }")
+
 
         key = lambda timestamp: timestamp["timestamp"]
         latest_results = sorted(latest_results, key = key, reverse = True)
