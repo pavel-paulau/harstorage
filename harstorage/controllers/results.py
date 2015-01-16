@@ -104,23 +104,36 @@ class ResultsController(BaseController):
             c.label = request.GET["label"]
             c.mode = "label"
 
+        # Try to fetch time filter
+        try: 
+            timeFilter = request.GET["timeFilter"]
+        except:
+            timeFilter = "30"
+
+        if timeFilter == "all":
+            startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-8760*60*60))
+        if timeFilter == "30":
+            startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-720*60*60))
+        if timeFilter == "60":
+            startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-1440*60*60))
+
         # Generate context for selector
-        self._set_options_in_selector(c.mode, c.label)
+        self._set_options_in_selector(c.mode, c.label, startTs)
 
         # Define url for data aggregation
         if c.mode == "label":
             c.query = "/superposed/display?" + \
                       "step_1_label=" + c.label + \
-                      "&step_1_start_ts=" + min(c.timestamp) + \
+                      "&step_1_start_ts=" + startTs + \
                       "&step_1_end_ts=" + max(c.timestamp)
             c.histo = "true"
         else:
-            c.histo = "false"
+            c.histo = "false"j
             c.query = "None"
  
         return render("/details/core.html")
     
-    def _set_options_in_selector(self, mode, label):
+    def _set_options_in_selector(self, mode, label, ts):
         """
         Create context data - a list of timestamps.
 
@@ -129,10 +142,18 @@ class ResultsController(BaseController):
         """
 
         # Read data for selector box from database
+        condition = {
+            mode: label,
+            "timestamp": {"$gte": ts}
+        }        
         results = MongoDB().collection.find(
-            {mode: label},
+            condition,
             fields = ["timestamp"],
             sort = [("timestamp", -1)])
+#        results = MongoDB().collection.find(
+#            {mode: label},
+#            fields = ["timestamp"],
+#            sort = [("timestamp", -1)])
 
         c.timestamp = list()
 
