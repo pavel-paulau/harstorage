@@ -7,9 +7,17 @@ ${dochead.html("Details | " + c.label)}
 ${header.html()}
 <center>
     <div class="results">
-        <div id="timeline"></div>
 
-        <p class="title">Run Info</p>
+        <div id="timeline"></div>
+        </br>
+
+        <div>            
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=7'">7 Days</button>
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=30'">30 Days</button>
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=60'">60 Days</button>
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=All'">All</button>
+        </div>
+        <div><p class="title">Run Info</p></div>
 
         <div class="selector">
             <select id="run_timestamp" class="chosen-select">

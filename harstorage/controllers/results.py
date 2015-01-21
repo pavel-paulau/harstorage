@@ -110,50 +110,49 @@ class ResultsController(BaseController):
         except:
             timeFilter = "30"
 
-        if timeFilter == "all":
-            startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-8760*60*60))
-        if timeFilter == "30":
-            startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-720*60*60))
-        if timeFilter == "60":
-            startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-1440*60*60))
+        if timeFilter == "7":
+            c.startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-168*60*60))
+        elif timeFilter == "30":
+            c.startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-720*60*60))
+        elif timeFilter == "60":
+            c.startTs = strftime("%Y-%m-%d %H:%M:%S", gmtime(time.time()-1440*60*60))
+        else:
+            c.startTs = "1970-01-01 01:00:00"
 
         # Generate context for selector
-        self._set_options_in_selector(c.mode, c.label, startTs)
+        self._set_options_in_selector(c.mode, c.label, c.startTs)
 
         # Define url for data aggregation
         if c.mode == "label":
             c.query = "/superposed/display?" + \
                       "step_1_label=" + c.label + \
-                      "&step_1_start_ts=" + startTs + \
+                      "&step_1_start_ts=" + c.startTs + \
                       "&step_1_end_ts=" + max(c.timestamp)
             c.histo = "true"
         else:
-            c.histo = "false"j
+            c.histo = "false"
             c.query = "None"
  
         return render("/details/core.html")
     
-    def _set_options_in_selector(self, mode, label, ts):
+    def _set_options_in_selector(self, mode, label, startTs):
         """
         Create context data - a list of timestamps.
 
         @parameter label - label of set with test results
         @parameter url   - URL of set with test results
+        @parameter startTs  - the start timestamp to narrow the results from
         """
 
         # Read data for selector box from database
         condition = {
             mode: label,
-            "timestamp": {"$gte": ts}
+            "timestamp": {"$gte": startTs}
         }        
         results = MongoDB().collection.find(
             condition,
             fields = ["timestamp"],
             sort = [("timestamp", -1)])
-#        results = MongoDB().collection.find(
-#            {mode: label},
-#            fields = ["timestamp"],
-#            sort = [("timestamp", -1)])
 
         c.timestamp = list()
 
@@ -168,6 +167,7 @@ class ResultsController(BaseController):
         # Parameters from GET request
         label = h.decode_uri(request.GET["label"])
         mode = request.GET["mode"]
+        startTs = request.GET["startTs"]
 
         # Metrics
         METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
@@ -193,8 +193,12 @@ class ResultsController(BaseController):
             data.append(str())
 
         # Read data for timeline from database in custom format (hash separated)
+        condition = {
+            mode: label,
+            "timestamp": {"$gte": startTs}
+        }        
         results = MongoDB().collection.find(
-            {mode: label},
+            condition,
             fields = METRICS,
             sort = [("timestamp", 1)])
 

@@ -152,7 +152,7 @@ HARSTORAGE.Timeline = function(run_info) {
 };
 
 // Get data for timeline
-HARSTORAGE.Timeline.prototype.get = function(label, mode) {
+HARSTORAGE.Timeline.prototype.get = function(label, mode, startTs) {
     "use strict";
 
     // Pointer
@@ -167,7 +167,7 @@ HARSTORAGE.Timeline.prototype.get = function(label, mode) {
         }
     };
 
-    var URI = "timeline?label=" + encodeURIComponent(label) + "&mode=" + mode;
+    var URI = "timeline?label=" + encodeURIComponent(label) + "&mode=" + mode + "&startTs=" + encodeURIComponent(startTs);
 
     xhr.open("GET", URI, true);
     xhr.send();
