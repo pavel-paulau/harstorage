@@ -14,11 +14,15 @@ from pylons import config
 from pylons.controllers.util import redirect
 from pylons.decorators.rest import restrict
 from time import gmtime, strftime
+from webhelpers import html as html
 
 from harstorage.lib.base import BaseController, render
 from harstorage.lib.HAR import HAR
 from harstorage.lib.MongoHandler import MongoDB
+from harstorage.lib.Math import Aggregator
+
 import harstorage.lib.helpers as h
+
 
 
 class ResultsController(BaseController):
@@ -503,3 +507,105 @@ class ResultsController(BaseController):
         response.content_type = mimetypes.guess_type(filename)[0] or "text/plain"
 
         return data
+
+    @restrict("GET")
+    def dashboard(self):
+        """Page with test results"""
+        c.graphs = html.literal(config["app_conf"]["dashboard_graphs"])
+        c.metric = html.literal(config["app_conf"]["dashboard_metric"])
+
+        return render("/dashboard/core.html")
+
+    @restrict("GET")
+    def dashboardChart(self):
+        """Generate data for timeline chart"""
+
+        # Parameters from GET request
+        label = h.decode_uri(request.GET["labels"])
+        # Aggregation option
+        c.agg_type = request.GET.get("metric", "Average")
+
+        yLabels = str()
+        yLabels += "Full Load Time"
+
+        # Metrics
+        FIELDS = ( "label", "timestamp", "full_load_time")
+
+        # Read data for timeline from database in custom format (hash separated)
+        labels = label.split(",")
+        startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-720*60*60))
+
+        condition = {
+            "label": { '$in': labels},
+            "timestamp": {"$gt": startTs}
+        }       
+        results = MongoDB().collection.find(
+            condition,
+            fields = FIELDS,
+            sort = [("label", 1), ("timestamp", 1)])
+
+        # Create a list of documents grouped by their labels
+        resultsByLabel = list()
+        documents = list()
+        prevLabel = results[0]["label"]
+        for result in results:
+            curLabel = result["label"]
+            if curLabel == prevLabel:
+                resultsByLabel.append(result)
+            else:
+                prevLabel = curLabel
+                documents.append(resultsByLabel)
+                resultsByLabel = list()
+                resultsByLabel.append(result)
+
+        # Add last result to avoid off by one       
+        documents.append(resultsByLabel)
+
+        # Aggregator
+        aggregator = Aggregator()
+
+        # Now create the aggregate rows by label / timestamp agregated daily
+        docs = list()
+        index = 0
+        seriesNames = str()
+        points = str()
+        categories = str()
+        timestamps = list()
+
+        for t in range (1, 32):
+            newTime = time.strftime("%Y-%m-%d", gmtime(time.time()-(31-t)*24*60*60))
+            categories += newTime + "#"
+            timestamps.append(newTime)
+
+        categories = categories[:-1]    
+
+        # Loop through documents list which is grouped by the label
+        for doc in documents:
+            index += 1
+            seriesNames += doc[0]["label"] + "#"
+            counter = 0
+
+            for row in doc:
+                ts = timestamps[counter]
+                timestamp = row["timestamp"]
+                timestamp = timestamp[:-9]
+                # Date has changed, so add the row and reset for the next loop
+                if time.strptime(timestamp, "%Y-%m-%d") == time.strptime(ts, "%Y-%m-%d"):
+                    docs.append(row["full_load_time"])
+                else:
+                    if len(docs) > 0:
+                        points += str(aggregator.get_aggregated_value(docs, c.agg_type, c.agg_type)) + str("#")
+                    else:
+                        points += "n/a#"
+                    # set vars for the next loop
+                    docs = list()
+                    counter += 1
+            points += ";"
+
+        seriesNames = seriesNames[:-1]
+        points = points[:-1]
+
+        # Final chart points
+        c.points = yLabels +';'+seriesNames +';'+categories+';'+points
+
+        return c.points

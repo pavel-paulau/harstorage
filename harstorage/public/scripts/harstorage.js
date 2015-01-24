@@ -1270,3 +1270,157 @@ HARSTORAGE.SuperposeForm.prototype.initializeDatePickers = function() {
         });
     });
 }
+
+/*
+ * Dashboard chart
+ */
+HARSTORAGE.Dashboard = function() {
+    "use strict";
+};
+
+/* 
+* Get data for the dashboard chart
+* graph - Name of the chart
+* lables - name of labels to fetch from the data store
+* metric - How to aggregate the data (average, 90th Percentile, etc...)
+* 
+* Charts will always be for the last 30 days
+*/
+HARSTORAGE.Dashboard.prototype.get = function(graph, labels, metric) {
+    "use strict";
+
+    // Pointer
+    var that = this;
+
+    // Retrieve data for timeline via XHR call
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            that.draw(graph, this.responseText, metric);
+        }
+    };
+
+    var URI = "/results/dashboardChart?labels=" + encodeURIComponent(labels) + "&metric=" + metric;
+
+    xhr.open("GET", URI, true);
+    xhr.send();
+};
+
+/*
+ * Data Converter for the dashboard use case
+ * Data String (points) expected in the following format: 
+ *      yAxisLabel;seriesLabelA#seriesLabelB;xCat1#xCat2#;p1a#p2a;p1b#p2b
+ */
+HARSTORAGE.Dashboard.prototype.converter = function(points) {
+    "use strict";
+
+    // Series data (data points for the series are after the fist 3 sections)
+    var splitResults = points.split(";"),
+        numberOfSets = splitResults.length - 3,
+        dataArray = [];
+
+    // yLabel, seriesLabels and Timestamps
+    var yLabel = splitResults[0].split("#"),
+        labels = splitResults[1].split("#"),
+        categories = splitResults[2].split("#"),
+        numberOfPoints = categories.length,
+        pointValue;
+
+    for (var dataSetIndex = 0; dataSetIndex < numberOfSets; dataSetIndex += 1 ) {
+        dataArray.push(splitResults[dataSetIndex + 3].split("#"));
+
+        // Convert string values to numbers
+        for (var pointIndex = 0; pointIndex < numberOfPoints; pointIndex += 1 ) {
+            // Original Value
+            pointValue = dataArray[dataSetIndex][pointIndex];
+
+            //Using a time (ms) value, parse, round accordingly
+            if (HARSTORAGE.times.indexOf(yLabel[0]) !== -1) {
+                // Parsed value
+                pointValue = parseFloat(pointValue / 1000, 10);
+                // Rounded value
+                if (pointValue > 1){
+                    pointValue = Math.round(pointValue * 10) / 10;
+                }
+            } else {
+                // Parsed value
+                pointValue = parseInt(pointValue, 10);
+            }
+            if(isNaN(pointValue))       
+                pointValue = null; 
+            
+            dataArray[dataSetIndex][pointIndex] = pointValue;
+        }
+    }
+
+    // Y Axis and series
+    var yAxis = [],
+        series = [];
+
+    yAxis.push({
+        title: {
+            text: yLabel,
+        },        
+        plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+        min: 0,
+        showEmpty: false
+    });
+    for (dataSetIndex = 0; dataSetIndex < numberOfSets; dataSetIndex += 1) {
+        series.push({
+            name: labels[dataSetIndex],
+            data: dataArray[dataSetIndex],
+            visible: true
+        });
+    }
+
+    return {
+        "categories": categories,
+        "yAxis": yAxis,
+        "series": series
+    };
+};
+
+// Dashboard Draw graph
+HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
+    "use strict";
+
+    // Pointer
+    var that = this;
+
+    // Convert data from custom format to arrays for chart
+    var converter = that.converter(points);
+
+    var categories = converter.categories,
+        yAxis = converter.yAxis,
+        series = converter.series;
+
+    new Highcharts.Chart({
+        chart: {
+            renderTo: graph,
+            zoomType: "x",
+            defaultSeriesType: 'line',            
+        },
+        credits: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        title: {
+            text: graph + " Trends - " + metric
+        },
+        xAxis: [{
+            categories: categories,
+            tickInterval: Math.ceil(categories.length / 10),
+            tickmarkPlacement: "on"
+        }],
+        yAxis: yAxis,
+        series: series
+    });
+};
+

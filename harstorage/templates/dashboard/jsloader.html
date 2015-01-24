@@ -1,0 +1,25 @@
+<%def name="html()">
+<script type="text/javascript">
+    $LAB
+    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
+    .script("${h.url_for('/combine/scripts')}" +
+            "?highcharts/highcharts.js&ver=2.2.0" +
+            "&highcharts/themes.js&ver=${c.rev}" +
+            "&highcharts/exporting.js&ver=2.2.0").wait()
+    .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
+    .wait(function(){
+        var graphs = "${c.graphs}";
+        var graphObj = JSON.parse(graphs);
+        var html = '';
+        $.each(graphObj, function(i, graph) {
+            html += "<div id='" + graph.title + "'></div></br>";
+        });
+        $('#container').append(html);
+
+        var dashboard = new HARSTORAGE.Dashboard();
+        $.each(graphObj, function(i, graph) {
+            dashboard.get(graph.title, graph.labels, "${c.metric}");
+            });
+    })
+</script>
+</%def>
