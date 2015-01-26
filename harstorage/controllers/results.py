@@ -511,6 +511,12 @@ class ResultsController(BaseController):
     @restrict("GET")
     def dashboard(self):
         """Page with test results"""
+        enabled = html.literal(config["app_conf"]["dashboard_enabled"])
+        if enabled != 'true':
+            c.message = str();
+            c.message += "Dashboard not enabled!"
+            return render("/error.html")
+
         c.graphs = html.literal(config["app_conf"]["dashboard_graphs"])
         c.metric = html.literal(config["app_conf"]["dashboard_metric"])
 
