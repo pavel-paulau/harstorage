@@ -585,6 +585,9 @@ class ResultsController(BaseController):
 
         categories = categories[:-1]    
 
+        # initialize a 2D array to capture the aggregate of all tests (labels) for each date
+        aggregated_docs = [list() for x in range(len(timestamps))] 
+
         # Loop through documents list which is grouped by the label
         for doc in documents:
             index += 1
@@ -598,6 +601,7 @@ class ResultsController(BaseController):
                 # Date has changed, so add the row and reset for the next loop
                 if time.strptime(timestamp, "%Y-%m-%d") == time.strptime(ts, "%Y-%m-%d"):
                     docs.append(row["full_load_time"])
+                    aggregated_docs[counter].append(row["full_load_time"])
                 else:
                     if len(docs) > 0:
                         points += str(aggregator.get_aggregated_value(docs, c.agg_type, c.agg_type)) + str("#")
@@ -608,10 +612,18 @@ class ResultsController(BaseController):
                     counter += 1
             points += ";"
 
-        seriesNames = seriesNames[:-1]
+        agg_points = str()
+        for x in range (0, len(aggregated_docs)):
+            if len(aggregated_docs[x]) > 0:
+                agg_points += str(aggregator.get_aggregated_value(aggregated_docs[x], c.agg_type, c.agg_type)) + str("#")
+            else:
+                agg_points += "n/a#"
+
+        seriesNames = seriesNames + "Aggregate"
         points = points[:-1]
+        agg_points = agg_points[:-1]
 
         # Final chart points
-        c.points = yLabels +';'+seriesNames +';'+categories+';'+points
+        c.points = yLabels +';'+seriesNames +';'+categories+';'+points+';'+agg_points
 
         return c.points
