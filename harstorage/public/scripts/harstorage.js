@@ -1347,9 +1347,9 @@ HARSTORAGE.Dashboard.prototype.converter = function(points) {
                 // Parsed value
                 pointValue = parseInt(pointValue, 10);
             }
-            if(isNaN(pointValue))       
+            if(isNaN(pointValue) || pointValue == 0)       
                 pointValue = null; 
-            
+
             dataArray[dataSetIndex][pointIndex] = pointValue;
         }
     }
