@@ -74,13 +74,20 @@ class SuperposedController(BaseController):
         # Aggregation option
         c.agg_type = request.GET.get("metric", "Average")
 
+        # Aggregation option
+        c.timeFormat = request.GET.get("timeFormat", "ms")
+
         # Number of records
         rows = [x for x in request.GET if "_label_hidden" in x]
         c.rowcount = len(rows)
 
+        if c.timeFormat == "s":
+            fltLabel = "Full Load Time (s)"
+        else:
+            fltLabel = "Full Load Time (ms)"
 
         # Data table
-        c.headers = ["Label", "Full Load Time (ms)", "Total Requests",
+        c.headers = ["Label", fltLabel, "Total Requests",
                      "Total Size (kB)", "Page Speed Score",
                      "onLoad Event (ms)", "Start Render Time (ms)",
                      "Time to First Byte (ms)", "Total DNS Time (ms)",
@@ -135,7 +142,13 @@ class SuperposedController(BaseController):
                                                         metric)
 
                 c.points += str(value) + "#"
-                c.metrics_table[column].append(value)
+
+                tableValue = value
+                if metric == "full_load_time":
+                    if c.timeFormat == "s":
+                        tableValue = tableValue / 1000
+
+                c.metrics_table[column].append(tableValue)
 
             column += 1
 
