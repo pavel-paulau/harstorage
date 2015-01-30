@@ -146,7 +146,7 @@ class SuperposedController(BaseController):
                 tableValue = value
                 if metric == "full_load_time":
                     if c.timeFormat == "s":
-                        tableValue = tableValue / 1000
+                        tableValue = round(tableValue / 1000, 2)
 
                 c.metrics_table[column].append(tableValue)
 
