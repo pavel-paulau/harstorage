@@ -682,6 +682,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
         // Summary
         $("#full-load-time").html(that.formatter(that.json.summary.full_load_time, "ms"));
+        $("#user-ready-time").html(that.formatter(that.json.summary.user_ready, "ms"));
         $("#onload-event").html(that.formatter(that.json.summary.onload_event, "ms"));
         $("#start-render-time").html(that.formatter(that.json.summary.start_render_time, "ms"));
         $("#time-to-first-byte").html(that.formatter(that.json.summary.time_to_first_byte, "ms"));

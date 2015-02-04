@@ -233,7 +233,7 @@ class HAR():
 	    if self.total_size > 0:
 	    	self.throughput = round(self.total_download_time / self.total_size, 0)
 	    else:
-		self.throughput = 0.0
+		  self.throughput = 0.0
 
         # Label
         self.label = self.get_label()
@@ -263,7 +263,7 @@ class HAR():
         self.media_size = self.media_size.to_kilobytes()
         self.cache_size = self.cache_size.to_kilobytes()
       
-	self.throughput = round((self.total_size - self.cache_size) / (self.total_download_time / 1000), 0) 
+        self.throughput = round((self.total_size - self.cache_size) / (self.total_download_time / 1000), 0) 
 
     def weight_ratio(self):
         """Breakdown by size of page objects"""
@@ -330,8 +330,8 @@ class HAR():
         return max(send_time, 0)
 
     def get_download_time(self):
-	download_time = max( self.entry['timings']['receive'], 0)
-	return download_time
+	   download_time = max( self.entry['timings']['receive'], 0)
+	   return download_time
 
     def get_server_time(self):
         server_time = self.entry["timings"]["wait"]

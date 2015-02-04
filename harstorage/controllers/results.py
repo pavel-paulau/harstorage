@@ -180,7 +180,7 @@ class ResultsController(BaseController):
                     "total_transfer_time", "total_server_time",
                     "avg_connecting_time", "avg_blocking_time", "text_size",
                     "media_size", "cache_size", "redirects", "bad_requests",
-                    "domains")
+                    "domains", "user_ready")
 
         TITLES = [ "Full Load Time", "Total Requests",
                    "Total Size", "Page Speed Score", "onLoad Event",
@@ -188,7 +188,7 @@ class ResultsController(BaseController):
                    "Total DNS Time", "Total Transfer Time", "Total Server Time",
                    "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
                    "Media Size", "Cache Size", "Redirects", "Bad Rquests",
-                   "Domains"]
+                   "Domains", "User Ready"]
 
         # Set of metrics to exclude (due to missing data)
         exclude = set()
@@ -210,7 +210,10 @@ class ResultsController(BaseController):
             index = 0
             for metric in METRICS:
                 if metric != "ps_scores":
-                    point = str(result[metric])
+                    try:
+                        point = str(result[metric])
+                    except:
+                        point = str(0)
                 else:
                     point = str(result[metric]["Total Score"])
                 if point == "n/a":
@@ -267,6 +270,11 @@ class ResultsController(BaseController):
 
         throughput = test_results["throughput"]
 
+        try:
+            userReady = har['log']['pages'][0]['_userTime.mark-user-ready']
+        except:
+            userReady = 'n/a'
+
         # Summary stats
         summary = { "full_load_time":       test_results["full_load_time"],
                     "onload_event":         test_results["onload_event"],
@@ -285,7 +293,8 @@ class ResultsController(BaseController):
                     "requests":             test_results["requests"],
                     "redirects":            test_results["redirects"],
                     "bad_requests":         test_results["bad_requests"],
-                    "domains":              test_results["domains"]}
+                    "domains":              test_results["domains"],
+                    "user_ready":           userReady}
 
         # Page Speed Scores
         scores = dict()
@@ -405,6 +414,10 @@ class ResultsController(BaseController):
 
 	    timestamp = har.har['log']['pages'][0]['startedDateTime'][0:19]
 	    timestamp = timestamp.replace("T", " ")
+        try:
+            userReady = har.har['log']['pages'][0]['_userTime.mark-user-ready']
+        except:
+            userReady = 'n/a'
 
             result = {  "label":                har.label,
                         "url":                  har.url,
@@ -432,7 +445,8 @@ class ResultsController(BaseController):
                         "har":                  har.origin,
                         "weights_ratio":        har.weight_ratio(),
                         "requests_ratio":       har.req_ratio(),
-                        "domains_ratio":        har.domains}
+                        "domains_ratio":        har.domains,
+                        "user_ready":           userReady}
 
             # MongoDB handler
             mdb_handler = MongoDB()
