@@ -86,8 +86,13 @@ class SuperposedController(BaseController):
         else:
             fltLabel = "Full Load Time (ms)"
 
+        if c.timeFormat == "s":
+            usrLabel = "User Ready Time (s)"
+        else:
+            usrLabel = "User Ready Time (ms)"
+
         # Data table
-        c.headers = ["Label", fltLabel, "Total Requests",
+        c.headers = ["Label", fltLabel, usrLabel, "Total Requests",
                      "Total Size (kB)", "Page Speed Score",
                      "onLoad Event (ms)", "Start Render Time (ms)",
                      "Time to First Byte (ms)", "Total DNS Time (ms)",
@@ -145,6 +150,9 @@ class SuperposedController(BaseController):
 
                 tableValue = value
                 if metric == "full_load_time":
+                    if c.timeFormat == "s":
+                        tableValue = round(tableValue / 1000, 2)
+                if metric == "user_ready_time":
                     if c.timeFormat == "s":
                         tableValue = round(tableValue / 1000, 2)
 
