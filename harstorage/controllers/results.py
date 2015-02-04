@@ -213,7 +213,7 @@ class ResultsController(BaseController):
                     try:
                         point = str(result[metric])
                     except:
-                        point = str(0)
+                        point = 0
                 else:
                     point = str(result[metric]["Total Score"])
                 if point == "n/a":
@@ -273,11 +273,11 @@ class ResultsController(BaseController):
         try:
             userReady = har['log']['pages'][0]['_userTime.mark-user-ready']
         except:
-            userReady = 'n/a'
+            userReady = 0
 
         # Summary stats
         summary = { "full_load_time":       test_results["full_load_time"],
-                    "user_ready_time":           userReady,
+                    "user_ready_time":      userReady,
                     "onload_event":         test_results["onload_event"],
                     "start_render_time":    test_results["start_render_time"],
                     "time_to_first_byte":   test_results["time_to_first_byte"],
@@ -417,7 +417,7 @@ class ResultsController(BaseController):
         try:
             userReady = har.har['log']['pages'][0]['_userTime.mark-user-ready']
         except:
-            userReady = 'n/a'
+            userReady = 0
 
             result = {  "label":                har.label,
                         "url":                  har.url,

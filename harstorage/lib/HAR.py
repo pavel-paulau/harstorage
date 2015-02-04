@@ -161,6 +161,7 @@ class HAR():
 
     def init_variables(self):
         self.full_load_time = 0
+        self.user_ready_time = 0
 
         self.total_dns_time      = 0.0
         self.total_transfer_time = 0.0
@@ -264,6 +265,17 @@ class HAR():
         self.cache_size = self.cache_size.to_kilobytes()
       
         self.throughput = round((self.total_size - self.cache_size) / (self.total_download_time / 1000), 0) 
+
+        # Get user Time
+        self.user_ready_time = self.getUserReadyTime()
+
+
+    def getUserReadyTime(self):
+        try:
+            user_ready_time = self.har["log"]['pages'][0]['_userTime.mark-user-ready']
+        except:
+            user_ready_time = 0
+        return user_ready_time
 
     def weight_ratio(self):
         """Breakdown by size of page objects"""
