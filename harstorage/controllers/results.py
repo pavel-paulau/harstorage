@@ -174,21 +174,21 @@ class ResultsController(BaseController):
         startTs = request.GET["startTs"]
 
         # Metrics
-        METRICS = ( "timestamp", "full_load_time", "requests", "total_size",
+        METRICS = ( "timestamp", "full_load_time", "user_ready_time", "requests", "total_size",
                     "ps_scores", "onload_event", "start_render_time",
                     "time_to_first_byte", "total_dns_time",
                     "total_transfer_time", "total_server_time",
                     "avg_connecting_time", "avg_blocking_time", "text_size",
                     "media_size", "cache_size", "redirects", "bad_requests",
-                    "domains", "user_ready")
+                    "domains" )
 
-        TITLES = [ "Full Load Time", "Total Requests",
+        TITLES = [ "Full Load Time", "User Ready Time", "Total Requests",
                    "Total Size", "Page Speed Score", "onLoad Event",
                    "Start Render Time", "Time to First Byte",
                    "Total DNS Time", "Total Transfer Time", "Total Server Time",
                    "Avg. Connecting Time", "Avg. Blocking Time", "Text Size",
                    "Media Size", "Cache Size", "Redirects", "Bad Rquests",
-                   "Domains", "User Ready"]
+                   "Domains" ]
 
         # Set of metrics to exclude (due to missing data)
         exclude = set()
@@ -277,6 +277,7 @@ class ResultsController(BaseController):
 
         # Summary stats
         summary = { "full_load_time":       test_results["full_load_time"],
+                    "user_ready_time":           userReady,
                     "onload_event":         test_results["onload_event"],
                     "start_render_time":    test_results["start_render_time"],
                     "time_to_first_byte":   test_results["time_to_first_byte"],
@@ -293,8 +294,7 @@ class ResultsController(BaseController):
                     "requests":             test_results["requests"],
                     "redirects":            test_results["redirects"],
                     "bad_requests":         test_results["bad_requests"],
-                    "domains":              test_results["domains"],
-                    "user_ready":           userReady}
+                    "domains":              test_results["domains"]}
 
         # Page Speed Scores
         scores = dict()
@@ -423,6 +423,7 @@ class ResultsController(BaseController):
                         "url":                  har.url,
                         "timestamp":            timestamp,
                         "full_load_time":       har.full_load_time,
+                        "user_ready_time":           userReady,
                         "onload_event":         har.onload_event,
                         "start_render_time":    har.start_render_time,
                         "time_to_first_byte":   har.time_to_first_byte,
@@ -445,8 +446,7 @@ class ResultsController(BaseController):
                         "har":                  har.origin,
                         "weights_ratio":        har.weight_ratio(),
                         "requests_ratio":       har.req_ratio(),
-                        "domains_ratio":        har.domains,
-                        "user_ready":           userReady}
+                        "domains_ratio":        har.domains }
 
             # MongoDB handler
             mdb_handler = MongoDB()

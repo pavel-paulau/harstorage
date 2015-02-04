@@ -37,6 +37,7 @@ var HARSTORAGE = HARSTORAGE || {};
  */
 HARSTORAGE.times = [
     "Full Load Time",
+    "User Ready Time",
     "onLoad Event",
     "Start Render Time",
     "Time to First Byte"
@@ -47,6 +48,7 @@ HARSTORAGE.times = [
  */
 HARSTORAGE.Units = {
     "Full Load Time": "s",
+    "User Ready Time": "s",
     "Total Requests": "",
     "Total Size": "kB",
     "Page Speed Score": "",
@@ -131,7 +133,7 @@ HARSTORAGE.Converter = function(points) {
             name: labels[dataSetIndex],
             yAxis: dataSetIndex,
             data: dataArray[dataSetIndex],
-            visible: (dataSetIndex < 3) ? true : false
+            visible: (dataSetIndex < 4) ? true : false
         });
     }
 
@@ -682,7 +684,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
         // Summary
         $("#full-load-time").html(that.formatter(that.json.summary.full_load_time, "ms"));
-        $("#user-ready-time").html(that.formatter(that.json.summary.user_ready, "ms"));
+        $("#user-ready-time").html(that.formatter(that.json.summary.user_ready_time, "ms"));
         $("#onload-event").html(that.formatter(that.json.summary.onload_event, "ms"));
         $("#start-render-time").html(that.formatter(that.json.summary.start_render_time, "ms"));
         $("#time-to-first-byte").html(that.formatter(that.json.summary.time_to_first_byte, "ms"));
