@@ -304,9 +304,15 @@ body a:hover {
 .results {
     width: 960px;
 }
+#dashboard.results {
+    width: 100%;
+}
 .results #timeline{
     width: 960px;
     height: 450px;
+}
+#dashboardTabContainer.tabberlive {
+    width: 100%;
 }
 .results .title {
     font-family: times, "Times New Roman", times-roman, georgia, serif;
@@ -331,12 +337,16 @@ body a:hover {
     width: 200px;
     height: 200px;
 }
-.results .container-max,.results .container-min,.results .container-umin {
+.results .container-max,.results .container-min,.results .container-umin, .results .dashboard-container {
     height: 210px;
     float: left;
     margin: 10px 0 0 0;
     font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-size: 93%;
+}
+.results .dashboard-container {
+    width: 100%;
+    height: 100%;
 }
 .results .container-max {
     width: 260px;

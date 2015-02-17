@@ -165,7 +165,7 @@ HARSTORAGE.Timeline.prototype.get = function(label, mode, startTs) {
 
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            that.draw(this.responseText);
+            that.draw(label, this.responseText);
         }
     };
 
@@ -176,7 +176,7 @@ HARSTORAGE.Timeline.prototype.get = function(label, mode, startTs) {
 };
 
 // Draw timeline
-HARSTORAGE.Timeline.prototype.draw = function(points) {
+HARSTORAGE.Timeline.prototype.draw = function(label, points) {
     "use strict";
 
     // Pointer
@@ -217,7 +217,7 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
             width: 960
         },
         title: {
-            text: "Performance Trends"
+            text: label + " Performance Trends"
         },
         xAxis: [{
             categories: categories,
@@ -1285,11 +1285,11 @@ HARSTORAGE.Dashboard = function() {
 * Get data for the dashboard chart
 * graph - Name of the chart
 * lables - name of labels to fetch from the data store
-* metric - How to aggregate the data (average, 90th Percentile, etc...)
-* 
-* Charts will always be for the last 30 days
+* aggMethod - How to aggregate the data (average, 90th Percentile, etc...)
+* timeFrameInDays - How many days back to see results for
+* metrics - What "metrics to display"
 */
-HARSTORAGE.Dashboard.prototype.get = function(graph, labels, metric) {
+HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFrameInDays, metrics) {
     "use strict";
 
     // Pointer
@@ -1300,11 +1300,11 @@ HARSTORAGE.Dashboard.prototype.get = function(graph, labels, metric) {
 
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            that.draw(graph, this.responseText, metric);
+            that.draw(graph, this.responseText, aggMethod);
         }
     };
 
-    var URI = "/results/dashboardChart?labels=" + encodeURIComponent(labels) + "&metric=" + metric;
+    var URI = "/results/dashboardChart?labels=" + encodeURIComponent(labels) + "&aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&metrics=" + encodeURIComponent(metrics);
 
     xhr.open("GET", URI, true);
     xhr.send();
@@ -1404,7 +1404,7 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
 
     new Highcharts.Chart({
         chart: {
-            renderTo: graph,
+            renderTo: graph + "-" + metric,
             zoomType: "x",
             defaultSeriesType: 'line',            
         },

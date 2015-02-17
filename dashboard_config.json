@@ -1,0 +1,164 @@
+[ {
+"tabName" : "Trends - 90th%",
+"aggMethod" : "90th Percentile",
+"charts" : [
+   {  
+      "title": "Home Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [   
+         "unifiedHP_cable_prod_RW",
+         "unifiedHP_cable_prod_SLCD",
+         "unifiedHP_cable_prod_SF",
+         "unifiedHP_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Event Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedEvent_cable_prod_RW",
+         "unifiedEvent_cable_prod_SLCD",
+         "unifiedEvent_cable_prod_SF",
+         "unifiedEvent_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Search Results Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedSearchResults_cable_prod_RW",
+         "unifiedSearchResults_cable_prod_SLCD",
+         "unifiedSearchResults_cable_prod_SF",
+         "unifiedSearchResults_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Artist Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedArtist_cable_prod_RW",
+         "unifiedArtist_cable_prod_SLCD",
+         "unifiedArtist_cable_prod_SF",
+         "unifiedArtist_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Team Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedTeam_cable_prod_RW",
+         "unifiedTeam_cable_prod_SLCD",
+         "unifiedTeam_cable_prod_SF",
+         "unifiedTeam_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Venue Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedVenue_cable_prod_RW",
+         "unifiedVenue_cable_prod_SLCD",
+         "unifiedVenue_cable_prod_SF",
+         "unifiedVenue_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"XO Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels":[  
+         "xo_newxo_cable_prod_RW",
+         "xo_newxo_cable_prod_SLCD",
+         "xo_newxo_cable_prod_SF",
+         "xo_newxo_cable_prod_EG"
+      ]
+   } ]
+},
+{
+"tabName" : "Trends - Median",
+"aggMethod" : "Median",
+"charts" : [
+   {  
+      "title": "Home Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [   
+         "unifiedHP_cable_prod_RW",
+         "unifiedHP_cable_prod_SLCD",
+         "unifiedHP_cable_prod_SF",
+         "unifiedHP_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Event Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedEvent_cable_prod_RW",
+         "unifiedEvent_cable_prod_SLCD",
+         "unifiedEvent_cable_prod_SF",
+         "unifiedEvent_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Search Results Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedSearchResults_cable_prod_RW",
+         "unifiedSearchResults_cable_prod_SLCD",
+         "unifiedSearchResults_cable_prod_SF",
+         "unifiedSearchResults_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Artist Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedArtist_cable_prod_RW",
+         "unifiedArtist_cable_prod_SLCD",
+         "unifiedArtist_cable_prod_SF",
+         "unifiedArtist_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Team Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedTeam_cable_prod_RW",
+         "unifiedTeam_cable_prod_SLCD",
+         "unifiedTeam_cable_prod_SF",
+         "unifiedTeam_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"Venue Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels": [  
+         "unifiedVenue_cable_prod_RW",
+         "unifiedVenue_cable_prod_SLCD",
+         "unifiedVenue_cable_prod_SF",
+         "unifiedVenue_cable_prod_EG"
+      ]
+   },
+   {  
+      "title":"XO Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+	  "timeFrameInDays" : "7", 
+      "labels":[  
+         "xo_newxo_cable_prod_RW",
+         "xo_newxo_cable_prod_SLCD",
+         "xo_newxo_cable_prod_SF",
+         "xo_newxo_cable_prod_EG"
+      ]
+   } ]   
+} ]

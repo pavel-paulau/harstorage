@@ -414,10 +414,10 @@ class ResultsController(BaseController):
 
 	    timestamp = har.har['log']['pages'][0]['startedDateTime'][0:19]
 	    timestamp = timestamp.replace("T", " ")
-        try:
-            userReady = har.har['log']['pages'][0]['_userTime.mark-user-ready']
-        except:
-            userReady = 0
+            try:
+                userReady = har.har['log']['pages'][0]['_userTime.mark-user-ready']
+            except:
+                userReady = 0
 
             result = {  "label":                har.label,
                         "url":                  har.url,
@@ -531,19 +531,30 @@ class ResultsController(BaseController):
             c.message += "Dashboard not enabled!"
             return render("/error.html")
 
-        c.graphs = html.literal(config["app_conf"]["dashboard_graphs"])
-        c.metric = html.literal(config["app_conf"]["dashboard_metric"])
+        filename = os.path.join(config["app_conf"]["dashboard_config_dir"], config["app_conf"]["dashboard_config_filename"])
+        with open(filename) as json_file:
+            configData = json.load(json_file)
+
+
+        c.configData = html.literal(configData)
 
         return render("/dashboard/core.html")
 
     @restrict("GET")
     def dashboardChart(self):
         """Generate data for timeline chart"""
+        #labels
+        #aggMethod
+        #timeFrameInDays
+        #metrics
 
         # Parameters from GET request
         label = h.decode_uri(request.GET["labels"])
         # Aggregation option
-        c.agg_type = request.GET.get("metric", "Average")
+        c.agg_type = request.GET.get("aggMethod", "Average")
+        timeFrameInDays = int(request.GET.get("timeFrameInDays", "7"))
+        metrics = h.decode_uri(request.GET["metrics"])
+
 
         yLabels = str()
         yLabels += "Full Load Time"
@@ -553,11 +564,11 @@ class ResultsController(BaseController):
 
         # Read data for timeline from database in custom format (hash separated)
         labels = label.split(",")
-        startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-720*60*60))
+        startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-timeFrameInDays*60*60))
 
         condition = {
             "label": { '$in': labels},
-            "timestamp": {"$gt": startTs}
+            "timestamp": {"$gte": startTs}
         }       
         results = MongoDB().collection.find(
             condition,
@@ -577,6 +588,9 @@ class ResultsController(BaseController):
                 documents.append(resultsByLabel)
                 resultsByLabel = list()
                 resultsByLabel.append(result)
+            # Consider getting last timestamp when reach last result
+            # Use this value to set the "days back" we are going
+            # As well as the timestamp ranges
 
         # Add last result to avoid off by one       
         documents.append(resultsByLabel)
@@ -592,8 +606,8 @@ class ResultsController(BaseController):
         categories = str()
         timestamps = list()
 
-        for t in range (1, 32):
-            newTime = time.strftime("%Y-%m-%d", gmtime(time.time()-(31-t)*24*60*60))
+        for t in range (1, timeFrameInDays+1):
+            newTime = time.strftime("%Y-%m-%d", gmtime(time.time()-(timeFrameInDays-t)*24*60*60))
             categories += newTime + "#"
             timestamps.append(newTime)
 
@@ -613,6 +627,7 @@ class ResultsController(BaseController):
                 timestamp = row["timestamp"]
                 timestamp = timestamp[:-9]
                 # Date has changed, so add the row and reset for the next loop
+                # Data is getting reversed in the pionts array somehow, need to check this
                 if time.strptime(timestamp, "%Y-%m-%d") == time.strptime(ts, "%Y-%m-%d"):
                     docs.append(row["full_load_time"])
                     aggregated_docs[counter].append(row["full_load_time"])

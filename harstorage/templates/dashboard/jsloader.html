@@ -6,20 +6,57 @@
             "?highcharts/highcharts.js&ver=2.2.0" +
             "&highcharts/themes.js&ver=${c.rev}" +
             "&highcharts/exporting.js&ver=2.2.0").wait()
+    .script("/scripts/chosen.jquery.js?ver=0.9.5").wait()
     .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
     .wait(function(){
-        var graphs = "${c.graphs}";
-        var graphObj = JSON.parse(graphs);
-        var html = '';
-        $.each(graphObj, function(i, graph) {
-            html += "<div id='" + graph.title + "'></div></br>";
-        });
-        $('#container').append(html);
+        /*
+        Location to config JSON file in the following format
+        [{ 
+        'tabName': 'name', 
+        'aggMethod' : 'val',
+        'charts' : [
+           { 
+               'title': 'val',
+               'labels' : [ 'vals' ],
+               'metrics' : [ 'vals' ],
+               'timeFrameInDays' : '7'
+           }]
+        }]
+        */
 
-        var dashboard = new HARSTORAGE.Dashboard();
-        $.each(graphObj, function(i, graph) {
-            dashboard.get(graph.title, graph.labels, "${c.metric}");
+        var config = "${c.configData}";
+        config = config.replace(/u'/g,"\"");
+        config = config.replace(/'/g,"\"");
+        var configObj = JSON.parse(config);
+        var html = '';
+        //Setup the HTML for receiving the charts
+        $.each(configObj, function(i, conf) {
+            html += "<div class='tabbertab' title='" + conf.tabName + "'>";                
+            html += "<div class='dashboard-container'>";
+            html += "<div style='width: 48%; float: left' id='col1'>";
+            var charts = conf.charts;
+            $.each(charts, function(j, chart) {
+                html += "<div id='" + chart.title + "-" + conf.aggMethod + "' style='margin: 5px 5px 5px 5px;'></div>";               
+                if((j+1) % 4 == 0) {
+                    html += "</div>";
+                    html += "<div style='width: 48%; float: right' id='col2'>";
+                }
             });
+            html += "</div></div></div>"
+        });
+        $('#dashboardTabContainer').append(html);
+
+        //Generate the charts
+        var dashboard = new HARSTORAGE.Dashboard();
+        $.each(configObj, function(i, conf) {
+            var metric = conf.aggMethod;
+            var charts = conf.charts;
+            $.each(charts, function(i, chart) {
+                dashboard.get(chart.title, chart.labels, metric, chart.timeFrameInDays, chart.metrics);
+            });
+        });
+
     })
+    .script("/scripts/tabber.js?ver=1.9.1").wait()
 </script>
 </%def>
