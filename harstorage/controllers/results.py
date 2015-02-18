@@ -564,7 +564,7 @@ class ResultsController(BaseController):
 
         # Read data for timeline from database in custom format (hash separated)
         labels = label.split(",")
-        startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-timeFrameInDays*60*60))
+        startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-(timeFrameInDays*24*60*60)))
 
         condition = {
             "label": { '$in': labels},
@@ -606,7 +606,7 @@ class ResultsController(BaseController):
         categories = str()
         timestamps = list()
 
-        for t in range (1, timeFrameInDays+1):
+        for t in range (0, timeFrameInDays):
             newTime = time.strftime("%Y-%m-%d", gmtime(time.time()-(timeFrameInDays-t)*24*60*60))
             categories += newTime + "#"
             timestamps.append(newTime)
