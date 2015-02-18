@@ -130,6 +130,7 @@ class ResultsController(BaseController):
         if c.mode == "label":
             c.query = "/superposed/display?" + \
                       "step_1_label=" + c.label + \
+                      "&step_1_label_hidden=" + c.label + \
                       "&step_1_start_ts=" + c.startTs + \
                       "&step_1_end_ts=" + max(c.timestamp)
             c.histo = "true"
