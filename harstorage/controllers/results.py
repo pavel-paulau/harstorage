@@ -625,11 +625,10 @@ class ResultsController(BaseController):
 
             for row in doc:
                 ts = timestamps[counter]
-                timestamp = row["timestamp"]
-                timestamp = timestamp[:-9]
+                timestamp = row["timestamp"][:-9]
                 # Date has changed, so add the row and reset for the next loop
                 # Data is getting reversed in the pionts array somehow, need to check this
-                if time.strptime(timestamp, "%Y-%m-%d") == time.strptime(ts, "%Y-%m-%d"):
+                if timestamp == ts:
                     docs.append(row["full_load_time"])
                     aggregated_docs[counter].append(row["full_load_time"])
                 else:
@@ -640,6 +639,9 @@ class ResultsController(BaseController):
                     # set vars for the next loop
                     docs = list()
                     counter += 1
+                    if counter >= len(timestamps):
+                        break
+            points = points[:-1]
             points += ";"
 
         agg_points = str()
