@@ -1422,6 +1422,17 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
             tickInterval: Math.ceil(categories.length / 10),
             tickmarkPlacement: "on"
         }],
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        click: function() {
+                           location.href = "/results/details?label=" + this.yAxis.axisTitle
+                        }
+                    }
+                }
+            }
+        },
         yAxis: yAxis,
         series: series
     });
