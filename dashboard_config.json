@@ -3,7 +3,7 @@
 "aggMethod" : "90th Percentile",
 "charts" : [
    {  
-      "title": "Home Page",
+      "title": "Simplified Home Page",
       "metrics" : [ "full_page_time", "user_ready_time"],
 	  "timeFrameInDays" : "7", 
       "labels": [   
@@ -11,6 +11,17 @@
          "unifiedHP_cable_prod_SLCD",
          "unifiedHP_cable_prod_SF",
          "unifiedHP_cable_prod_EG"
+      ]
+   },
+   {  
+      "title": "Explore Home Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+     "timeFrameInDays" : "7", 
+      "labels": [   
+         "unifiedCardsHP_cable_prod_RW",
+         "unifiedCardsHP_cable_prod_SLCD",
+         "unifiedCardsHP_cable_prod_SF",
+         "unifiedCardsHP_cable_prod_EG"
       ]
    },
    {  
@@ -85,7 +96,7 @@
 "aggMethod" : "Median",
 "charts" : [
    {  
-      "title": "Home Page",
+      "title": "Simplified Home Page",
       "metrics" : [ "full_page_time", "user_ready_time"],
 	  "timeFrameInDays" : "7", 
       "labels": [   
@@ -93,6 +104,17 @@
          "unifiedHP_cable_prod_SLCD",
          "unifiedHP_cable_prod_SF",
          "unifiedHP_cable_prod_EG"
+      ]
+   },
+   {  
+      "title": "Explore Home Page",
+      "metrics" : [ "full_page_time", "user_ready_time"],
+     "timeFrameInDays" : "7", 
+      "labels": [   
+         "unifiedCardsHP_cable_prod_RW",
+         "unifiedCardsHP_cable_prod_SLCD",
+         "unifiedCardsHP_cable_prod_SF",
+         "unifiedCardsHP_cable_prod_EG"
       ]
    },
    {  
