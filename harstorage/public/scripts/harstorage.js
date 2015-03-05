@@ -1424,16 +1424,18 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
         }],
         plotOptions: {
             series: {
+                cursor: "pointer",
                 point: {
                     events: {
                         click: function() {
-                           location.href = "/results/details?label=" + this.yAxis.axisTitle
+                            if(this.series.name != 'Aggregate') {
+                                location.href = "/results/details?label=" + this.series.name;
+                            }
                         }
                     }
                 }
             }
-        },
-        yAxis: yAxis,
+        },        yAxis: yAxis,
         series: series
     });
 };
