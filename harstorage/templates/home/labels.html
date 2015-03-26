@@ -1,13 +1,17 @@
 <%def name="html()">
 <div>
 	<div>Filter Results by:
+	<br/>
 	<button type="button" style="width: 100px" onclick="filterTable('(hp)|(homepage)', true, false);">Home</button>
 	<button type="button" style="width: 100px" onclick="filterTable('event', false, true);">Event</button>
-	<button type="button" style="width: 100px" onclick="filterTable('artist', false, true);">Artist/Performer</button>
 	<button type="button" style="width: 100px" onclick="filterTable('searchResults', false, true);">Search Results</button>
-	<button type="button" style="width: 100px" onclick="filterTable('venue', false, true);">Venue</button>
 	<button type="button" style="width: 100px" onclick="filterTable('xo', false, true);">Checkout</button>
+	<button type="button" style="width: 100px" onclick="filterTable('artist', false, true);">Artist/Performer</button>
+	<br/>
+	<button type="button" style="width: 100px" onclick="filterTable('venue', false, true);">Venue</button>
 	<button type="button" style="width: 100px" onclick="filterTable('team', false, true);">Team</button>
+	<button type="button" style="width: 100px" onclick="filterTable('category', false, true);">Category</button>
+	<button type="button" style="width: 100px" onclick="filterTable('grouping', false, true);">Grouping</button>
 	<button type="button" style="width: 100px; background: #90B080" onclick="filterTable('', true, false);">Reset All</button>
 	</div>	
 </div>
