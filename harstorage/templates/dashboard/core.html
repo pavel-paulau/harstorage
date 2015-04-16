@@ -7,7 +7,33 @@ ${dochead.html("Dashboard")}
 ${header.html()}
 <center>
     <div class="results" id="dashboard">
-	    <div class="tabber" id="dashboardTabContainer"></div>
+        <div class="tabber" id="dashboardTabContainer">
+            <div class="tabbertab" title="Overview">
+                <div class="tabber" id="dashboardOverviewContainer">
+			            <div class="tabbertab" title="prod-desktop">
+			                <div id="prod-desktop-container"></div>
+			            </div>
+			            <div class="tabbertab" title="prod-unified-desktop">
+			                <div id="prod-unified-desktop-container"></div>
+			            </div>
+			            <div class="tabbertab" title="prod-mWeb">
+			                <div id="prod-mWeb-container"></div>
+			            </div>
+			            <div class="tabbertab" title="qa-desktop">
+			                <div id="qa-desktop-container"></div>
+			            </div>
+			            <div class="tabbertab" title="qa-mWeb">
+			                <div id="qa-mWeb-container"></div>
+			            </div>
+		        </div>
+            </div>
+
+            <div class="tabbertab" title="Trends">
+                <div class="tabber" id="dashboardTrendsContainer">
+	            </div>
+            </div>
+
+        </div>
     </div>
 </center>
 ${jsloader.html()}

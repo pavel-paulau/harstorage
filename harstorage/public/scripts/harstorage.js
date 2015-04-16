@@ -104,6 +104,8 @@ HARSTORAGE.Converter = function(points) {
                 // Parsed value
                 pointValue = parseInt(pointValue, 10);
             }
+            if(isNaN(pointValue))       
+                pointValue = null; 
 
             dataArray[dataSetIndex][pointIndex] = pointValue;
         }
@@ -1289,7 +1291,7 @@ HARSTORAGE.Dashboard = function() {
 * timeFrameInDays - How many days back to see results for
 * metrics - What "metrics to display"
 */
-HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFrameInDays, metrics) {
+HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFrameInDays, metrics, renderToDiv) {
     "use strict";
 
     // Pointer
@@ -1300,7 +1302,7 @@ HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFram
 
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            that.draw(graph, this.responseText, aggMethod);
+            that.draw(graph, this.responseText, renderToDiv);
         }
     };
 
@@ -1389,7 +1391,7 @@ HARSTORAGE.Dashboard.prototype.converter = function(points) {
 };
 
 // Dashboard Draw graph
-HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
+HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv) {
     "use strict";
 
     // Pointer
@@ -1404,7 +1406,7 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
 
     new Highcharts.Chart({
         chart: {
-            renderTo: graph + "-" + metric,
+            renderTo: renderToDiv,
             zoomType: "x",
             defaultSeriesType: 'line',            
         },
@@ -1415,7 +1417,7 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, metric) {
             enabled: false
         },
         title: {
-            text: graph + " Trends - " + metric
+            text: graph
         },
         xAxis: [{
             categories: categories,
