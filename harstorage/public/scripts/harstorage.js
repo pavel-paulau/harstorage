@@ -105,7 +105,7 @@ HARSTORAGE.Converter = function(points) {
                 pointValue = parseInt(pointValue, 10);
             }
             if(isNaN(pointValue))       
-                pointValue = null; 
+                pointValue = 0; 
 
             dataArray[dataSetIndex][pointIndex] = pointValue;
         }

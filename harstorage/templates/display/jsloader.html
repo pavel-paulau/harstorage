@@ -10,9 +10,9 @@
     % endif
     % if c.chart == "true":
     .script("${h.url_for('/combine/scripts')}" +
-            "?highcharts/highcharts.js&ver=2.2.0" +
+            "?highcharts/highcharts.js&ver=4.1.5" +
             "&highcharts/themes.js&ver=${c.rev}" +
-            "&highcharts/exporting.js&ver=2.2.0").wait()
+            "&highcharts/exporting.js&ver=4.1.5").wait()
     % endif
     .script("${h.url_for('/scripts/chosen.jquery.js')}?ver=0.9.5")
     .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
