@@ -139,7 +139,7 @@ body a:hover {
 }
 /* Summary Table on Home Page */
 .summary {
-    width: 960px;
+    width: 1300px;
     visibility: hidden;
 }
 .summary .title {
