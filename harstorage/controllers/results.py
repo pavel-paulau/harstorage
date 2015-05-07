@@ -424,7 +424,7 @@ class ResultsController(BaseController):
                         "url":                  har.url,
                         "timestamp":            timestamp,
                         "full_load_time":       har.full_load_time,
-                        "user_ready_time":           userReady,
+                        "user_ready_time":      userReady,
                         "onload_event":         har.onload_event,
                         "start_render_time":    har.start_render_time,
                         "time_to_first_byte":   har.time_to_first_byte,
@@ -447,7 +447,8 @@ class ResultsController(BaseController):
                         "har":                  har.origin,
                         "weights_ratio":        har.weight_ratio(),
                         "requests_ratio":       har.req_ratio(),
-                        "domains_ratio":        har.domains }
+                        "domains_ratio":        har.domains,
+                        "pagename":             har.pageName }
 
             # MongoDB handler
             mdb_handler = MongoDB()

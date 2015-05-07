@@ -16,6 +16,9 @@
         var today = new Date();
         var month = today.getMonth() + 1;
         var monthStr = month;
+        var metric = "90th Percentile";
+        var metricUrlEncoded = "90th%20Percentile";
+
         if(month<10) {      
             monthStr = '0'+month;
         }        
@@ -36,6 +39,7 @@
                 var query = conf.query;
                 query = query.replace(/<START_TS>/g,sdFormatted);
                 query = query.replace(/<END_TS>/g,tFormatted);
+                query = query + '&metric=' + metricUrlEncoded;
 
                 var iframeHtml = "<iframe src=" + query + " width='980' id='" + conf.tabName + "-iframe' frameborder='0' scrolling='no' height='1000'></iframe>";
                 $('#'+conf.tabName+'-container').append(iframeHtml);
@@ -65,7 +69,6 @@
 
         //Generate the charts
         var dashboard = new HARSTORAGE.Dashboard();
-        var metric = "90th Percentile";
         var timeFrameInDays = '30';
         var metrics = [ "full_page_time", "user_ready_time"];
         $.each(configObj[0].trends, function(i, conf) {

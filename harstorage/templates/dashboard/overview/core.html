@@ -1,11 +1,10 @@
-<%namespace name="jsloader" file="/display/jsloader.html"/>
-<%namespace name="dochead"  file="/display/dochead.html"/>
+<%namespace name="jsloader" file="/dashboard/overview/jsloader.html"/>
+<%namespace name="dochead"  file="/dashboard/overview/dochead.html"/>
 <%namespace name="header"   file="/common/header.html"/>
 <%namespace name="footer"   file="/common/footer.html"/>
-<%namespace name="modules"  file="/display/modules.html"/>
+<%namespace name="modules"  file="/dashboard/overview/modules.html"/>
 
 ${dochead.html("Superposed Tests | " + c.agg_type)}
-${header.html()}
 <center>
     <div class="sp-display">
         % if c.chart == "true":

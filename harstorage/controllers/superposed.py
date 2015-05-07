@@ -68,6 +68,7 @@ class SuperposedController(BaseController):
         c.chart_type = request.GET.get("chart", None)
         c.table = request.GET.get("table", "false")
         init = request.GET.get("metric", "true")
+        forOverview = request.GET.get("overview", "false")
 
         c.chart = "true" if c.chart_type else "false"
 
@@ -169,7 +170,10 @@ class SuperposedController(BaseController):
         c.points = titles[:-1] + ";" + c.points[:-1]
         c.points = aggregator.exclude_missing(c.points)
 
-        return render("/display/core.html")
+        if forOverview == "true":
+            return render("/dashboard/overview/core.html")
+        else:
+            return render("/display/core.html")
 
     def histogram(self):
         """Render chart with histograms"""
