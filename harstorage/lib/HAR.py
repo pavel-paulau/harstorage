@@ -1,7 +1,6 @@
 import json
 import time
 import re
-import string
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
@@ -181,8 +180,7 @@ class HAR():
         self.bad_requests = 0
 
         self.domains = dict()
-        self.pageNames = ("Event", "Venue", "CardsHP", "UnifiedHP", "desktopHP", 
-            "xo_newxo", "SearchResults", "Artist", "team", "category", "grouping")
+        self.pageNames = ("Event", "Venue", "CardsHP", "UnifiedHP", "desktopHP", "xo_newxo", "SearchResults", "Artist", "team", "category", "grouping")
         self.pageNamesFriendlyName = json.loads('{"CardsHP" : "Explore Home", "UnifiedHP" : "Simplified Home", "desktopHP" : "Explore Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results",}')
 
     def analyze(self):
@@ -230,7 +228,7 @@ class HAR():
 
             # Update domain info
             self.update_domain_info()
-        
+
         if self.total_size == 0:
             self.total_size = self.get_page_size()
 
@@ -506,6 +504,25 @@ class HAR():
     def get_avg_blocking_time(self):
         return round(self.avg_blocking_time / self.requests, 0)
 
+    def getPageName(self):
+        # loop through possible page names
+        # conduct a regex pattern match for the page name
+        # if found, return the page name used in the pattern match
+        # self.pageNamesFriendlyName
+        # self.pageNames
+        capLabel = self.label.lower()
+        for pageName in self.pageNames:
+            capPageName = pageName.lower()
+            #if pagename found
+            if capLabel.find(capPageName) != -1:
+                #lookup in friendly names
+                try:
+                    return self.pageNamesFriendlyName[pageName]
+                except:
+                    return pageName
+
+        return 'n/a'
+
     def update_domain_info(self):
         domain = self.entry["request"]["url"].partition("//")[-1].partition("/")[0]
 
@@ -521,21 +538,3 @@ class HAR():
 
         self.domains[mongo_domain] = [domain_requests, domain_data_size]
 
-    def getPageName(self):
-        # loop through possible page names
-        # conduct a regex pattern match for the page name
-        # if found, return the page name used in the pattern match
-        # self.pageNamesFriendlyName
-        # self.pageNames
-        capLabel = string.capitalize(self.label)
-        for pageName in self.pageNames:
-            capPageName = string.capitalize(pageName)
-            #if pagename found
-            if capLabel.find(capPageName) != -1:
-                #lookup in friendly names
-                try:
-                    return self.pageNamesFriendlyName[pageName]
-                except:
-                    return pageName
-
-        return 'n/a'
