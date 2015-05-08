@@ -17,23 +17,19 @@
     .script("${h.url_for('/scripts/chosen.jquery.js')}?ver=0.9.5")
     .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
     .wait(function(){
+        HARSTORAGE.AggregatedStatistics("metrics");
+
         % if c.chart == "true":
         var columns = new HARSTORAGE.Columns();
         columns.draw("${c.points}", "${c.chart_type}");
         % endif
-
-        HARSTORAGE.AggregatedStatistics("metrics");
 
         % if c.table == "true":
         $(document).ready(function() {
             $("#stats_table").dataTable({
                 "bJQueryUI": true,
                 "sPaginationType": "full_numbers",
-                "sDom": 'R<"H"Tfr>t<"F"ip>',
-                "oTableTools": {
-                        "sSwfPath": "${h.url_for('/swf/copy_cvs_xls.swf')}",
-                        "aButtons": ["copy", "csv", "xls"]
-                },
+                "sDom": 'R<"H">t<"F"ip>',
                 "bAutoWidth": false,
                 "iDisplayLength": 100,
                 "sScrollX": "4270px"
