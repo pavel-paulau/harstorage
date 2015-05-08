@@ -7,10 +7,6 @@
 ${dochead.html("Superposed Tests | " + c.agg_type)}
 <center>
     <div class="sp-display">
-        % if c.chart == "true":
-            ${modules.chart()}
-        % endif
-    
         <p class="title">Aggregated Statistics</p>
 
         <div class="selector">
@@ -23,6 +19,10 @@ ${dochead.html("Superposed Tests | " + c.agg_type)}
             </select>
         </div>
 
+        % if c.chart == "true":
+            ${modules.chart()}
+        % endif
+    
         % if c.table == "true":
             ${modules.table()}
         % endif
