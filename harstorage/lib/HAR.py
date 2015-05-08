@@ -181,7 +181,9 @@ class HAR():
 
         self.domains = dict()
         self.pageNames = ("Event", "Venue", "CardsHP", "UnifiedHP", "desktopHP", "xo_newxo", "SearchResults", "Artist", "team", "category", "grouping")
-        self.pageNamesFriendlyName = json.loads('{"CardsHP" : "Explore Home", "UnifiedHP" : "Simplified Home", "desktopHP" : "Explore Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results",}')
+
+        friendlyNames = '{"CardsHP" : "Explore Home", "UnifiedHP" : "Simplified Home", "desktopHP" : "Explore Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results"}'
+        self.pageNamesFriendlyName = json.loads(friendlyNames)
 
     def analyze(self):
         """Extract data from HAR container"""
