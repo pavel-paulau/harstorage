@@ -921,6 +921,46 @@ HARSTORAGE.AggregatedStatistics = function(id) {
 };
 
 /*
+* Setting the aggregate option list for the dashboard location tab
+*/
+HARSTORAGE.setAggregatedForDashboard = function(ids) {
+    "use strict";
+
+    // Determine metric type from Query string
+    var metric,
+        href;
+
+    if (location.href.indexOf("metric") === -1) {
+        href = location.href + "?metric=";
+        metric = "Average";
+    } else {
+        href = location.href.split("metric")[0] + "metric=";
+        metric = location.href.split("metric")[1].split("=")[1];
+
+        if (metric === "90th%20Percentile") {
+            metric = "90th Percentile";
+        }
+    }
+
+    // Update selector box active option
+    $.each(ids, function(i, id) {
+        var selector = document.getElementById(id);
+        for (var i = 0, len = selector.options.length; i < len; i += 1 ) {
+            if (selector.options[i].value === metric) {
+                selector.selectedIndex = i;
+                $("#" + id).trigger("liszt:updated");
+                break;
+            }
+        }
+        // Add event handler to selector box
+        selector.onchange = function() {
+            location.href = href + this.value;
+        };
+    });
+
+};
+
+/*
  * Superpose Form
  */
 HARSTORAGE.SuperposeForm = function() {

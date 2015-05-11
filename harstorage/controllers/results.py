@@ -543,6 +543,17 @@ class ResultsController(BaseController):
         return render("/dashboard/core.html")
 
     @restrict("GET")
+    def dashboardLocation(self):
+        """Page with test results"""
+        filename = os.path.join(config["app_conf"]["dashboard_config_dir"], config["app_conf"]["dashboard_config_filename"])
+        with open(filename) as json_file:
+            configData = json.load(json_file)
+
+        c.configData = html.literal(configData)
+
+        return render("/dashboard/location/core.html")
+
+    @restrict("GET")
     def dashboardChart(self):
         """Generate data for timeline chart"""
         #labels

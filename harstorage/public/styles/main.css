@@ -320,6 +320,21 @@ body a:hover {
 #dashboardTrendsContainer.tabberlive {
     width: 100%;
 }
+#dashboardTrendsIframeContainer.tabberlive {
+    width: 100%;
+}
+.dashboard-container .selector {
+    text-align: center;
+    margin: 12px 0 18px 0;
+}
+.dashboard-container .title {
+    font-family: times, "Times New Roman", times-roman, georgia, serif;
+    font-weight: bold;
+    font-size: 108%;
+    margin: 12px 0 18px 0;
+    float: center;
+    text-align: center;
+}
 .results .title {
     font-family: times, "Times New Roman", times-roman, georgia, serif;
     font-weight: bold;
@@ -343,7 +358,7 @@ body a:hover {
     width: 200px;
     height: 200px;
 }
-.results .container-max,.results .container-min,.results .container-umin, .results .dashboardOverviewContainer, .results .dashboardTrendsContainer {
+.results .container-max,.results .container-min,.results .container-umin, .results .dashboardOverviewContainer, .results .dashboardTrendsContainer, .results .dashboardTrendsIframeContainer {
     height: 210px;
     float: left;
     margin: 10px 0 0 0;
@@ -355,6 +370,10 @@ body a:hover {
     height: 100%;
 }
 .results .dashboardTrendsContainer {
+    width: 100%;
+    height: 100%;
+}
+.results .dashboardTrendsIframeContainer {
     width: 100%;
     height: 100%;
 }
