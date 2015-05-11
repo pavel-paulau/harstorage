@@ -50,33 +50,10 @@
 
         var html = '';
         //Setup the HTML for receiving the charts
-        $.each(configObj[0].trends, function(i, conf) {
-            html += "<div class='tabbertab' title='" + conf.tabName + "'>";                
-            html += "<div class='dashboard-container'>";
-            html += "<div style='width: 48%; float: left' id='col1'>";
+        html += "<iframe src=/results/dashboardLocation?metric=" + metricUrlEncoded + " width='100%' id='dashboardTrendsIframe' frameborder='0' scrolling='no' height='2500'></iframe>";
+        html += "</div>"
+        $('#dashboardTrendsIframeContainer').append(html);
 
-            var charts = conf.charts;
-            $.each(charts, function(j, chart) {
-                html += "<div id='" + chart.title + "-"+ conf.tabName +"' style='margin: 5px 5px 5px 5px;'></div>";               
-                if((j+1) % 4 == 0) {
-                    html += "</div>";
-                    html += "<div style='width: 48%; float: right' id='col2'>";
-                }
-            });
-            html += "</div></div></div>"
-        });
-        $('#dashboardTrendsContainer').append(html);
-
-        //Generate the charts
-        var dashboard = new HARSTORAGE.Dashboard();
-        var timeFrameInDays = '30';
-        var metrics = [ "full_page_time", "user_ready_time"];
-        $.each(configObj[0].trends, function(i, conf) {
-            var charts = conf.charts;
-            $.each(charts, function(i, chart) {
-                dashboard.get(chart.title, chart.labels, metric, timeFrameInDays, metrics, chart.title + "-" + conf.tabName);
-            });
-        });
     })
     .script("/scripts/tabber.js?ver=1.9.1").wait()
 </script>
