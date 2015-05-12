@@ -1471,7 +1471,7 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv) {
                     events: {
                         click: function() {
                             if(this.series.name != 'Aggregate') {
-                                location.href = "/results/details?label=" + this.series.name;
+                                window.top.location.href = "/results/details?label=" + this.series.name;
                             }
                         }
                     }
