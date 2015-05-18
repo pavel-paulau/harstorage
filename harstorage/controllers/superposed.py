@@ -117,21 +117,35 @@ class SuperposedController(BaseController):
             start_ts = request.GET["step_" + str(row_index + 1) + "_start_ts"]
             end_ts = request.GET["step_" + str(row_index + 1) + "_end_ts"]
 
-            # Add label
-            c.metrics_table[0].append(label[:40])
-            c.points += label[:40] + "#"
-
             # Fetch test results
             labels = label.split(",")
             condition = {
                 "label": { '$in': labels},
                 "timestamp": {"$gte": start_ts, "$lte": end_ts}
             }
+            fields = list()
+            for metric in self.METRICS:
+                fields.append(metric)
+            fields.append("pagename")
+
             documents = md_handler.collection.find(condition,
-                                                   fields=aggregator.METRICS)
+                                                   fields=fields)
 
             # Add data row to aggregator
-            aggregator.add_row(label[:40], row_index, documents)
+            if forOverview == "true":
+                try:
+                    pagename = documents[0]["pagename"]
+                except:
+                    pagename = label[:40]
+
+                aggregator.add_row(pagename, row_index, documents)
+                c.metrics_table[0].append(pagename)
+                c.points += pagename + "#"
+            else:
+                # Add label
+                c.metrics_table[0].append(label[:40])
+                c.points += label[:40] + "#"
+                aggregator.add_row(label[:40], row_index, documents)                
 
         # Aggregated data per column
         column = 1
