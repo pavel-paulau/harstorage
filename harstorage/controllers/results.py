@@ -566,14 +566,15 @@ class ResultsController(BaseController):
         # Aggregation option
         c.agg_type = request.GET.get("aggMethod", "Average")
         timeFrameInDays = int(request.GET.get("timeFrameInDays", "7"))
-        metrics = h.decode_uri(request.GET["metrics"])
+        metric = h.decode_uri(request.GET["metric"])
 
 
         yLabels = str()
-        yLabels += "Full Load Time"
+        yLabels += metric
 
         # Metrics
-        FIELDS = ( "label", "timestamp", "full_load_time")
+        FIELDS = ["label", "timestamp"]
+        FIELDS.append(metric)
 
         # Read data for timeline from database in custom format (hash separated)
         labels = label.split(",")
@@ -641,8 +642,8 @@ class ResultsController(BaseController):
                 # Date has changed, so add the row and reset for the next loop
                 # Data is getting reversed in the pionts array somehow, need to check this
                 if timestamp == ts:
-                    docs.append(row["full_load_time"])
-                    aggregated_docs[counter].append(row["full_load_time"])
+                    docs.append(row[metric])
+                    aggregated_docs[counter].append(row[metric])
                 else:
                     if len(docs) > 0:
                         points += str(aggregator.get_aggregated_value(docs, c.agg_type, c.agg_type)) + str("#")

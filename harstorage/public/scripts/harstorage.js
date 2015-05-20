@@ -1346,7 +1346,7 @@ HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFram
         }
     };
 
-    var URI = "/results/dashboardChart?labels=" + encodeURIComponent(labels) + "&aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&metrics=" + encodeURIComponent(metrics);
+    var URI = "/results/dashboardChart?labels=" + encodeURIComponent(labels) + "&aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&metric=" + encodeURIComponent(metrics);
 
     xhr.open("GET", URI, true);
     xhr.send();

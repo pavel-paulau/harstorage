@@ -30,7 +30,7 @@
             html += "<div class='dashboard-container'>";
             html += "<p class='title'>Aggregated Statistics</p>";
             html += "<div class='selector'>";
-            html += "<select id='metrics-" + conf.tabName + "' class='chosen-select-'" + conf.tabName + "'>";
+            html += "<select id='aggMethod-" + conf.tabName + "' class='chosen-select-'" + conf.tabName + "'>";
             html += "<option value='Average'>Average</option>";
             html += "<option value='Median'>Median</option>";
             html += "<option value='90th Percentile'>90th Percentile</option>";
@@ -40,7 +40,7 @@
             html += "</div>";
             html += "<div style='width: 48%; float: left' id='col1'>";
 
-            selectorIds.push("metrics-" + conf.tabName);
+            selectorIds.push("aggMethod-" + conf.tabName);
 
             var charts = conf.charts;
             $.each(charts, function(j, chart) {
@@ -58,7 +58,7 @@
         //Generate the charts
         var dashboard = new HARSTORAGE.Dashboard();
         var timeFrameInDays = '30';
-        var metrics = [ "full_page_time", "user_ready_time"];
+        var metrics = "full_load_time";
         $.each(configObj[0].trends, function(i, conf) {
             $(".chosen-select-" + conf.tabName).chosen();
             var charts = conf.charts;
