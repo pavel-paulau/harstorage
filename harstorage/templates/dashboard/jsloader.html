@@ -18,6 +18,7 @@
         var monthStr = month;
         var metric = "90th Percentile";
         var metricUrlEncoded = "90th%20Percentile";
+        var value = "full_load_time";
 
         if(month<10) {      
             monthStr = '0'+month;
@@ -50,7 +51,7 @@
 
         var html = '';
         //Setup the HTML for receiving the charts
-        html += "<iframe src=/results/dashboardLocation?metric=" + metricUrlEncoded + " width='100%' id='dashboardTrendsIframe' frameborder='0' scrolling='no' height='2500'></iframe>";
+        html += "<iframe src=/results/dashboardLocation?metric=" + metricUrlEncoded + "&value=" + value + " width='100%' id='dashboardTrendsIframe' frameborder='0' scrolling='no' height='2500'></iframe>";
         html += "</div>"
         $('#dashboardTrendsIframeContainer').append(html);
 

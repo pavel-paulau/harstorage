@@ -325,7 +325,8 @@ body a:hover {
 }
 .dashboard-container .selector {
     text-align: center;
-    margin: 12px 0 18px 0;
+    margin: 12px 10px 18px 0;
+    padding-left: 10px;
 }
 .dashboard-container .title {
     font-family: times, "Times New Roman", times-roman, georgia, serif;

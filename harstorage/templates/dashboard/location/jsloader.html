@@ -14,23 +14,30 @@
         config = config.replace(/'/g,"\"");
         var configObj = JSON.parse(config);
 
-        var metric = "90th Percentile";
+        var aggMethod = "90th Percentile";
+        var metric = "full_load_time";
         if (location.href.indexOf("metric") > -1) {
-            metric = location.href.split("metric")[1].split("=")[1];
-            if (metric === "90th%20Percentile") {
-                metric = "90th Percentile";
+            aggMethod = location.href.split("metric")[1].split("=")[1];
+            if (aggMethod === "90th%20Percentile") {
+                aggMethod = "90th Percentile";
             }
         }
+        if (location.href.indexOf("value") > -1) {
+            metric = location.href.split("value")[1].split("=")[1];
+        }
+
         var html = '';
         var selectorIds = [];
+        var metricsSelectorIds = [];
 
         //Setup the HTML for receiving the charts
         $.each(configObj[0].trends, function(i, conf) {
             html += "<div class='tabbertab' title='" + conf.tabName + "'>";                
             html += "<div class='dashboard-container'>";
+            html += "<div style='display: flex'>";
             html += "<p class='title'>Aggregated Statistics</p>";
             html += "<div class='selector'>";
-            html += "<select id='aggMethod-" + conf.tabName + "' class='chosen-select-'" + conf.tabName + "'>";
+            html += "<select id='aggMethod-" + conf.tabName + "' class='chosen-select-agg-" + conf.tabName + "'>";
             html += "<option value='Average'>Average</option>";
             html += "<option value='Median'>Median</option>";
             html += "<option value='90th Percentile'>90th Percentile</option>";
@@ -38,9 +45,18 @@
             html += "<option value='Maximum'>Maximum</option>";
             html += "</select>";
             html += "</div>";
+            html += "<p class='title'>Metric</p>";
+            html += "<div class='selector'>";
+            html += "<select id='metric-" + conf.tabName + "' class='chosen-select-metric-" + conf.tabName + "'>";
+            html += "<option value='full_load_time'>Full Load Time</option>";
+            html += "<option value='user_ready_time'>User Ready Time</option>";
+            html += "</select>";
+            html += "</div>";
+            html += "</div>";
             html += "<div style='width: 48%; float: left' id='col1'>";
 
             selectorIds.push("aggMethod-" + conf.tabName);
+            metricsSelectorIds.push("metric-" + conf.tabName);
 
             var charts = conf.charts;
             $.each(charts, function(j, chart) {
@@ -58,16 +74,17 @@
         //Generate the charts
         var dashboard = new HARSTORAGE.Dashboard();
         var timeFrameInDays = '30';
-        var metrics = "full_load_time";
         $.each(configObj[0].trends, function(i, conf) {
-            $(".chosen-select-" + conf.tabName).chosen();
+            $(".chosen-select-agg-" + conf.tabName).chosen();
+            $(".chosen-select-metric-" + conf.tabName).chosen();
             var charts = conf.charts;
             $.each(charts, function(i, chart) {
-                dashboard.get(chart.title, chart.labels, metric, timeFrameInDays, metrics, chart.title + "-" + conf.tabName);
+                dashboard.get(chart.title, chart.labels, aggMethod, timeFrameInDays, metric, chart.title + "-" + conf.tabName);
             });
         });
 
         HARSTORAGE.setAggregatedForDashboard(selectorIds);
+        HARSTORAGE.setMetricsForDashboard(metricsSelectorIds);
 
     })
     .script("/scripts/tabber.js?ver=1.9.1").wait()

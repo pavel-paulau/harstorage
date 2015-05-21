@@ -920,6 +920,25 @@ HARSTORAGE.AggregatedStatistics = function(id) {
     };
 };
 
+HARSTORAGE.replaceUrlParam = function(url, paramName, paramValue){
+    var pattern = new RegExp('('+paramName+'=).*?(&|$)')
+    var newUrl=url
+    if(url.search(pattern)>=0){
+        newUrl = url.replace(pattern,'$1' + paramValue + '$2');
+    }
+    else{
+        newUrl = newUrl + (newUrl.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue 
+    }
+    return newUrl
+}
+
+HARSTORAGE.getParameterByName = function(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 /*
 * Setting the aggregate option list for the dashboard location tab
 */
@@ -930,16 +949,9 @@ HARSTORAGE.setAggregatedForDashboard = function(ids) {
     var metric,
         href;
 
-    if (location.href.indexOf("metric") === -1) {
-        href = location.href + "?metric=";
-        metric = "Average";
-    } else {
-        href = location.href.split("metric")[0] + "metric=";
-        metric = location.href.split("metric")[1].split("=")[1];
-
-        if (metric === "90th%20Percentile") {
-            metric = "90th Percentile";
-        }
+    metric = HARSTORAGE.getParameterByName("metric");
+    if (metric == "") {
+        metric = "Average";        
     }
 
     // Update selector box active option
@@ -954,7 +966,39 @@ HARSTORAGE.setAggregatedForDashboard = function(ids) {
         }
         // Add event handler to selector box
         selector.onchange = function() {
-            location.href = href + this.value;
+            location.href = HARSTORAGE.replaceUrlParam(location.href, "metric", this.value);
+        };
+    });
+
+};
+
+/*
+* Setting the metrics option list for the dashboard location tab
+*/
+HARSTORAGE.setMetricsForDashboard = function(ids) {
+    "use strict";
+
+    // Determine metric type from Query string
+    var metric,
+        href;
+    metric = HARSTORAGE.getParameterByName("value");
+    if (metric == "") {
+        metric = "full_load_time";        
+    }
+
+    // Update selector box active option
+    $.each(ids, function(i, id) {
+        var selector = document.getElementById(id);
+        for (var i = 0, len = selector.options.length; i < len; i += 1 ) {
+            if (selector.options[i].value === metric) {
+                selector.selectedIndex = i;
+                $("#" + id).trigger("liszt:updated");
+                break;
+            }
+        }
+        // Add event handler to selector box
+        selector.onchange = function() {
+            location.href = HARSTORAGE.replaceUrlParam(location.href, "value", this.value);
         };
     });
 
