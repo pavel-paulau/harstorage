@@ -1386,7 +1386,7 @@ HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFram
 
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            that.draw(graph, this.responseText, renderToDiv);
+            that.draw(graph, this.responseText, renderToDiv, true);
         }
     };
 
@@ -1475,7 +1475,7 @@ HARSTORAGE.Dashboard.prototype.converter = function(points) {
 };
 
 // Dashboard Draw graph
-HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv) {
+HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv, allowLinkTo) {
     "use strict";
 
     // Pointer
@@ -1514,7 +1514,7 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv) {
                 point: {
                     events: {
                         click: function() {
-                            if(this.series.name != 'Aggregate') {
+                            if(this.series.name != 'Aggregate' && allowLinkTo) {
                                 window.top.location.href = "/results/details?label=" + this.series.name;
                             }
                         }
@@ -1526,3 +1526,31 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv) {
     });
 };
 
+/* 
+* Get data for the dashboard chart
+* tabName - Name of the tab to fetch the chart for
+* aggMethod - How to aggregate the data (average, 90th Percentile, etc...)
+* timeFrameInDays - How many days back to see results for
+* renderToDiv - the div to render the chart to
+*/
+HARSTORAGE.Dashboard.prototype.getAggregateTrendChart = function(tabName, aggMethod, timeFrameInDays, renderToDiv) {
+    "use strict";
+
+    // Pointer
+    var that = this;
+
+    // Retrieve data for timeline via XHR call
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            if(this.responseText != "")
+                that.draw(tabName, this.responseText, renderToDiv, false);
+        }
+    };
+
+    var URI = "/results/dashboardAggregateTrendingChart?tabName=" + encodeURIComponent(tabName) + "&aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays;
+
+    xhr.open("GET", URI, true);
+    xhr.send();
+};

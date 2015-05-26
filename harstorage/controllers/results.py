@@ -672,3 +672,101 @@ class ResultsController(BaseController):
         c.points = yLabels +';'+seriesNames +';'+categories+';'+points+';'+agg_points
 
         return c.points
+
+    @restrict("GET")
+    def dashboardAggregateTrendingChart(self):
+        """Generate data for average trending timeline chart"""
+
+        # Load the config file and it's data
+        filename = os.path.join(config["app_conf"]["dashboard_config_dir"], config["app_conf"]["dashboard_config_filename"])
+        with open(filename) as json_file:
+            configData = json.load(json_file)
+
+        aggTrendCharts = str()
+        for jsonObj in configData:
+            aggTrendCharts = jsonObj["aggTrendCharts"];
+
+        defaultAggMethod = aggTrendCharts["defaultAggMethod"]
+        metrics = aggTrendCharts["metrics"]
+
+        # requestParams
+        tabName = h.decode_uri(request.GET["tabName"])
+        agg_type = request.GET.get("aggMethod", defaultAggMethod)
+        timeFrameInDays = int(request.GET.get("timeFrameInDays", "7"))
+        startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-(timeFrameInDays*24*60*60)))
+
+        try:
+            tabData = aggTrendCharts[tabName]
+            charts = tabData["charts"]
+        except:
+            # No configured chart for this tab, return empty points
+            return ""
+
+        # Setup the chart data
+        seriesNames = str()
+        points = str()
+        categories = str()
+        timestamps = list()
+
+        # Aggregator
+        aggregator = Aggregator()
+
+        for t in range (0, timeFrameInDays):
+            newTime = time.strftime("%Y-%m-%d", gmtime(time.time()-(timeFrameInDays-t)*24*60*60))
+            categories += newTime + "#"
+            timestamps.append(newTime)
+
+        categories = categories[:-1]    
+
+        # Loop returned charts for tab
+        # Get the title and tests for aggregating
+        # Query the dataset and aggregate
+        for metric in metrics:
+            for chart in charts:
+                labels = chart["labels"]
+                seriesNames += chart["title"] + "-" + metric + "#"
+                counter = 0
+            
+
+                # fields results from datastore
+                fields = ["label", "timestamp"]
+                fields.append(metric)
+
+                condition = {
+                    "label": { '$in': labels},
+                    "timestamp": {"$gte": startTs}
+                }       
+                results = MongoDB().collection.find(
+                    condition,
+                    fields = fields,
+                    sort = [("timestamp", 1)])
+            
+                #Initialize a list for capturing the resulting metric data to analyze
+                aggregated_docs = list()
+
+                for result in results:
+                    ts = timestamps[counter]
+                    timestamp = result["timestamp"][:-9]
+                    # Date has changed, so add the row and reset for the next loop
+                    # Data is getting reversed in the pionts array somehow, need to check this
+                    if timestamp == ts:
+                        aggregated_docs.append(result[metric])
+                    else:
+                        if len(aggregated_docs) > 0:
+                            points += str(aggregator.get_aggregated_value(aggregated_docs, agg_type, agg_type)) + str("#")
+                        else:
+                            points += "n/a#"
+                        # set vars for the next loop
+                        aggregated_docs = list()
+                        counter += 1
+                        if counter >= len(timestamps):
+                            break
+                points = points[:-1]
+                points += ";"
+
+        points = points[:-1]
+
+        # Final chart points
+        points = "Time" +';'+seriesNames +';'+categories+';'+points
+
+        return points

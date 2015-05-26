@@ -41,6 +41,7 @@
                 query = query.replace(/<START_TS>/g,sdFormatted);
                 query = query.replace(/<END_TS>/g,tFormatted);
                 query = query + '&metric=' + metricUrlEncoded;
+                query = query + '&tabName=' + conf.tabName;
 
                 var iframeHtml = "<iframe src=" + query + " width='980' id='" + conf.tabName + "-iframe' frameborder='0' scrolling='no' height='1000'></iframe>";
                 $('#'+conf.tabName+'-container').append(iframeHtml);

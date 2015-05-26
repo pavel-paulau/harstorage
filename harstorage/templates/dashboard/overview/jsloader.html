@@ -19,6 +19,13 @@
     .wait(function(){
         HARSTORAGE.AggregatedStatistics("metrics");
 
+        var dashboard = new HARSTORAGE.Dashboard();
+        var tabName = HARSTORAGE.getParameterByName("tabName");
+        var aggMethod = HARSTORAGE.getParameterByName("metric");
+        var timeFrameInDays = '30';
+
+        dashboard.getAggregateTrendChart(tabName, aggMethod, timeFrameInDays, "aggTrendsChart");
+ 
         % if c.chart == "true":
         var columns = new HARSTORAGE.Columns();
         columns.draw("${c.points}", "${c.chart_type}");

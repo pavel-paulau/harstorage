@@ -147,5 +147,135 @@
     ]
   }]
    }
-]
+], 
+"aggTrendCharts" : {
+  "metrics" : [ "full_load_time", "user_ready_time"],
+  "defaultAggMethod" : "90th Percentile",
+  "prod-mWeb": { 
+    "charts" : [
+    {  
+      "title": "Explore Home Page",
+      "labels": [   
+         "unifiedCardsHP_cable_prod_SLCD",
+         "unifiedCardsHP_cable_prod_SF",
+         "unifiedCardsHP_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"Event Page",
+      "labels": [  
+         "unifiedEvent_cable_prod_SLCD",
+         "unifiedEvent_cable_prod_SF",
+         "unifiedEvent_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"Search Results Page",
+      "labels": [  
+         "unifiedSearchResults_cable_prod_SLCD",
+         "unifiedSearchResults_cable_prod_SF",
+         "unifiedSearchResults_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"Artist Page",
+      "labels": [  
+         "unifiedArtist_cable_prod_SLCD",
+         "unifiedArtist_cable_prod_SF",
+         "unifiedArtist_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"Team Page",
+      "labels": [  
+         "unifiedTeam_cable_prod_SLCD",
+         "unifiedTeam_cable_prod_SF",
+         "unifiedTeam_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"Venue Page",
+      "labels": [  
+         "unifiedVenue_cable_prod_SLCD",
+         "unifiedVenue_cable_prod_SF",
+         "unifiedVenue_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"XO Page",
+      "labels":[  
+         "xo_newxo_cable_prod_SLCD",
+         "xo_newxo_cable_prod_SF",
+         "xo_newxo_cable_prod_EG"
+      ]
+    },
+    {  
+      "title":"Category Page",
+      "labels":[  
+         "unifiedCategory_cable_prod_SLCD",
+         "unifiedCategory_cable_prod_EG",
+         "unifiedCategory_cable_prod_SF"
+      ]
+    },
+    {  
+      "title":"Grouping Page",
+      "labels":[  
+         "unifiedGrouping_cable_prod_SLCD",
+         "unifiedGrouping_cable_prod_EG",
+         "unifiedGrouping_cable_prod_SF"
+      ]
+    }]
+    },
+  "prod-legacy-desktop": { 
+    "charts" : [
+    {  
+      "title": "Home Page",
+      "labels": [   
+         "desktopHP_cable_prod_EG",
+         "desktopHP_cable_prod_SLCD",
+         "desktopHP_cable_prod_SF"
+      ]
+    },  
+    {  
+      "title": "Search Results Page",
+      "labels": [   
+         "desktopSearch_cable_prod_EG",
+         "desktopSearch_cable_prod_SLCD",
+         "desktopSearch_cable_prod_SF"
+      ]
+    },  
+    {  
+      "title": "Event Page",
+      "labels": [   
+         "desktop_event_cable_prod_EG",
+         "desktop_event_cable_prod_SLCD",
+         "desktop_event_cable_prod_SF"
+      ]
+    },  
+    {  
+      "title": "Grouping Page",
+      "labels": [   
+         "desktop_grouping_cable_prod_EG",
+         "desktop_grouping_cable_prod_SLCD",
+         "desktop_grouping_cable_prod_SF"
+      ]
+    },  
+    {  
+      "title": "Venue Page",
+      "labels": [   
+         "desktop_venue_cable_prod_EG",
+         "desktop_venue_cable_prod_SLCD",
+         "desktop_venue_cable_prod_SF"
+      ]
+    },  
+    {  
+      "title": "Category Page",
+      "labels": [   
+         "desktop_category_cable_prod_EG",
+         "desktop_category_cable_prod_SLCD",
+         "desktop_category_cable_prod_SF"
+      ]
+    }]
+  }   
+}
 }]
