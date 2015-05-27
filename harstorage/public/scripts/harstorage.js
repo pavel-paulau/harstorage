@@ -891,16 +891,12 @@ HARSTORAGE.AggregatedStatistics = function(id) {
     var metric,
         href;
 
-    if (location.href.indexOf("metric") === -1) {
-        href = location.href + "&metric=";
-        metric = "Average";
-    } else {
-        href = location.href.split("metric")[0] + "metric=";
-        metric = location.href.split("metric")[1].split("=")[1];
-
-        if (metric === "90th%20Percentile") {
-            metric = "90th Percentile";
-        }
+    metric = HARSTORAGE.getParameterByName("metric");
+    if (metric == "") {
+        metric = "Average";        
+    }
+    if (metric === "90th%20Percentile") {
+        metric = "90th Percentile";
     }
 
     // Update selector box active option
@@ -917,6 +913,7 @@ HARSTORAGE.AggregatedStatistics = function(id) {
     // Add event handler to selector box
     selector.onchange = function() {
         location.href = href + this.value;
+        location.href = HARSTORAGE.replaceUrlParam(location.href, "metric", this.value);
     };
 };
 
@@ -1230,83 +1227,6 @@ HARSTORAGE.SuperposeForm.prototype.del = function(button) {
     }
 };
 
-// Set timelines for selected label
-/*
-HARSTORAGE.SuperposeForm.prototype.setTimestamps = function(id) {
-    "use strict";
-
-    // Poiner
-    var that = this;
-
-    // Dynamic data
-    this.dates = [];
-
-    // Show Ajax spinner
-    this.spinner.style.display = "block";
-
-    // Update timestamps
-    var set_data = function() {
-        var i,
-            len,
-            ts;
-
-        // Calculate id
-        id  = id.split("_")[0] + "_" + id.split("_")[1];
-
-        // Hide Ajax spinner
-        that.spinner.style.display = "none";
-
-        // Update cache
-        if (typeof(that.cache[that.URI]) === "undefined") {
-            that.dates = that.xhr.responseText.split(";");
-            that.cache[that.URI] = that.dates;
-        } else {
-            that.dates.reverse();
-        }
-
-        // Start timestamps
-        var select = document.getElementById(id + "_start_ts");
-        select.options.length = 0;
-
-        for (i = 0, len = that.dates.length; i < len; i += 1) {
-            ts = that.dates[i];
-            select.options[i] = new Option(ts, ts, false, false);
-        }
-
-        // End timestamps
-        select = document.getElementById(id + "_end_ts");
-        select.options.length = 0;
-        that.dates.reverse();
-
-        for (i = 0, len = that.dates.length; i < len; i += 1) {
-            ts = that.dates[i];
-            select.options[i] = new Option(ts, ts, false, false);
-        }
-    };
-
-    // Request data via XHR or read from cache
-    var select = document.getElementById(id);
-    var label = select.options[select.selectedIndex].text;
-    this.URI = "dates?label=" + label;
-
-    this.xhr = new XMLHttpRequest();
-
-    this.xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            set_data();
-        }
-    };
-
-    if (typeof(this.cache[this.URI]) === "undefined") {
-        this.xhr.open("GET", this.URI, true);
-        this.xhr.send();
-    } else {
-        this.dates = this.cache[this.URI];
-        set_data();
-    }
-};
-*/
-
 // Add Ajax spinner
 HARSTORAGE.SuperposeForm.prototype.addSpinner = function() {
     "use strict";
@@ -1498,7 +1418,19 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv, allow
             enabled: false
         },
         exporting: {
-            enabled: false
+            buttons: {
+                printButton: {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
+            },
         },
         title: {
             text: graph
@@ -1549,7 +1481,7 @@ HARSTORAGE.Dashboard.prototype.getAggregateTrendChart = function(tabName, aggMet
         }
     };
 
-    var URI = "/results/dashboardAggregateTrendingChart?tabName=" + encodeURIComponent(tabName) + "&aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays;
+    var URI = "/results/dashboardAggregateTrendingChart?aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&tabName=" + encodeURIComponent(tabName);
 
     xhr.open("GET", URI, true);
     xhr.send();
