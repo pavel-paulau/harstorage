@@ -18,7 +18,8 @@ ${dochead.html("Superposed Tests | " + c.agg_type)}
             </select>
         </div>
 
-        <div id="aggTrendsChart" style="padding-bottom: 5px"></div>
+        <div id="aggTrendsChart-full" style="padding-bottom: 5px"></div>
+        <div id="aggTrendsChart-user" style="padding-bottom: 5px"></div>
 
         % if c.chart == "true":
             ${modules.chart()}

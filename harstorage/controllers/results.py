@@ -687,10 +687,11 @@ class ResultsController(BaseController):
             aggTrendCharts = jsonObj["aggTrendCharts"];
 
         defaultAggMethod = aggTrendCharts["defaultAggMethod"]
-        metrics = aggTrendCharts["metrics"]
 
         # requestParams
         tabName = h.decode_uri(request.GET["tabName"])
+        metric = h.decode_uri(request.GET["metric"])
+
         agg_type = request.GET.get("aggMethod", defaultAggMethod)
         timeFrameInDays = int(request.GET.get("timeFrameInDays", "7"))
         startTs = strftime("%Y-%m-%d 00:00:00", gmtime(time.time()-(timeFrameInDays*24*60*60)))
@@ -721,48 +722,46 @@ class ResultsController(BaseController):
         # Loop returned charts for tab
         # Get the title and tests for aggregating
         # Query the dataset and aggregate
-        for metric in metrics:
-            for chart in charts:
-                labels = chart["labels"]
-                seriesNames += chart["title"] + "-" + metric + "#"
-                counter = 0
-            
+        for chart in charts:
+            labels = chart["labels"]
+            seriesNames += chart["title"] + "-" + metric + "#"
+            counter = 0
 
-                # fields results from datastore
-                fields = ["label", "timestamp"]
-                fields.append(metric)
+            # fields results from datastore
+            fields = ["label", "timestamp"]
+            fields.append(metric)
 
-                condition = {
-                    "label": { '$in': labels},
-                    "timestamp": {"$gte": startTs}
-                }       
-                results = MongoDB().collection.find(
-                    condition,
-                    fields = fields,
-                    sort = [("timestamp", 1)])
-            
-                #Initialize a list for capturing the resulting metric data to analyze
-                aggregated_docs = list()
+            condition = {
+                "label": { '$in': labels},
+                "timestamp": {"$gte": startTs}
+            }       
+            results = MongoDB().collection.find(
+                condition,
+                fields = fields,
+                sort = [("timestamp", 1)])
+        
+            #Initialize a list for capturing the resulting metric data to analyze
+            aggregated_docs = list()
 
-                for result in results:
-                    ts = timestamps[counter]
-                    timestamp = result["timestamp"][:-9]
-                    # Date has changed, so add the row and reset for the next loop
-                    # Data is getting reversed in the pionts array somehow, need to check this
-                    if timestamp == ts:
-                        aggregated_docs.append(result[metric])
+            for result in results:
+                ts = timestamps[counter]
+                timestamp = result["timestamp"][:-9]
+                # Date has changed, so add the row and reset for the next loop
+                # Data is getting reversed in the pionts array somehow, need to check this
+                if timestamp == ts:
+                    aggregated_docs.append(result[metric])
+                else:
+                    if len(aggregated_docs) > 0:
+                        points += str(aggregator.get_aggregated_value(aggregated_docs, agg_type, agg_type)) + str("#")
                     else:
-                        if len(aggregated_docs) > 0:
-                            points += str(aggregator.get_aggregated_value(aggregated_docs, agg_type, agg_type)) + str("#")
-                        else:
-                            points += "n/a#"
-                        # set vars for the next loop
-                        aggregated_docs = list()
-                        counter += 1
-                        if counter >= len(timestamps):
-                            break
-                points = points[:-1]
-                points += ";"
+                        points += "n/a#"
+                    # set vars for the next loop
+                    aggregated_docs = list()
+                    counter += 1
+                    if counter >= len(timestamps):
+                        break
+            points = points[:-1]
+            points += ";"
 
         points = points[:-1]
 

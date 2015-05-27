@@ -1465,7 +1465,7 @@ HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv, allow
 * timeFrameInDays - How many days back to see results for
 * renderToDiv - the div to render the chart to
 */
-HARSTORAGE.Dashboard.prototype.getAggregateTrendChart = function(tabName, aggMethod, timeFrameInDays, renderToDiv) {
+HARSTORAGE.Dashboard.prototype.getAggregateTrendChart = function(tabName, aggMethod, timeFrameInDays, renderToDiv, metric) {
     "use strict";
 
     // Pointer
@@ -1477,11 +1477,11 @@ HARSTORAGE.Dashboard.prototype.getAggregateTrendChart = function(tabName, aggMet
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             if(this.responseText != "")
-                that.draw(tabName, this.responseText, renderToDiv, false);
+                that.draw(tabName + " - " + metric, this.responseText, renderToDiv, false);
         }
     };
 
-    var URI = "/results/dashboardAggregateTrendingChart?aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&tabName=" + encodeURIComponent(tabName);
+    var URI = "/results/dashboardAggregateTrendingChart?aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&tabName=" + encodeURIComponent(tabName) + "&metric=" + metric;
 
     xhr.open("GET", URI, true);
     xhr.send();

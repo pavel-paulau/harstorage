@@ -24,7 +24,8 @@
         var aggMethod = HARSTORAGE.getParameterByName("metric");
         var timeFrameInDays = '30';
 
-        dashboard.getAggregateTrendChart(tabName, aggMethod, timeFrameInDays, "aggTrendsChart");
+        dashboard.getAggregateTrendChart(tabName, aggMethod, timeFrameInDays, "aggTrendsChart-full", "full_load_time");
+        dashboard.getAggregateTrendChart(tabName, aggMethod, timeFrameInDays, "aggTrendsChart-user", "user_ready_time");
  
         % if c.chart == "true":
         var columns = new HARSTORAGE.Columns();

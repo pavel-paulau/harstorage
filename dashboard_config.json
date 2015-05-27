@@ -149,7 +149,6 @@
    }
 ], 
 "aggTrendCharts" : {
-  "metrics" : [ "full_load_time", "user_ready_time"],
   "defaultAggMethod" : "90th Percentile",
   "prod-mWeb": { 
     "charts" : [
