@@ -646,7 +646,7 @@ class ResultsController(BaseController):
                     aggregated_docs[counter].append(row[metric])
                 else:
                     if len(docs) > 0:
-                        points += str(aggregator.get_aggregated_value(docs, c.agg_type, c.agg_type)) + str("#")
+                        points += str(aggregator.get_aggregated_value(docs, c.agg_type, c.agg_type) / 1000) + str("#")
                     else:
                         points += "n/a#"
                     # set vars for the next loop
@@ -660,7 +660,7 @@ class ResultsController(BaseController):
         agg_points = str()
         for x in range (0, len(aggregated_docs)):
             if len(aggregated_docs[x]) > 0:
-                agg_points += str(aggregator.get_aggregated_value(aggregated_docs[x], c.agg_type, c.agg_type)) + str("#")
+                agg_points += str(aggregator.get_aggregated_value(aggregated_docs[x], c.agg_type, c.agg_type) / 1000) + str("#")
             else:
                 agg_points += "n/a#"
 
@@ -724,7 +724,7 @@ class ResultsController(BaseController):
         # Query the dataset and aggregate
         for chart in charts:
             labels = chart["labels"]
-            seriesNames += chart["title"] + "-" + metric + "#"
+            seriesNames += chart["title"] + "#"
             counter = 0
 
             # fields results from datastore
@@ -752,7 +752,7 @@ class ResultsController(BaseController):
                     aggregated_docs.append(result[metric])
                 else:
                     if len(aggregated_docs) > 0:
-                        points += str(aggregator.get_aggregated_value(aggregated_docs, agg_type, agg_type)) + str("#")
+                        points += str(aggregator.get_aggregated_value(aggregated_docs, agg_type, agg_type) / 1000) + str("#")
                     else:
                         points += "n/a#"
                     # set vars for the next loop
@@ -766,6 +766,6 @@ class ResultsController(BaseController):
         points = points[:-1]
 
         # Final chart points
-        points = "Time" +';'+seriesNames +';'+categories+';'+points
+        points = "Time"+';'+seriesNames +';'+categories+';'+points
 
         return points
