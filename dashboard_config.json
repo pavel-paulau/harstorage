@@ -328,7 +328,7 @@
       ]
     }]
   },
-  "prod-unified-desktop_unified": { 
+  "prod-unified-desktop": { 
     "charts" : [
     {  
       "title": "Home Page",
