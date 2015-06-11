@@ -769,3 +769,9 @@ class ResultsController(BaseController):
         points = "Time"+';'+seriesNames +';'+categories+';'+points
 
         return points
+
+    @restrict("GET")
+    def dailyReport(self):
+        """Page with test results"""
+
+        return render("/dailyReport.html")
