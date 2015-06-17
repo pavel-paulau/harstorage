@@ -1,6 +1,7 @@
 import json
 import time
 import re
+import sys
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
@@ -180,10 +181,13 @@ class HAR():
         self.bad_requests = 0
 
         self.domains = dict()
-        self.pageNames = ("Event", "Venue", "CardsHP", "UnifiedHP", "desktopHP", "xo_newxo", "SearchResults", "Artist", "team", "category", "grouping")
+        self.pageNames = ("Event", "Venue", "CardsHP", "UnifiedHP", "desktopHP", "xo_newxo", "SearchResults", "Artist", "team", "category", "grouping", "Search_")
 
-        friendlyNames = '{"CardsHP" : "Explore Home", "UnifiedHP" : "Simplified Home", "desktopHP" : "Explore Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results"}'
-        self.pageNamesFriendlyName = json.loads(friendlyNames)
+	try:
+        	friendlyNames = '{"CardsHP" : "Explore Home", "UnifiedHP" : "Simplified Home", "desktopHP" : "Explore Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results", "Search_" : "Search Results"}'
+        	self.pageNamesFriendlyName = json.loads(friendlyNames)
+	except Exception, err:
+    	    print sys.exc_info()[0]
 
     def analyze(self):
         """Extract data from HAR container"""
@@ -539,4 +543,5 @@ class HAR():
         domain_data_size += self.get_response_size().to_kilobytes()
 
         self.domains[mongo_domain] = [domain_requests, domain_data_size]
+
 
