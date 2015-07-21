@@ -163,6 +163,7 @@ class HAR():
     def init_variables(self):
         self.full_load_time = 0
         self.user_ready_time = 0
+        self.ads_full_time = 0
 
         self.total_dns_time      = 0.0
         self.total_transfer_time = 0.0
@@ -184,7 +185,7 @@ class HAR():
         self.pageNames = ("Event", "Venue", "CardsHP", "UnifiedHP", "desktopHP", "xo_newxo", "SearchResults", "Artist", "team", "category", "grouping", "Search_")
 
 	try:
-        	friendlyNames = '{"CardsHP" : "Explore Home", "UnifiedHP" : "Simplified Home", "desktopHP" : "Explore Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results", "Search_" : "Search Results"}'
+        	friendlyNames = '{"CardsHP" : "Home", "UnifiedHP" : "Home", "desktopHP" : "Home", "xo_newxo" : "Checkout", "SearchResults" : "Search Results", "Search_" : "Search Results"}'
         	self.pageNamesFriendlyName = json.loads(friendlyNames)
 	except Exception, err:
     	    print sys.exc_info()[0]
@@ -280,6 +281,8 @@ class HAR():
         # Get user Time
         self.user_ready_time = self.getUserReadyTime()
 
+        # Get Ads Full Time
+        self.ads_full_time = self.getAdsTime()
 
     def getUserReadyTime(self):
         try:
@@ -287,6 +290,24 @@ class HAR():
         except:
             user_ready_time = 0
         return user_ready_time
+
+    def getAdsTime(self):
+        try:
+            # Get Ad Load Start time
+            ad_start_time = self.har["log"]['pages'][0]['_userTime.mark-ad-load-start-time']
+            ad_content_load_time = 0
+            # Find the last _userTime.mark-*content-load-time (it's value - time - should be the largest)
+            for key in self.har["log"]['pages'][0].keys():
+                if key.find("content-load-time") != -1:
+                    content_load_time = self.har["log"]['pages'][0][key]
+                    if content_load_time > ad_content_load_time:
+                        ad_content_load_time = content_load_time
+
+            # calculate the total ads times
+            ads_full_time = ad_content_load_time - ad_start_time
+        except:
+            ads_full_time = 0
+        return ads_full_time
 
     def weight_ratio(self):
         """Breakdown by size of page objects"""

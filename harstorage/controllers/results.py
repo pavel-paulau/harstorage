@@ -272,13 +272,21 @@ class ResultsController(BaseController):
         throughput = test_results["throughput"]
 
         try:
-            userReady = har['log']['pages'][0]['_userTime.mark-user-ready']
+            userReady = test_results["user_ready_time"]
+            #har['log']['pages'][0]['_userTime.mark-user-ready']
         except:
             userReady = 0
+
+        try:
+            ads_full_time = test_results["ads_full_time"]
+            #har['log']['pages'][0]['_userTime.mark-user-ready']
+        except:
+            ads_full_time = 0
 
         # Summary stats
         summary = { "full_load_time":       test_results["full_load_time"],
                     "user_ready_time":      userReady,
+                    "ads_full_time":        ads_full_time,
                     "onload_event":         test_results["onload_event"],
                     "start_render_time":    test_results["start_render_time"],
                     "time_to_first_byte":   test_results["time_to_first_byte"],
@@ -415,16 +423,22 @@ class ResultsController(BaseController):
 
 	    timestamp = har.har['log']['pages'][0]['startedDateTime'][0:19]
 	    timestamp = timestamp.replace("T", " ")
+            
             try:
-                userReady = har.har['log']['pages'][0]['_userTime.mark-user-ready']
+                userReady = har.user_ready_time
             except:
                 userReady = 0
+            try:
+                ads_full_time = har.ads_full_time
+            except:
+                ads_full_time = 0
 
             result = {  "label":                har.label,
                         "url":                  har.url,
                         "timestamp":            timestamp,
                         "full_load_time":       har.full_load_time,
                         "user_ready_time":      userReady,
+                        "ads_full_time":        ads_full_time,
                         "onload_event":         har.onload_event,
                         "start_render_time":    har.start_render_time,
                         "time_to_first_byte":   har.time_to_first_byte,

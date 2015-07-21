@@ -100,7 +100,7 @@ class SuperposedController(BaseController):
                      "Total Transfer Time (ms)", "Total Server Time (ms)",
                      "Avg. Connecting Time (ms)", "Avg. Blocking Time (ms)",
                      "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
-                     "Redirects", "Bad Rquests", "Domains"]
+                     "Redirects", "Bad Rquests", "Domains", "Ads Time"]
         c.metrics_table = list()
         c.metrics_table.append(list())
 

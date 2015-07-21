@@ -65,7 +65,8 @@ HARSTORAGE.Units = {
     "Cache Size": "kB",
     "Redirects": "",
     "Bad Rquests": "",
-    "Domains":  ""
+    "Domains":  "",
+    "Ads Time": "s"
 };
 
 /*
@@ -699,6 +700,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         $("#throughput").html(that.formatter(that.json.throughput, "kB/s"));
         $("#source-url").html(source);
 
+        $("#ads-full-time").html(that.formatter(that.json.summary.ads_full_time, "ms"));
         $("#total-size").html(that.formatter(that.json.summary.total_size, "kB"));
         $("#text-size").html(that.formatter(that.json.summary.text_size, "kB"));
         $("#media-size").html(that.formatter(that.json.summary.media_size, "kB"));

@@ -16,7 +16,7 @@ class Aggregator():
                         "total_transfer_time", "total_server_time",
                         "avg_connecting_time", "avg_blocking_time", "text_size",
                         "media_size", "cache_size", "redirects", "bad_requests",
-                        "domains")
+                        "domains", "ads_full_time")
 
         self.TITLES = ["Full Load Time", "User Ready Time", "Total Requests", "Total Size",
                        "Page Speed Score", "onLoad Event", "Start Render Time",
@@ -24,7 +24,7 @@ class Aggregator():
                        "Total Transfer Time", "Total Server Time",
                        "Avg. Connecting Time", "Avg. Blocking Time",
                        "Text Size", "Media Size", "Cache Size", "Redirects",
-                       "Bad Rquests", "Domains"]
+                       "Bad Rquests", "Domains", "Ads Time"]
 
         self.data = self.data_container()
 
