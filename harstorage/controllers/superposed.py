@@ -84,13 +84,12 @@ class SuperposedController(BaseController):
 
         if c.timeFormat == "s":
             fltLabel = "Full Load Time (s)"
+            usrLabel = "User Ready Time (s)"
+            adsLabel = "Ads Time (s)"
         else:
             fltLabel = "Full Load Time (ms)"
-
-        if c.timeFormat == "s":
-            usrLabel = "User Ready Time (s)"
-        else:
             usrLabel = "User Ready Time (ms)"
+            adsLabel = "Ads Time (ms)"
 
         # Data table
         c.headers = ["Label", fltLabel, usrLabel, "Total Requests",
@@ -100,7 +99,7 @@ class SuperposedController(BaseController):
                      "Total Transfer Time (ms)", "Total Server Time (ms)",
                      "Avg. Connecting Time (ms)", "Avg. Blocking Time (ms)",
                      "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
-                     "Redirects", "Bad Rquests", "Domains", "Ads Time"]
+                     "Redirects", "Bad Rquests", "Domains", adsLabel]
         c.metrics_table = list()
         c.metrics_table.append(list())
 
@@ -164,10 +163,7 @@ class SuperposedController(BaseController):
                 c.points += str(value) + "#"
 
                 tableValue = value
-                if metric == "full_load_time":
-                    if c.timeFormat == "s":
-                        tableValue = round(tableValue / 1000, 2)
-                if metric == "user_ready_time":
+                if metric == "full_load_time" or metric == "user_ready_time" or metric == "ads_full_time":
                     if c.timeFormat == "s":
                         tableValue = round(tableValue / 1000, 2)
 
