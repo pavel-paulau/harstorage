@@ -877,7 +877,9 @@ HARSTORAGE.autoHeight = function() {
     "use strict";
 
     var iframe = document.getElementById("harviewer-iframe");
-    iframe.height = iframe.contentDocument.body.offsetHeight;
+    iframe.onload = function() {
+        this.height = this.contentDocument.body.offsetHeight;
+    }
 };
 
 /*
