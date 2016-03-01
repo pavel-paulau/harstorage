@@ -21,6 +21,9 @@ class CombineController(BaseController):
         for key in request.GET.keys():
             if key != "ver":
                 base = config["pylons.paths"]["static_files"]
+                if ".." in key:
+                    # prevent local file inclusion
+                    return None
                 try:
                     with open(base + "/styles/" + key) as file:
                         try:
@@ -44,6 +47,9 @@ class CombineController(BaseController):
         for key in request.GET.keys():
             if key != "ver":
                 base = config["pylons.paths"]["static_files"]
+                if ".." in key:
+                    # prevent local file inclusion
+                    return None
                 try:
                     with open(base + "/scripts/" + key) as file:
                         try:
