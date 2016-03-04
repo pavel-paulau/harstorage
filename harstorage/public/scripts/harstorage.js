@@ -36,7 +36,7 @@ var HARSTORAGE = HARSTORAGE || {};
 /*
  * Base url to be used when generating urls
  */
-var base_url = $('#base-url').text();
+var base_url = window.location.protocol+"//"+window.location.host;
 HARSTORAGE.base_url = base_url
 
 
@@ -901,6 +901,14 @@ HARSTORAGE.AggregatedStatistics = function(id) {
 
         if (metric === "90th%20Percentile") {
             metric = "90th Percentile";
+        }
+
+        if (metric === "95th%20Percentile") {
+            metric = "95th Percentile";
+        }
+
+        if (metric === "99th%20Percentile") {
+            metric = "99th Percentile";
         }
     }
 
