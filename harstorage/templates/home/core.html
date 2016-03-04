@@ -2,6 +2,8 @@
 <%namespace name="dochead"  file="/home/dochead.html"/>
 <%namespace name="header"   file="/common/header.html"/>
 <%namespace name="footer"   file="/common/footer.html"/>
+<%namespace name="labels"   file="/home/labels.html"/>
+
 
 ${dochead.html("HAR Storage")}
 ${header.html()}
@@ -18,7 +20,8 @@ ${header.html()}
 
     <div class="summary" id="summary-table">
         <p class="title">Latest Results</p>
-    
+
+        ${labels.html()}    
         <table class="display" id="stats_table">
             <thead>
                 <tr>

@@ -40,11 +40,13 @@ var base_url = window.location.protocol+"//"+window.location.host;
 HARSTORAGE.base_url = base_url
 
 
+
 /*
  * Time metrics
  */
 HARSTORAGE.times = [
     "Full Load Time",
+    "User Ready Time",
     "onLoad Event",
     "Start Render Time",
     "Time to First Byte"
@@ -55,6 +57,7 @@ HARSTORAGE.times = [
  */
 HARSTORAGE.Units = {
     "Full Load Time": "s",
+    "User Ready Time": "s",
     "Total Requests": "",
     "Total Size": "kB",
     "Page Speed Score": "",
@@ -71,7 +74,8 @@ HARSTORAGE.Units = {
     "Cache Size": "kB",
     "Redirects": "",
     "Bad Rquests": "",
-    "Domains":  ""
+    "Domains":  "",
+    "Ads Time": "s"
 };
 
 /*
@@ -110,6 +114,8 @@ HARSTORAGE.Converter = function(points) {
                 // Parsed value
                 pointValue = parseInt(pointValue, 10);
             }
+            if(isNaN(pointValue))       
+                pointValue = 0; 
 
             dataArray[dataSetIndex][pointIndex] = pointValue;
         }
@@ -139,7 +145,7 @@ HARSTORAGE.Converter = function(points) {
             name: labels[dataSetIndex],
             yAxis: dataSetIndex,
             data: dataArray[dataSetIndex],
-            visible: (dataSetIndex < 3) ? true : false
+            visible: (dataSetIndex < 4) ? true : false
         });
     }
 
@@ -160,7 +166,7 @@ HARSTORAGE.Timeline = function(run_info) {
 };
 
 // Get data for timeline
-HARSTORAGE.Timeline.prototype.get = function(label, mode) {
+HARSTORAGE.Timeline.prototype.get = function(label, mode, startTs) {
     "use strict";
 
     // Pointer
@@ -171,18 +177,18 @@ HARSTORAGE.Timeline.prototype.get = function(label, mode) {
 
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            that.draw(this.responseText);
+            that.draw(label, this.responseText);
         }
     };
 
-    var URI = "timeline?label=" + encodeURIComponent(label) + "&mode=" + mode;
+    var URI = "timeline?label=" + encodeURIComponent(label) + "&mode=" + mode + "&startTs=" + encodeURIComponent(startTs);
 
     xhr.open("GET", URI, true);
     xhr.send();
 };
 
 // Draw timeline
-HARSTORAGE.Timeline.prototype.draw = function(points) {
+HARSTORAGE.Timeline.prototype.draw = function(label, points) {
     "use strict";
 
     // Pointer
@@ -218,12 +224,12 @@ HARSTORAGE.Timeline.prototype.draw = function(points) {
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url: "/chart/export",
             filename: "timeline",
             width: 960
         },
         title: {
-            text: "Performance Trends"
+            text: label + " Performance Trends"
         },
         xAxis: [{
             categories: categories,
@@ -310,7 +316,7 @@ HARSTORAGE.Histogram.prototype.draw = function(points, title) {
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url: "/chart/export",
             filename: "histogram",
             width: 960
         },
@@ -392,7 +398,7 @@ HARSTORAGE.Columns.prototype.draw = function(points, chart_type) {
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url: "/chart/export",
             filename: "superposed",
             width: 960            
         },
@@ -467,7 +473,7 @@ HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     if (query !== "None") {
         agg_btn.style.display = "inline";
         agg_btn.onclick = function() {
-            location.href = HARSTORAGE.base_url + query.replace(/amp;/g,"") + "&chart=column&table=true";
+            location.href = query.replace(/amp;/g,"") + "&chart=column&table=true";
         };
     }
 
@@ -477,7 +483,7 @@ HARSTORAGE.RunInfo = function(mode, label, query, histo) {
     if (histo === "true") {
         histo_btn.style.display = "inline";
         histo_btn.onclick = function() {
-            location.href = HARSTORAGE.base_url + "/superposed/histogram?label=" + label + "&metric=full_load_time";
+            location.href = "/superposed/histogram?label=" + label + "&metric=full_load_time";
         };
     }
 };
@@ -523,7 +529,7 @@ HARSTORAGE.RunInfo.prototype.resources = function (div, title, hash, units, widt
                     ]
                 }
             },
-            url: HARSTORAGE.base_url + "/chart/export",
+            url:"/chart/export",
             filename: "resources",
             width: width
         },
@@ -642,7 +648,6 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
     // Dynamic data
     this.json = [];
-
     // Show Ajax spinner
     this.spinner.style.display = "block";
 
@@ -685,9 +690,13 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
             that.json = JSON.parse(that.xhr.responseText);
             that.cache[that.URI] = that.json;
         }
+        
+        var sourceUrl = that.formatter(that.json.source, "string");
+        var source = '<a href="'+sourceUrl+'" target="_blank">'+sourceUrl+'</a>';
 
         // Summary
         $("#full-load-time").html(that.formatter(that.json.summary.full_load_time, "ms"));
+        $("#user-ready-time").html(that.formatter(that.json.summary.user_ready_time, "ms"));
         $("#onload-event").html(that.formatter(that.json.summary.onload_event, "ms"));
         $("#start-render-time").html(that.formatter(that.json.summary.start_render_time, "ms"));
         $("#time-to-first-byte").html(that.formatter(that.json.summary.time_to_first_byte, "ms"));
@@ -697,7 +706,10 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
         $("#total-server-time").html(that.formatter(that.json.summary.total_server_time, "ms"));
         $("#avg-connecting-time").html(that.formatter(that.json.summary.avg_connecting_time, "ms"));
         $("#avg-blocking-time").html(that.formatter(that.json.summary.avg_blocking_time, "ms"));
+        $("#throughput").html(that.formatter(that.json.throughput, "kB/s"));
+        $("#source-url").html(source);
 
+        $("#ads-full-time").html(that.formatter(that.json.summary.ads_full_time, "ms"));
         $("#total-size").html(that.formatter(that.json.summary.total_size, "kB"));
         $("#text-size").html(that.formatter(that.json.summary.text_size, "kB"));
         $("#media-size").html(that.formatter(that.json.summary.media_size, "kB"));
@@ -710,7 +722,7 @@ HARSTORAGE.RunInfo.prototype.get = function(opt_ts) {
 
         // HAR Viewer
         var iframe  = document.createElement("iframe");
-        var url = HARSTORAGE.base_url + "/results/harviewer?inputUrl=" + HARSTORAGE.base_url + "/results/download%3Fid%3D";
+        var url = "/results/harviewer?inputUrl=/results/download%3Fid%3D";
             url += that.json.har;
             url += "&expand=true";
 
@@ -926,7 +938,92 @@ HARSTORAGE.AggregatedStatistics = function(id) {
     // Add event handler to selector box
     selector.onchange = function() {
         location.href = href + this.value;
+        location.href = HARSTORAGE.replaceUrlParam(location.href, "metric", this.value);
     };
+};
+
+HARSTORAGE.replaceUrlParam = function(url, paramName, paramValue){
+    var pattern = new RegExp('('+paramName+'=).*?(&|$)')
+    var newUrl=url
+    if(url.search(pattern)>=0){
+        newUrl = url.replace(pattern,'$1' + paramValue + '$2');
+    }
+    else{
+        newUrl = newUrl + (newUrl.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue 
+    }
+    return newUrl
+}
+
+HARSTORAGE.getParameterByName = function(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+/*
+* Setting the aggregate option list for the dashboard location tab
+*/
+HARSTORAGE.setAggregatedForDashboard = function(ids) {
+    "use strict";
+
+    // Determine metric type from Query string
+    var metric,
+        href;
+
+    metric = HARSTORAGE.getParameterByName("metric");
+    if (metric == "") {
+        metric = "Average";        
+    }
+
+    // Update selector box active option
+    $.each(ids, function(i, id) {
+        var selector = document.getElementById(id);
+        for (var i = 0, len = selector.options.length; i < len; i += 1 ) {
+            if (selector.options[i].value === metric) {
+                selector.selectedIndex = i;
+                $("#" + id).trigger("liszt:updated");
+                break;
+            }
+        }
+        // Add event handler to selector box
+        selector.onchange = function() {
+            location.href = HARSTORAGE.replaceUrlParam(location.href, "metric", this.value);
+        };
+    });
+
+};
+
+/*
+* Setting the metrics option list for the dashboard location tab
+*/
+HARSTORAGE.setMetricsForDashboard = function(ids) {
+    "use strict";
+
+    // Determine metric type from Query string
+    var metric,
+        href;
+    metric = HARSTORAGE.getParameterByName("value");
+    if (metric == "") {
+        metric = "full_load_time";        
+    }
+
+    // Update selector box active option
+    $.each(ids, function(i, id) {
+        var selector = document.getElementById(id);
+        for (var i = 0, len = selector.options.length; i < len; i += 1 ) {
+            if (selector.options[i].value === metric) {
+                selector.selectedIndex = i;
+                $("#" + id).trigger("liszt:updated");
+                break;
+            }
+        }
+        // Add event handler to selector box
+        selector.onchange = function() {
+            location.href = HARSTORAGE.replaceUrlParam(location.href, "value", this.value);
+        };
+    });
+
 };
 
 /*
@@ -940,12 +1037,6 @@ HARSTORAGE.SuperposeForm = function() {
 
     // Initialize cache
     this.cache = {};
-
-    // Select box event handler
-    var selector = document.getElementById("step_1_label");
-    selector.onchange = function() {
-        that.setTimestamps(this.name);
-    };
 
     // Submit button event handler
     var submit = document.getElementById("submit");
@@ -982,17 +1073,37 @@ HARSTORAGE.SuperposeForm = function() {
 HARSTORAGE.SuperposeForm.prototype.submit = function() {
     "use strict";
 
-    var selectors = document.getElementsByTagName("select");
+    var that = this;
 
-    for (var i = 0, len = selectors.length/3; i < len; i += 1) {
-        var id = 1 + i*3;
+    var datepickers = document.getElementsByClassName('datepicker');
 
-        var start_ts    = selectors.item(id).options[ selectors.item(id).options.selectedIndex ].value;
-        var end_ts      = selectors.item(id+1).options[ selectors.item(id+1).options.selectedIndex ].value;
+    for(var i = 0, len = datepickers.length/2; i < len; i += 2) {
+
+        var start_ts    = datepickers.item(i).value;
+        var end_ts      = datepickers.item(i+1).value;
 
         if (end_ts < start_ts) {
-            window.alert("Invalid timestamps!");
+            window.alert('Invalid timestamps!');
             return false;
+        }
+    }
+
+    var selectors = document.getElementsByTagName('select');
+    for(var i = 0, len = selectors.length; i < len; i += 1) {
+
+        var selector   = selectors.item(i);
+        var selectedValue   = selector.value;
+
+        if (selectedValue === "") {
+            window.alert('Invalid test selected!');
+            return false;
+        } else {
+            // get all the selected values
+            var values = that.getSelectValues(selector);
+            //Set the hidden input field
+            var id = selector.id + "_hidden";
+            document.getElementById(id).value = values;
+
         }
     }
 
@@ -1027,28 +1138,34 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
 
     // Update name and id of selectors
     var selectors = new_div.getElementsByTagName("select");
+    var datepickers = new_div.getElementsByClassName('datepicker');
 
     for (i = selectors.length; i -- ; ) {
         switch (selectors.item(i).name) {
         case prev_id + "_label":
             selectors.item(i).name  = new_id + "_label";
             selectors.item(i).id    = new_id + "_label";
-            selectors.item(i).onchange = function() {
-                that.setTimestamps(this.name);
-            };
-            break;
-        case prev_id + "_start_ts":
-            selectors.item(i).name  = new_id + "_start_ts";
-            selectors.item(i).id    = new_id + "_start_ts";
-            break;
-        case prev_id + "_end_ts":
-            selectors.item(i).name  = new_id + "_end_ts";
-            selectors.item(i).id    = new_id + "_end_ts";
             break;
         default:
             break;
         }
     }
+    for(i = datepickers.length; i -- ; ) {
+        switch (datepickers.item(i).name) {
+        case prev_id + '_start_ts':
+            datepickers.item(i).name  = new_id + '_start_ts';
+            datepickers.item(i).id    = new_id + '_start_ts';
+            break;
+        case prev_id + '_end_ts':
+            datepickers.item(i).name  = new_id + '_end_ts';
+            datepickers.item(i).id    = new_id + '_end_ts';
+            break;
+        default:
+            break;
+        }
+    }
+
+    that.initializeDatePickers();
 
     // Update inputs
     var inputs = new_div.getElementsByTagName("input");
@@ -1084,6 +1201,11 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
                 that.del(this);
             };
             break;
+        case prev_id + '_label_hidden':
+            // Set new id
+            inputs.item(i).id = new_id + '_label_hidden';
+            inputs.item(i).name = new_id + '_label_hidden';
+            break;
         default:
             break;
         }
@@ -1101,8 +1223,6 @@ HARSTORAGE.SuperposeForm.prototype.add = function(button) {
         }
     }
 
-    // Update timestamp
-    this.setTimestamps(new_id + "_label");
 };
 
 // Delete selected step
@@ -1132,80 +1252,6 @@ HARSTORAGE.SuperposeForm.prototype.del = function(button) {
     }
 };
 
-// Set timelines for selected label
-HARSTORAGE.SuperposeForm.prototype.setTimestamps = function(id) {
-    "use strict";
-
-    // Poiner
-    var that = this;
-
-    // Dynamic data
-    this.dates = [];
-
-    // Show Ajax spinner
-    this.spinner.style.display = "block";
-
-    // Update timestamps
-    var set_data = function() {
-        var i,
-            len,
-            ts;
-
-        // Calculate id
-        id  = id.split("_")[0] + "_" + id.split("_")[1];
-
-        // Hide Ajax spinner
-        that.spinner.style.display = "none";
-
-        // Update cache
-        if (typeof(that.cache[that.URI]) === "undefined") {
-            that.dates = that.xhr.responseText.split(";");
-            that.cache[that.URI] = that.dates;
-        } else {
-            that.dates.reverse();
-        }
-
-        // Start timestamps
-        var select = document.getElementById(id + "_start_ts");
-        select.options.length = 0;
-
-        for (i = 0, len = that.dates.length; i < len; i += 1) {
-            ts = that.dates[i];
-            select.options[i] = new Option(ts, ts, false, false);
-        }
-
-        // End timestamps
-        select = document.getElementById(id + "_end_ts");
-        select.options.length = 0;
-        that.dates.reverse();
-
-        for (i = 0, len = that.dates.length; i < len; i += 1) {
-            ts = that.dates[i];
-            select.options[i] = new Option(ts, ts, false, false);
-        }
-    };
-
-    // Request data via XHR or read from cache
-    var select = document.getElementById(id);
-    var label = select.options[select.selectedIndex].text;
-    this.URI = "dates?label=" + label;
-
-    this.xhr = new XMLHttpRequest();
-
-    this.xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            set_data();
-        }
-    };
-
-    if (typeof(this.cache[this.URI]) === "undefined") {
-        this.xhr.open("GET", this.URI, true);
-        this.xhr.send();
-    } else {
-        this.dates = this.cache[this.URI];
-        set_data();
-    }
-};
 // Add Ajax spinner
 HARSTORAGE.SuperposeForm.prototype.addSpinner = function() {
     "use strict";
@@ -1227,4 +1273,241 @@ HARSTORAGE.SuperposeForm.prototype.checkbox = function(input) {
         var checkbox = document.getElementById(id);
         checkbox.checked = false;
     }
+};
+
+// Return an array of the selected opion values
+// select is an HTML select element
+HARSTORAGE.SuperposeForm.prototype.getSelectValues = function(select) {
+  var result = [];
+  var options = select && select.options;
+  var opt;
+
+  for (var i=0, iLen=options.length; i<iLen; i++) {
+    opt = options[i];
+
+    if (opt.selected) {
+      result.push(opt.value || opt.text);
+    }
+  }
+  return result;
+}
+
+HARSTORAGE.SuperposeForm.prototype.initializeDatePickers = function() { 
+    $('.datepicker').each(function () { 
+        $(this).removeClass('hasDatepicker').removeData('datepicker').unbind();
+        $(this).datepicker({
+            dateFormat: 'yy-mm-dd',
+            onSelect: function(datetext) {
+                datetext=datetext+" 00:00:00";
+                $(this).val(datetext);
+            }
+        });
+    });
+}
+
+/*
+ * Dashboard chart
+ */
+HARSTORAGE.Dashboard = function() {
+    "use strict";
+};
+
+/* 
+* Get data for the dashboard chart
+* graph - Name of the chart
+* lables - name of labels to fetch from the data store
+* aggMethod - How to aggregate the data (average, 90th Percentile, etc...)
+* timeFrameInDays - How many days back to see results for
+* metrics - What "metrics to display"
+*/
+HARSTORAGE.Dashboard.prototype.get = function(graph, labels, aggMethod, timeFrameInDays, metrics, renderToDiv) {
+    "use strict";
+
+    // Pointer
+    var that = this;
+
+    // Retrieve data for timeline via XHR call
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            that.draw(graph, this.responseText, renderToDiv, true);
+        }
+    };
+
+    var URI = "/results/dashboardChart?labels=" + encodeURIComponent(labels) + "&aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&metric=" + encodeURIComponent(metrics);
+
+    xhr.open("GET", URI, true);
+    xhr.send();
+};
+
+/*
+ * Data Converter for the dashboard use case
+ * Data String (points) expected in the following format: 
+ *      yAxisLabel;seriesLabelA#seriesLabelB;xCat1#xCat2#;p1a#p2a;p1b#p2b
+ */
+HARSTORAGE.Dashboard.prototype.converter = function(points) {
+    "use strict";
+
+    // Series data (data points for the series are after the fist 3 sections)
+    var splitResults = points.split(";"),
+        numberOfSets = splitResults.length - 3,
+        dataArray = [];
+
+    // yLabel, seriesLabels and Timestamps
+    var yLabel = splitResults[0].split("#"),
+        labels = splitResults[1].split("#"),
+        categories = splitResults[2].split("#"),
+        numberOfPoints = categories.length,
+        pointValue;
+
+    for (var dataSetIndex = 0; dataSetIndex < numberOfSets; dataSetIndex += 1 ) {
+        dataArray.push(splitResults[dataSetIndex + 3].split("#"));
+
+        // Convert string values to numbers
+        for (var pointIndex = 0; pointIndex < numberOfPoints; pointIndex += 1 ) {
+            // Original Value
+            pointValue = dataArray[dataSetIndex][pointIndex];
+
+            //Using a time (ms) value, parse, round accordingly
+            if (HARSTORAGE.times.indexOf(yLabel[0]) !== -1) {
+                // Parsed value
+                pointValue = parseFloat(pointValue / 1000, 10);
+                // Rounded value
+                if (pointValue > 1){
+                    pointValue = Math.round(pointValue * 10) / 10;
+                }
+            } else {
+                // Parsed value
+                pointValue = parseInt(pointValue, 10);
+            }
+            if(isNaN(pointValue) || pointValue == 0)       
+                pointValue = null; 
+
+            dataArray[dataSetIndex][pointIndex] = pointValue;
+        }
+    }
+
+    // Y Axis and series
+    var yAxis = [],
+        series = [];
+
+    yAxis.push({
+        title: {
+            text: yLabel,
+        },        
+        plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+        min: 0,
+        showEmpty: false
+    });
+    for (dataSetIndex = 0; dataSetIndex < numberOfSets; dataSetIndex += 1) {
+        series.push({
+            name: labels[dataSetIndex],
+            data: dataArray[dataSetIndex],
+            visible: true
+        });
+    }
+
+    return {
+        "categories": categories,
+        "yAxis": yAxis,
+        "series": series
+    };
+};
+
+// Dashboard Draw graph
+HARSTORAGE.Dashboard.prototype.draw = function(graph, points, renderToDiv, allowLinkTo) {
+    "use strict";
+
+    // Pointer
+    var that = this;
+
+    // Convert data from custom format to arrays for chart
+    var converter = that.converter(points);
+
+    var categories = converter.categories,
+        yAxis = converter.yAxis,
+        series = converter.series;
+
+    new Highcharts.Chart({
+        chart: {
+            renderTo: renderToDiv,
+            zoomType: "x",
+            defaultSeriesType: 'line',            
+        },
+        credits: {
+            enabled: false
+        },
+        exporting: {
+            buttons: {
+                printButton: {
+                    enabled: false
+                },
+                exportButton: {
+                    menuItems: [
+                        {},
+                        null,
+                        null,
+                        {}
+                    ]
+                }
+            },
+        },
+        title: {
+            text: graph
+        },
+        xAxis: [{
+            categories: categories,
+            tickInterval: Math.ceil(categories.length / 10),
+            tickmarkPlacement: "on"
+        }],
+        plotOptions: {
+            series: {
+                cursor: "pointer",
+                point: {
+                    events: {
+                        click: function() {
+                            if(this.series.name != 'Aggregate' && allowLinkTo) {
+                                window.top.location.href = "/results/details?label=" + this.series.name;
+                            }
+                        }
+                    }
+                }
+            }
+        },        yAxis: yAxis,
+        series: series
+    });
+};
+
+/* 
+* Get data for the dashboard chart
+* tabName - Name of the tab to fetch the chart for
+* aggMethod - How to aggregate the data (average, 90th Percentile, etc...)
+* timeFrameInDays - How many days back to see results for
+* renderToDiv - the div to render the chart to
+*/
+HARSTORAGE.Dashboard.prototype.getAggregateTrendChart = function(tabName, aggMethod, timeFrameInDays, renderToDiv, metric) {
+    "use strict";
+
+    // Pointer
+    var that = this;
+
+    // Retrieve data for timeline via XHR call
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            if(this.responseText != "")
+                that.draw(tabName + " - " + metric, this.responseText, renderToDiv, false);
+        }
+    };
+
+    var URI = "/results/dashboardAggregateTrendingChart?aggMethod=" + aggMethod + "&timeFrameInDays=" + timeFrameInDays + "&tabName=" + encodeURIComponent(tabName) + "&metric=" + metric;
+
+    xhr.open("GET", URI, true);
+    xhr.send();
 };

@@ -1,0 +1,34 @@
+<%namespace name="jsloader" file="/dashboard/overview/jsloader.html"/>
+<%namespace name="dochead"  file="/dashboard/overview/dochead.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+<%namespace name="modules"  file="/dashboard/overview/modules.html"/>
+
+${dochead.html("Superposed Tests | " + c.agg_type)}
+<center>
+    <div class="sp-display">
+        <p class="title">Aggregated Statistics</p>
+
+        <div class="selector">
+            <select id="metrics" class="chosen-select">
+                <option value="Average">Average</option>
+                <option value="Median">Median</option>
+                <option value="90th Percentile">90th Percentile</option>
+                <option value="Minimum">Minimum</option>
+                <option value="Maximum">Maximum</option>
+            </select>
+        </div>
+
+        <div id="aggTrendsChart-full" style="padding-bottom: 5px"></div>
+        <div id="aggTrendsChart-user" style="padding-bottom: 5px"></div>
+
+        % if c.chart == "true":
+            ${modules.chart()}
+        % endif
+    
+        % if c.table == "true":
+            ${modules.table()}
+        % endif
+    </div>
+</center>
+${jsloader.html()}
+${footer.html()}
