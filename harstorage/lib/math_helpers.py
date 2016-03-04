@@ -69,10 +69,14 @@ class Aggregator():
             return self.minimum(list)
         elif agg_type == "Maximum":
             return self.maximum(list)
-        elif agg_type == "90th Percentile":
-            return self.percentile(list, 0.9)
         elif agg_type == "Median":
             return self.percentile(list, 0.5)
+        elif agg_type == "90th Percentile":
+            return self.percentile(list, 0.9)
+        elif agg_type == "95th Percentile":
+            return self.percentile(list, 0.95)
+        elif agg_type == "99th Percentile":
+            return self.percentile(list, 0.99)
 
     def exclude_missing(self, points):
         """Remove points missing in all subsets"""
