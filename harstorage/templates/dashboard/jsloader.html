@@ -1,0 +1,62 @@
+<%def name="html()">
+<script type="text/javascript">
+    $LAB
+    .script("${h.url_for('/scripts/jquery-1.7.min.js')}").wait()
+    .script("${h.url_for('/combine/scripts')}" +
+            "?highcharts/highcharts.js&ver=4.1.5" +
+            "&highcharts/themes.js&ver=${c.rev}" +
+            "&highcharts/exporting.js&ver=4.1.5").wait()
+    .script("/scripts/chosen.jquery.js?ver=0.9.5").wait()
+    .script("${h.url_for('/scripts/harstorage.js')}?ver=${c.rev}").wait()
+    .wait(function(){
+        var config = "${c.configData}";
+        config = config.replace(/u'/g,"\"");
+        config = config.replace(/'/g,"\"");
+        var configObj = JSON.parse(config);
+        var today = new Date();
+        var month = today.getMonth() + 1;
+        var monthStr = month;
+        var metric = "90th Percentile";
+        var metricUrlEncoded = "90th%20Percentile";
+        var value = "full_load_time";
+
+        if(month<10) {      
+            monthStr = '0'+month;
+        }        
+        var todayFormatted = today.getFullYear() + '-' + monthStr+ '-' + today.getDate() + '+00:00:00';
+
+        var startDate = new Date(today.getTime() - 30*24*60*60*1000);
+        var startMonth = startDate.getMonth() + 1;
+        var startMonthStr = startMonth;
+        if(startMonth<10) {      
+            startMonthStr = '0'+startMonth;
+        }        
+        var startDateFormatted = startDate.getFullYear() + '-' + startMonthStr + '-' + startDate.getDate() + '+00:00:00';
+
+        function overviewCallback(startDateFormatted, todayFormatted) {
+            var sdFormatted = startDateFormatted;
+            var tFormatted = todayFormatted;
+            return function(i, conf) {
+                var query = conf.query;
+                query = query.replace(/<START_TS>/g,sdFormatted);
+                query = query.replace(/<END_TS>/g,tFormatted);
+                query = query + '&metric=' + metricUrlEncoded;
+                query = query + '&tabName=' + conf.tabName;
+
+                var iframeHtml = "<iframe src=" + query + " width='980' id='" + conf.tabName + "-iframe' frameborder='0' scrolling='no' height='1000'></iframe>";
+                $('#'+conf.tabName+'-container').append(iframeHtml);
+            }
+        };
+
+        $.each(configObj[0].overview, overviewCallback(startDateFormatted, todayFormatted));
+
+        var html = '';
+        //Setup the HTML for receiving the charts
+        html += "<iframe src=/results/dashboardLocation?metric=" + metricUrlEncoded + "&value=" + value + " width='100%' id='dashboardTrendsIframe' frameborder='0' scrolling='no' height='2000'></iframe>";
+        html += "</div>"
+        $('#dashboardTrendsIframeContainer').append(html);
+
+    })
+    .script("/scripts/tabber.js?ver=1.9.1").wait()
+</script>
+</%def>

@@ -10,21 +10,21 @@ class Aggregator():
 
     def __init__(self):
 
-        self.METRICS = ("full_load_time", "requests", "total_size",
+        self.METRICS = ("full_load_time", "user_ready_time", "requests", "total_size",
                         "ps_scores", "onload_event", "start_render_time",
                         "time_to_first_byte", "total_dns_time",
                         "total_transfer_time", "total_server_time",
                         "avg_connecting_time", "avg_blocking_time", "text_size",
                         "media_size", "cache_size", "redirects", "bad_requests",
-                        "domains")
+                        "domains", "ads_full_time")
 
-        self.TITLES = ["Full Load Time", "Total Requests", "Total Size",
+        self.TITLES = ["Full Load Time", "User Ready Time", "Total Requests", "Total Size",
                        "Page Speed Score", "onLoad Event", "Start Render Time",
                        "Time to First Byte", "Total DNS Time",
                        "Total Transfer Time", "Total Server Time",
                        "Avg. Connecting Time", "Avg. Blocking Time",
                        "Text Size", "Media Size", "Cache Size", "Redirects",
-                       "Bad Rquests", "Domains"]
+                       "Bad Rquests", "Domains", "Ads Time"]
 
         self.data = self.data_container()
 
@@ -69,10 +69,14 @@ class Aggregator():
             return self.minimum(list)
         elif agg_type == "Maximum":
             return self.maximum(list)
-        elif agg_type == "90th Percentile":
-            return self.percentile(list, 0.9)
         elif agg_type == "Median":
             return self.percentile(list, 0.5)
+        elif agg_type == "90th Percentile":
+            return self.percentile(list, 0.9)
+        elif agg_type == "95th Percentile":
+            return self.percentile(list, 0.95)
+        elif agg_type == "99th Percentile":
+            return self.percentile(list, 0.99)
 
     def exclude_missing(self, points):
         """Remove points missing in all subsets"""

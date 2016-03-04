@@ -1,0 +1,40 @@
+<%namespace name="jsloader" file="/dashboard/jsloader.html"/>
+<%namespace name="dochead"  file="/dashboard/dochead.html"/>
+<%namespace name="header"   file="/common/header.html"/>
+<%namespace name="footer"   file="/common/footer.html"/>
+
+${dochead.html("Dashboard")}
+${header.html()}
+<center>
+    <div class="results" id="dashboard">
+        <div class="tabber" id="dashboardTabContainer">
+            <div class="tabbertab" title="Overview">
+                <div class="tabber" id="dashboardOverviewContainer">
+			            <div class="tabbertab" title="prod-mWeb">
+			                <div id="prod-mWeb-container"></div>
+			            </div>
+			            <div class="tabbertab" title="prod-legacy-desktop">
+			                <div id="prod-legacy-desktop-container"></div>
+			            </div>
+			            <div class="tabbertab" title="prod-unified-desktop">
+			                <div id="prod-unified-desktop-container"></div>
+			            </div>
+			            <div class="tabbertab" title="qa-mWeb">
+			                <div id="qa-mWeb-container"></div>
+			            </div>
+			            <div class="tabbertab" title="qa-desktop">
+			                <div id="qa-desktop-container"></div>
+			            </div>
+		        </div>
+            </div>
+
+            <div class="tabbertab" title="Prod Trends - by app and location">
+                <div id="dashboardTrendsIframeContainer">
+	            </div>
+            </div>
+
+        </div>
+    </div>
+</center>
+${jsloader.html()}
+${footer.html()}

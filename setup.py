@@ -11,7 +11,11 @@ setup(
     license='BSD, see LICENSE.txt for details',
     platforms=['Linux', 'Windows'],
     setup_requires=[],
-    install_requires=[],
+    install_requires=[
+        'pylons==1.0',
+        'pymongo==2.7.2',
+        'webob==0.9.8',
+    ],
     packages=find_packages(),
     include_package_data=True,
     test_suite='nose.collector',
