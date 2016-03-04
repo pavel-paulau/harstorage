@@ -68,27 +68,38 @@ class SuperposedController(BaseController):
         c.chart_type = request.GET.get("chart", None)
         c.table = request.GET.get("table", "false")
         init = request.GET.get("metric", "true")
+        forOverview = request.GET.get("overview", "false")
 
         c.chart = "true" if c.chart_type else "false"
 
         # Aggregation option
         c.agg_type = request.GET.get("metric", "Average")
 
+        # Aggregation option
+        c.timeFormat = request.GET.get("timeFormat", "ms")
+
         # Number of records
-        if c.chart == "true" and c.table == "true" and init != "true":
-            c.rowcount = len(request.GET) / 3 - 1
+        rows = [x for x in request.GET if "_label_hidden" in x]
+        c.rowcount = len(rows)
+
+        if c.timeFormat == "s":
+            fltLabel = "Full Load Time (s)"
+            usrLabel = "User Ready Time (s)"
+            adsLabel = "Ads Time (s)"
         else:
-            c.rowcount = len(request.GET) / 3
+            fltLabel = "Full Load Time (ms)"
+            usrLabel = "User Ready Time (ms)"
+            adsLabel = "Ads Time (ms)"
 
         # Data table
-        c.headers = ["Label", "Full Load Time (ms)", "Total Requests",
+        c.headers = ["Label", fltLabel, usrLabel, "Total Requests",
                      "Total Size (kB)", "Page Speed Score",
                      "onLoad Event (ms)", "Start Render Time (ms)",
                      "Time to First Byte (ms)", "Total DNS Time (ms)",
                      "Total Transfer Time (ms)", "Total Server Time (ms)",
                      "Avg. Connecting Time (ms)", "Avg. Blocking Time (ms)",
                      "Text Size (kB)", "Media Size (kB)", "Cache Size (kB)",
-                     "Redirects", "Bad Rquests", "Domains"]
+                     "Redirects", "Bad Rquests", "Domains", adsLabel]
         c.metrics_table = list()
         c.metrics_table.append(list())
 
@@ -101,24 +112,39 @@ class SuperposedController(BaseController):
         # Test results from database
         for row_index in range(c.rowcount):
             # Parameters from GET request
-            label = request.GET["step_" + str(row_index + 1) + "_label"]
+            label  = request.GET[ 'step_' + str(row_index+1) + '_label_hidden' ]
             start_ts = request.GET["step_" + str(row_index + 1) + "_start_ts"]
             end_ts = request.GET["step_" + str(row_index + 1) + "_end_ts"]
 
-            # Add label
-            c.metrics_table[0].append(label)
-            c.points += label + "#"
-
             # Fetch test results
+            labels = label.split(",")
             condition = {
-                "label": label,
+                "label": { '$in': labels},
                 "timestamp": {"$gte": start_ts, "$lte": end_ts}
             }
+            fields = list()
+            for metric in self.METRICS:
+                fields.append(metric)
+            fields.append("pagename")
+
             documents = md_handler.collection.find(condition,
-                                                   fields=aggregator.METRICS)
+                                                   fields=fields)
 
             # Add data row to aggregator
-            aggregator.add_row(label, row_index, documents)
+            if forOverview == "true":
+                try:
+                    pagename = documents[0]["pagename"]
+                except:
+                    pagename = label[:40]
+
+                aggregator.add_row(pagename, row_index, documents)
+                c.metrics_table[0].append(pagename)
+                c.points += pagename + "#"
+            else:
+                # Add label
+                c.metrics_table[0].append(label[:40])
+                c.points += label[:40] + "#"
+                aggregator.add_row(label[:40], row_index, documents)                
 
         # Aggregated data per column
         column = 1
@@ -128,11 +154,20 @@ class SuperposedController(BaseController):
 
             for row_index in range(c.rowcount):
                 data_list = aggregator.data[metric][row_index]
-                value = aggregator.get_aggregated_value(data_list, c.agg_type,
+                if len(data_list) <= 0:
+                    value = 0
+                else:
+                    value = aggregator.get_aggregated_value(data_list, c.agg_type,
                                                         metric)
 
                 c.points += str(value) + "#"
-                c.metrics_table[column].append(value)
+
+                tableValue = value
+                if metric == "full_load_time" or metric == "user_ready_time" or metric == "ads_full_time":
+                    if c.timeFormat == "s":
+                        tableValue = round(tableValue / 1000, 2)
+
+                c.metrics_table[column].append(tableValue)
 
             column += 1
 
@@ -145,7 +180,10 @@ class SuperposedController(BaseController):
         c.points = titles[:-1] + ";" + c.points[:-1]
         c.points = aggregator.exclude_missing(c.points)
 
-        return render("/display/core.html")
+        if forOverview == "true":
+            return render("/dashboard/overview/core.html")
+        else:
+            return render("/display/core.html")
 
     def histogram(self):
         """Render chart with histograms"""

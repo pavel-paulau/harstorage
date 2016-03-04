@@ -7,9 +7,17 @@ ${dochead.html("Details | " + c.label)}
 ${header.html()}
 <center>
     <div class="results">
-        <div id="timeline"></div>
 
-        <p class="title">Run Info</p>
+        <div id="timeline"></div>
+        </br>
+
+        <div>            
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=7'">7 Days</button>
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=30'">30 Days</button>
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=60'">60 Days</button>
+            <button type="button" style="width: 100px; display: inline;" onclick="location.href='/results/details?label=${c.label}&timeFilter=All'">All</button>
+        </div>
+        <div><p class="title">Run Info</p></div>
 
         <div class="selector">
             <select id="run_timestamp" class="chosen-select">
@@ -25,9 +33,11 @@ ${header.html()}
             <div class="tabbertab" title="Summary">                
                 <div class="container-max">
                     <div class="title-umax">Full Load Time:</div>       <div class="value" id="full-load-time">n/a</div>
+                    <div class="title-umax">User Ready Time:</div>       <div class="value" id="user-ready-time">n/a</div>
                     <div class="title-umax">onLoad Event:</div>         <div class="value" id="onload-event">n/a</div>
                     <div class="title-umax">Start Render Time:</div>    <div class="value" id="start-render-time">n/a</div>
                     <div class="title-umax">Time to First Byte:</div>   <div class="value" id="time-to-first-byte">n/a</div>
+                    <div class="title-umax">Throughput:</div>           <div class="value" id="throughput">n/a</div>
                 </div>
                 
                 <div class="container-max">
@@ -36,8 +46,11 @@ ${header.html()}
                     <div class="title-max">Total Server Time:</div>     <div class="value" id="total-server-time">n/a</div>
                     <div class="title-max">Avg. Connecting Time:</div>  <div class="value" id="avg-connecting-time">n/a</div>
                     <div class="title-max">Avg. Blocking Time:</div>    <div class="value" id="avg-blocking-time">n/a</div>
+
+                    <div class="title-min">Source:</div>               <div class="value" id="source-url"></div>
                 </div>
                 <div class="container-min">
+                    <div class="title-min">Ads Time:</div>           <div class="value" id="ads-full-time"></div>
                     <div class="title-min">Total Size:</div>           <div class="value" id="total-size">n/a</div>
                     <div class="title-min">Text Files:</div>           <div class="value" id="text-size">n/a</div>
                     <div class="title-min">Media Files:</div>          <div class="value" id="media-size">n/a</div>
@@ -49,7 +62,7 @@ ${header.html()}
                     <div class="title-min">Bad Requests:</div>         <div class="value-min" id="bad-requests">n/a</div>
                     <div class="title-min">Domains:</div>              <div class="value-min" id="domains">n/a</div>
 
-                    <div><input type="image" src="${h.url_for('/images/help_button.png')}" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
+                    <div><input type="image" src="/images/help_button.png" class="image" onclick="window.open('http://code.google.com/p/harstorage/wiki/HowToUse#Summary_Stats');"/></div>
                 </div>
             </div>
 
