@@ -1,5 +1,5 @@
-Supported platforms
-Test Suite Passes:
+# Supported platforms
+## Test Suite Passes:
 
 Ubuntu 10.04, 11.10
 Mint 12
@@ -14,52 +14,47 @@ Chrome 17.0
 Safari 5.1
 Opera 11.61
 IE 8, 9
-32-bit limitations
+
+### 32-bit limitations
 MongoDB uses memory-mapped files. When running on a 32-bit operating system, the total storage size for the server (data, indexes, everything) is 2GB.
 
 If you are running on a 64-bit os, there is virtually no limit to storage size.
 
 Thus 64 bit production deployments are recommended.
 
-Debian/Ubuntu/Mint dependencies
+# Environment setup
+## Debian/Ubuntu/Mint dependencies
 Install the following packages as root:
 
-apt-get install mongodb
-
+```
 apt-get install lib32stdc++6 (for 64-bit OS)
+apt-get install python python-cairo python-rsvg python-setuptools
+```
+```
+pip install pylons==1.0
+pip install webob==0.9.8
+```
 
-apt-get install python
+### Install and setup your preferred backend, for example MongoDB
+`apt-get install mongodb`
+`pip install pymongo`
 
-apt-get install python-cairo
 
-apt-get install python-rsvg
-
-apt-get install python-setuptools
-
-easy_install pylons==1.0
-
-easy_install webob==0.9.8
-
-easy_install pymongo
-CentOS dependencies
-Install and start MongoDB
-
+## CentOS dependencies
 Install the following packages as root:
+```
+yum install python pycairo gnome-python2-rsvg python-setuptools
+```
+```
+pip install pylons==1.0
+pip install webob==0.9.8
+```
 
-yum install python
+### Install and setup your preferred backend, for example MongoDB
+`yum install mongodb`
+`pip install pymongo`
 
-yum install pycairo
-
-yum install gnome-python2-rsvg
-
-yum install python-setuptools
-
-easy_install pylons==1.0
-
-easy_install webob==0.9.8
-
-easy_install pymongo
-Windows dependencies
+## Windows dependencies
 Install and start MongoDB
 
 Install Python 2.7.2
@@ -75,39 +70,41 @@ Install setuptools
 
 Finally run in command prompt:
 
+```
 easy_install pylons==1.0
-
 easy_install webob==0.9.8
-
 easy_install pymongo
-Installation
-Download the latest package. Use easy_install to install downloaded egg file (root privileges are required):
+```
 
-easy_install harstorage-1.0-py2.7.egg
+# Installation
+Download the latest package. Use `pip install` to install downloaded egg file (root privileges are required):
+
+`pip install harstorage-1.0-py2.7.egg`
 Create a skeleton config file for your application instance called production.ini:
 
-paster make-config "harstorage" production.ini
+`paster make-config "harstorage" production.ini`
 After that run the following command, specifying the config file you want to set up, which in this case is production.ini:
 
-paster setup-app production.ini
+`paster setup-app production.ini`
 Now you can run HAR Storage using the Paste HTTP server:
 
-paster serve production.ini
-Upgrade Notes
+`paster serve production.ini`
+
+## Upgrade Notes
 In case of upgrade to HAR Storage v0.6 downgrade of WebOb may be necessary:
 
-easy_install webob==0.9.8
+`pip install webob==0.9.8`
 In case of upgrade to HAR Storage v1.0 go to home page (http://localhost:5000/ by default) and wait until the data was migrated.
 
 Also check that you are using exactly Pylons 1.0:
 
-easy_install pylons==1.0
+`pip install pylons==1.0`
 It really makes sense to backup your test results before upgrade.
 
-Customization
+## Customization
 Once the production.ini file is created, you can customize it for your particular deployment.
 
-Web server options
+## Web server options
 host, port - these specify the IP address and port the server should listen on for requests. If you want to serve an application on all interfaces, you will need to change the host option to 0.0.0.0.
 MongoDB options
 mongo_host - IP address MongoDB database.
@@ -116,21 +113,23 @@ mongo_db - name of database.
 mongo_auth - this can be true or false. If true, MongoDB authentication is enabled (false by default).
 mongo_user - user name for authentication.
 mongo_pswd - password for authentication.
-Debugging
-debug - this can be true or false. If true, the interactive debugger is enabled to allow you to track down problems (false by default).
-Logging
+
+## Debugging
+`debug` - this can be true or false. If true, the interactive debugger is enabled to allow you to track down problems (false by default).
+
+## Logging
 Sometimes it makes sense to redirect application output to log file using --log-file option:
 
-paster serve production.ini --log-file production.log
-Theme
+`paster serve production.ini --log-file production.log`
+
+## Theme
 You can also customize chart theme via Preference menu at the top right corner of the browser window.
 
-Page Speed integration (optional)
+## Page Speed integration (optional)
 There are prepared binaries for two platforms:
 
 Windows x86
 Linux x86
-You can download them here.
 
 In order to create own file you should meet prerequisites for your platfrom.
 
@@ -140,7 +139,7 @@ Now you are ready to build Page Speed library. pagespeed_bin or pagespeed_bin.ex
 
 If you want to enable Page Speed integration change permissions of pagespeed_bin file (Linux only):
 
-chmod +x pagespeed_bin
+`chmod +x pagespeed_bin`
 and modify configuration file production.ini:
 
 ps_enabled - this can be true or false. If true, Page Speed integration in enabled.
