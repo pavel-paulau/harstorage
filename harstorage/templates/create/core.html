@@ -1,5 +1,5 @@
 <%namespace name="jsloader" file="/create/jsloader.html"/>
-<%namespace name="dochead"  file="/common/dochead.html"/>
+<%namespace name="dochead"  file="/create/dochead.html"/>
 <%namespace name="header"   file="/common/header.html"/>
 <%namespace name="footer"   file="/common/footer.html"/>
 
@@ -23,28 +23,28 @@ ${header.html()}
                             <div class="title" id="step_1_head" >Set 1 &gt;</div>
                             <div class="text">Label:</div>
 
-                            <select name="step_1_label" id="step_1_label" class="slct-label">
+                            <select name="step_1_label" id="step_1_label" class="slct-label" size="8" multiple>
                                 % for label in c.labels:
                                 <option value="${label}">${label}</option>
                                 % endfor
                             </select>
 
-                            <div class="text">Start Time:</div>
+                            <input name="step_1_label_hidden" id="step_1_label_hidden" type="hidden" value=""/>
 
-                            <select name="step_1_start_ts" id="step_1_start_ts" class="slct-start" >
-                            </select>
+                            <div class="text">Start Time:
+                                <input name="step_1_start_ts" id="step_1_start_ts" class="datepicker" type="text">
+                            </div>
 
-                            <div class="text">End Time:</div>
-
-                            <select name="step_1_end_ts" id="step_1_end_ts" class="slct-end" >
-                            </select>
+                            <div class="text">End Time:
+                                <input name="step_1_end_ts" id="step_1_end_ts" class="datepicker" type="text">
+                            </div>
 
                             <input id="step_1_add" type="image" src="${h.url_for('/images/add_button.png')}"    class="image" />
                             <input id="step_1_del" type="image" src="${h.url_for('/images/remove_button.png')}" class="image" />
                         </div>
                     </div>
 
-                    <div>
+                    <div style="float: right;">
                         <input type="checkbox" class="checkbox" id="column" name="chart" value="column" checked="yes" /><span class="checkbox-text">Column Chart</span>
                         <input type="checkbox" class="checkbox" id="spline" name="chart" value="spline" /><span class="checkbox-text">Spline Chart</span>
                         <input type="checkbox" class="checkbox" name="table" value="true" checked="yes" /><span class="checkbox-text">Data Table</span><br />

@@ -1,5 +1,5 @@
 <%def name="chart()">
-<div id="chart"></div>
+<div id="chart" style="padding-bottom: 5px"></div>
 </%def>
 
 <%def name="table()">
@@ -16,12 +16,7 @@
     <tbody>
         % for row in range(c.rowcount):
         <tr>
-            % if "," not in c.metrics_table[0][row]:
-
-                <td class="left"><a href="${h.url_for(controller='results',action='details',label=c.metrics_table[0][row],method='GET')}">${c.metrics_table[0][row]}</a></td>
-            % else:
-                <td class="left">${c.metrics_table[0][row]}</td>
-            % endif
+            <td class="left">${c.metrics_table[0][row]}</td>
             % for column in range(len(c.headers)-1):
                 <td class="center">${c.metrics_table[column+1][row]}</td>
             % endfor

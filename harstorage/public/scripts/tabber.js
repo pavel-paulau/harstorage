@@ -126,6 +126,7 @@ function TabberObj(argsObj) {
            and the tabber object. */
         this.div = null;
     }
+
 }
 
 /*--------------------------------------------------
@@ -345,6 +346,9 @@ TabberObj.prototype.navClick = function(event) {
 
     self.tabShow(tabberIndex);
 
+    var event = new Event('resize');
+    window.dispatchEvent(event);
+    
     return false;
 };
 
